@@ -1,0 +1,83 @@
+﻿<Page x:Class="WpfApp1.ArrangementPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfApp1"
+      mc:Ignorable="d" d:DesignWidth="800"
+      Title="ArrangementPage" Height="533">
+
+    <Grid>
+        <Label Content="Elegant Orchids Arrangements" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
+        <TextBox x:Name="ArrangementName" HorizontalAlignment="Left" Height="30" Margin="31,104,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.531,1.362"/>
+        <Label Content="Arrangement Name" HorizontalAlignment="Left" Margin="31,56,0,0" VerticalAlignment="Top" Width="120" Height="41"/>
+        <Button Content="Add Image" HorizontalAlignment="Left" Margin="524,106,0,0" VerticalAlignment="Top" Width="122" Height="29" Click="AddImageButton_Click" RenderTransformOrigin="0.893,0.379"/>
+        <!--<Label Content="Sevice Code" HorizontalAlignment="Left" Margin="180,53,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.559,-0.795" Height="44"/>
+        <ComboBox x:Name ="ServiceCodes" HorizontalAlignment="Left" Margin="180,106,0,0" VerticalAlignment="Top" Width="125" Height="29"  DisplayMemberPath="Value"/>-->
+        <ComboBox Name="InventoryCombo" HorizontalAlignment="Left" Margin="339,24,0,0" VerticalAlignment="Top" Width="120" Height="27"  DisplayMemberPath="Value" RenderTransformOrigin="1.5,-1.963" SelectionChanged="InventoryCombo_SelectionChanged" Visibility="Hidden"/>
+        <Label Content="Inventory Search" HorizontalAlignment="Left" Margin="339,56,0,0" VerticalAlignment="Top" Width="131" RenderTransformOrigin="0.559,-0.795" Height="27"/>
+
+        <Label Content="Inventory Items" HorizontalAlignment="Left" Margin="31,152,0,0" VerticalAlignment="Top" Width="120"/>
+        <ListView Name="InventoryListView" HorizontalAlignment="Left" Height="96" Margin="31,177,0,0" VerticalAlignment="Top" Width="615" RenderTransformOrigin="0.495,-0.215">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="180"/>
+                    <!--<GridViewColumn Header="Inventory" DisplayMemberBinding="{Binding Arrangement.InventorId}" Width="100"/>-->
+                    <!--<GridViewColumn Header="Service Code" DisplayMemberBinding="{Binding ServiceCodeName}" Width="100"/>-->
+                    <GridViewColumn Header="Quantity" Width="60" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Path=Quantity, Mode=TwoWay}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Image" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Image" Click="OnShowArrangementInventoryImage" CommandParameter="{Binding}" Width="86"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Delete" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Delete" Click="OnDeleteArrangementInventory" CommandParameter="{Binding}" Width="86"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <ListView Name="ArrangementInventoryListView" HorizontalAlignment="Left" Height="217" Margin="31,306,0,0" VerticalAlignment="Top" Width="615">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Arrangement Name" DisplayMemberBinding="{Binding Arrangement.ArrangementName}" Width="150"/>
+                    <GridViewColumn Header="Items" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox  HorizontalAlignment="Left" VerticalAlignment="Top" Width="88" Height="20"  ItemsSource="{Binding Path=InventoryList}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Edit" Width="90">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Image" Click="ShowImage" CommandParameter="{Binding}" Width="70"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Delete" Width="90">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Delete" Click="DeleteArrangement" CommandParameter="{Binding}" Width="70"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button Content="Search" HorizontalAlignment="Left" Margin="339,106,0,0" VerticalAlignment="Top" Width="111" Height="29" Click="SearchButton_Click"/>
+
+    </Grid>
+</Page>
