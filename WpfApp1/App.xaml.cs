@@ -31,7 +31,9 @@ namespace WpfApp1
             base.OnStartup(e);
 
             //set LAN Address
-            LAN_Address = "http://10.0.0.5:9000/";   //Me Fl Royalwood
+            //LAN_Address = "http://10.0.0.5:9000/";   //Me Fl Royalwood
+
+            LAN_Address = "http://10.1.10.36:9000";  //Roseanne from jdambar and Orchid Home
 
             //LAN_Address = "elegantsystem.ddns.net";  // the no ip server
         }

@@ -54,13 +54,30 @@ namespace WpfApp1
                (this.ToDatePicker.SelectedDate != null && this.ToDatePicker.SelectedDate != DateTime.MinValue)) &&
                (this.FromDatePicker.SelectedDate < this.ToDatePicker.SelectedDate))
             {
-                workOrderList = GetWorkOrders();
-                list1 = new ObservableCollection<WorkOrderInventoryDTO>(workOrderList);
-                foreach(WorkOrderInventoryDTO wor in list1)
+                //workOrderList = GetWorkOrders();
+                List<WorkOrderResponse> response = GetWorkOrders();
+
+                ObservableCollection<WorkOrderInventoryItemDTO>  list1 = new ObservableCollection<WorkOrderInventoryItemDTO>();
+
+                foreach (WorkOrderResponse r in response)
                 {
-                    foreach(WorkOrderInventoryMapDTO x in wor.InventoryList)
+                    
+                    foreach (WorkOrderInventoryMapDTO wor in r.WorkOrderList)
                     {
-                        x.InventoryName = inventory.Where(a => a.InventoryId == x.InventoryId).Select(b => b.InventoryName).First();
+                        //wor.InventoryName = inventory.Where(a => a.InventoryId == wor.InventoryId).Select(b => b.InventoryName).First();
+
+                        list1.Add(new WorkOrderInventoryItemDTO()
+                        {
+                            GroupId = wor.GroupId,
+                            InventoryId = wor.InventoryId,
+                            InventoryName = wor.InventoryName,
+                            NotInInventoryName =wor.NotInInventoryName,
+                            NotInInventoryPrice = wor.NotInInventoryPrice,
+                            NotInInventorySize = wor.NotInInventorySize,
+                            Quantity = wor.Quantity,
+                            Size = wor.Size,
+                            WorkOrderId = wor.WorkOrderId
+                        });
                     }
                 }
 
@@ -72,9 +89,9 @@ namespace WpfApp1
             }
         }
 
-        private List<WorkOrderInventoryDTO> GetWorkOrders()
+        private List<WorkOrderResponse> GetWorkOrders()
         {
-           List<WorkOrderInventoryDTO> workOrders = new List<WorkOrderInventoryDTO>();
+           List<WorkOrderResponse> workOrders = new List<WorkOrderResponse>();
 
             try
             {
@@ -101,6 +118,7 @@ namespace WpfApp1
                     string strData = strReader.ReadToEnd();
                     strReader.Close();
                     List<WorkOrderResponse> response = JsonConvert.DeserializeObject<List<WorkOrderResponse>>(strData);
+                    workOrders = response;
                 }
                 else
                 {
