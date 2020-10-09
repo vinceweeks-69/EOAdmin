@@ -77,6 +77,10 @@ namespace WpfApp1
 
                     break;
 
+                case "Arrangements":
+
+                    break;
+
                 case "Materials":
                     if (materialTypes.Count == 0)
                     {

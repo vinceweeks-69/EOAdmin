@@ -5,46 +5,81 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp1"
       mc:Ignorable="d" d:DesignWidth="800"
-      Title="WorkOrderReportPage" Height="610">
+      Title="WorkOrderReportPage" Width="Auto" Height="Auto">
 
-    <Grid>
-        <Label Content="Elegant Orchids Work Order Reports" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="401" Height="41" FontFamily="Verdana" FontSize="20"/>
-        <Label Content="From" HorizontalAlignment="Left" Margin="42,88,0,0" VerticalAlignment="Top" Width="92"/>
-        <Label Content="To" HorizontalAlignment="Left" Margin="200,88,0,0" VerticalAlignment="Top" Height="26" Width="57"/>
-        <DatePicker x:Name="FromDatePicker" HorizontalAlignment="Left" Margin="42,137,0,0" VerticalAlignment="Top" Width="128"/>
-        <DatePicker x:Name="ToDatePicker" HorizontalAlignment="Left" Margin="200,137,0,0" VerticalAlignment="Top" Width="114"/>
-        <Button Content="Show Reports" HorizontalAlignment="Left" Margin="372,137,0,0" VerticalAlignment="Top" Width="95" Height="24" Click="Button_Click"/>
-        <ListView x:Name="WorkOrderReportListView" HorizontalAlignment="Left" Height="169" Margin="42,211,0,0" VerticalAlignment="Top" Width="448" SelectionChanged="WorkOrderReportListView_SelectionChanged">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Created Date" DisplayMemberBinding="{Binding WorkOrder.CreateDate}" Width="150"/>
-                    <GridViewColumn Header="Items" Width="100">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Items" CommandParameter="{Binding}" Click="ShowWorkOrderItems_Clicked" Width="90"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Edit" Width="100">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Image" CommandParameter="{Binding}" Width="90"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Label Content="Work Orders" HorizontalAlignment="Left" Margin="42,184,0,0" VerticalAlignment="Top" Width="81"/>
-        <ListView Name="WorkOrderDetailListView" HorizontalAlignment="Left" Height="100" Margin="42,417,0,0" VerticalAlignment="Top" Width="448">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="150"/>
-                    <GridViewColumn Header="Quantity" DisplayMemberBinding="{Binding Quantity}" Width="150"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Label Content="Details" HorizontalAlignment="Left" Margin="42,394,0,0" VerticalAlignment="Top" Width="68"/>
-
-    </Grid>
+    <ScrollViewer>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />   
+                <RowDefinition Height="1*" />     
+                <RowDefinition Height="1*" />  
+                <RowDefinition Height="1*" /> 
+                <RowDefinition Height="8*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="8*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            
+            <Label Content="Elegant Orchids Work Order Reports" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontFamily="Verdana" FontSize="20"/>
+            <Label Content="From" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+            <Label Content="To" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="Auto" Width="Auto" FontWeight="Bold"/>
+            <DatePicker x:Name="FromDatePicker" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto"/>
+            <DatePicker x:Name="ToDatePicker" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto"/>
+            <Button Content="Show Reports" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" MinWidth="100" Width="Auto" Height="Auto" Click="Button_Click"/>
+            
+            <Label Content="Work Orders" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+            
+            <ListView x:Name="WorkOrderReportListView" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="200" MinWidth="600" Height="Auto" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" SelectionChanged="WorkOrderReportListView_SelectionChanged">
+                <ListView.Resources>
+				    <Style TargetType="{x:Type GridViewColumnHeader}">
+					    <Setter Property="HorizontalContentAlignment" Value="Left" />
+				    </Style>
+			    </ListView.Resources>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Created Date" DisplayMemberBinding="{Binding WorkOrder.CreateDate}" Width="150"/>
+                        <GridViewColumn Header="Items" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Items" CommandParameter="{Binding}" Click="ShowWorkOrderItems_Clicked" Width="80"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Edit" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Name="EditWorkOrder" Content="Order" CommandParameter="{Binding}" Click="EditWorkOrder_Click" Width="80" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            
+            <Label Content="Details" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+            
+            <ListView Name="WorkOrderDetailListView" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="100" MinWidth="600" Height="Auto" Margin="10,10,10,10" VerticalAlignment="Top" Width="Auto">
+                <ListView.Resources>
+				<Style TargetType="{x:Type GridViewColumnHeader}">
+					<Setter Property="HorizontalContentAlignment" Value="Left" />
+				</Style>
+			</ListView.Resources>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="250" />
+                        <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size}"  Width="175"/>
+                        <GridViewColumn Header="Quantity" DisplayMemberBinding="{Binding Quantity}"  Width="80"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </ScrollViewer>
 </Page>

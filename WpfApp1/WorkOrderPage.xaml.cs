@@ -21,6 +21,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ViewModels.ControllerModels;
 using ViewModels.DataModels;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1
 {
@@ -32,9 +33,13 @@ namespace WpfApp1
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
         private List<InventoryTypeDTO> inventoryTypeList;
-        private List<WorkOrderInventoryMapDTO> workOrderInventoryMap = new List<WorkOrderInventoryMapDTO>();
-        private List<WorkOrderInventoryItemDTO> workOrderInventoryList = new List<WorkOrderInventoryItemDTO>();
-        ObservableCollection<WorkOrderInventoryItemDTO> list1 = new ObservableCollection<WorkOrderInventoryItemDTO>(); 
+        //private List<WorkOrderInventoryMapDTO> workOrderInventoryMap = new List<WorkOrderInventoryMapDTO>();
+        //private List<WorkOrderInventoryItemDTO> workOrderInventoryList = new List<WorkOrderInventoryItemDTO>();
+        ObservableCollection<WorkOrderInventoryItemDTO> list1 = new ObservableCollection<WorkOrderInventoryItemDTO>();
+
+        List<AddArrangementRequest> arrangementList = new List<AddArrangementRequest>();
+        List<WorkOrderInventoryItemDTO> workOrderInventoryList = new List<WorkOrderInventoryItemDTO>();
+        List<NotInInventoryDTO> notInInventory = new List<NotInInventoryDTO>();
 
         public WorkOrderPage()
         {
@@ -53,6 +58,10 @@ namespace WpfApp1
       
         }
 
+        public WorkOrderPage(WorkOrderResponse workOrderResponse)
+        {
+
+        }
         public List<InventoryTypeDTO> GetInventoryTypes()
         {
             MainWindow wnd = Application.Current.MainWindow as MainWindow;
@@ -100,24 +109,24 @@ namespace WpfApp1
 
                 WorkOrderDTO dto = new WorkOrderDTO()
                 {
-                    Seller = this.SellerTextBox.Text,
-                    Buyer = this.BuyerTextBox.Text,
+                    Seller = this.Seller.Text,
+                    Buyer = this.Buyer.Text,
                     CreateDate = DateTime.Now,
                     Comments = this.CommentsTextBox.Text
                 };
 
-                foreach(WorkOrderInventoryItemDTO woii in workOrderInventoryList)
-                {
-                    workOrderInventoryMap.Add(new WorkOrderInventoryMapDTO()
-                    {
-                        InventoryId = woii.InventoryId,
-                        InventoryName = woii.InventoryName,
-                        Quantity = woii.Quantity
-                    });
-                }
+                //foreach(WorkOrderInventoryItemDTO woii in workOrderInventoryList)
+                //{
+                //    workOrderInventoryMap.Add(new WorkOrderInventoryMapDTO()
+                //    {
+                //        InventoryId = woii.InventoryId,
+                //        InventoryName = woii.InventoryName,
+                //        Quantity = woii.Quantity
+                //    });
+                //}
 
                 addWorkOrderRequest.WorkOrder = dto;
-                addWorkOrderRequest.WorkOrderInventoryMap = workOrderInventoryMap;
+                //addWorkOrderRequest.WorkOrderInventoryMap = workOrderInventoryMap;
 
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
@@ -238,7 +247,7 @@ namespace WpfApp1
 
         public void AddPersonSelection(PersonDTO person)
         {
-            BuyerTextBox.Text = person.CustomerName;
+            Buyer.Text = person.CustomerName;
         }
 
         private void CustomerSearch_Click(object sender, RoutedEventArgs e)
@@ -272,9 +281,9 @@ namespace WpfApp1
         {
             GetWorkOrderSalesDetailResponse response = GetWorkOrderDetail();
 
-            SubTotal.Text = response.SubTotal.ToString("C", CultureInfo.CurrentCulture);
-            Tax.Text = response.Tax.ToString("C", CultureInfo.CurrentCulture);
-            Total.Text = response.Total.ToString("C", CultureInfo.CurrentCulture);
+            //SubTotal.Text = response.SubTotal.ToString("C", CultureInfo.CurrentCulture);
+            //Tax.Text = response.Tax.ToString("C", CultureInfo.CurrentCulture);
+            //Total.Text = response.Total.ToString("C", CultureInfo.CurrentCulture);
         }
 
         private void QuantityTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -293,6 +302,21 @@ namespace WpfApp1
             this.WorkOrderInventoryListView.ItemsSource = list1;
 
             SetWorkOrderSalesData();
+        }
+
+        private void AddProductToWorkOrder_Click(object sender, RoutedEventArgs e)
+        {
+            //show the product screen - pass workOrderId
+            ((App)App.Current).NavigationStack.Push(this);
+
+            MainWindow wnd = Window.GetWindow(this) as MainWindow;
+            wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
+            wnd.MainContent.Content = new Frame() { Content = new InventoryFilter() };
+        }
+
+        public void ProcessMessage(WorkOrderMessage msg)
+        {
+            int debug = 1;
         }
     }
 }

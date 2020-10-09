@@ -20,6 +20,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ViewModels.ControllerModels;
 using ViewModels.DataModels;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1
 {
@@ -28,7 +29,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        public string LAN_Address { get; private set; }
+        //public string LAN_Address { get; private set; }
         public string User { get; private set; }
         public string Pwd { get; private set; }
 
@@ -38,8 +39,6 @@ namespace WpfApp1
             {
                 InitializeComponent();
 
-                GetNetworkConfig();
-
                 MainContent.Content = new Frame() { Content = new LoginPage() };
             }
             catch(Exception ex)
@@ -47,47 +46,19 @@ namespace WpfApp1
                 int debug = 1;
             }
         }
+      
 
-        private void GetNetworkConfig()
+        public async void OnLogInClick(object sender, RoutedEventArgs e)
         {
-
-            ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-
-            ManagementObjectCollection nics = mc.GetInstances();
-
-            List<string> enabledIPs = new List<string>();
-
-            foreach (ManagementObject nic in nics)
-            {
-                if (Convert.ToBoolean(nic["ipEnabled"]) == true)
-                {
-                    string IpAddress = (nic["IPAddress"] as String[])[0];
-
-                    enabledIPs.Add(IpAddress);
-
-                    string IPSubnet = (nic["IPSubnet"] as String[])[0];
-
-                    string DefaultGateWay = (nic["DefaultIPGateway"] as String[])[0];
-                }
-            }
-
-            if (enabledIPs.Count > 0)
-            {
-                LAN_Address = enabledIPs.First();
-            }
-        }
-
-        public void OnLogInClick(object sender, RoutedEventArgs e)
-        {
-            string jsonData = String.Empty;
+            LoginRequest request = new LoginRequest();
 
             try
             {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
+                //HttpClient client = new HttpClient();
+                //client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
 
-                client.DefaultRequestHeaders.Accept.Add(
-                   new MediaTypeWithQualityHeaderValue("application/json"));
+                //client.DefaultRequestHeaders.Accept.Add(
+                //   new MediaTypeWithQualityHeaderValue("application/json"));
 
                 Frame f = MainContent.Content as Frame;
                 User = (f.Content as LoginPage).UserName.Text;
@@ -96,31 +67,52 @@ namespace WpfApp1
                 ((App)App.Current).User = User;
                 ((App)App.Current).Pwd = Pwd;
 
-                client.DefaultRequestHeaders.Add("EO-Header", User + " : " + Pwd);
+                //client.DefaultRequestHeaders.Add("EO-Header", User + " : " + Pwd);
 
-                LoginRequest request = new LoginRequest(User, Pwd);
+                request.Login.UserName = User;
+                request.Login.Password = Pwd;
 
-                jsonData = JsonConvert.SerializeObject(request);
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage httpResponse = client.PostAsync("api/Login/Login", content).Result;
-                if (httpResponse.IsSuccessStatusCode)
+                LoginResponse response = await ((App)App.Current).PostRequest<LoginRequest, LoginResponse>("Login", request);
+
+                if(response.Success)
                 {
-                    IEnumerable<string> values;
-                    httpResponse.Headers.TryGetValues("EO-Header", out values);
-                    if (values != null && values.ToList().Count == 1)
-                    {                        
-                        this.MainContent.Content = new Frame() { Content = new DashboardPage() };
-                    }
-                    else
-                    {
-                        MessageBox.Show("Unrecognized username / password");
-                    }
+                    this.MainContent.Content = new Frame() { Content = new DashboardPage() };
                 }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach(KeyValuePair<string,List<string>> s in response.Messages)
+                    {
+                        foreach (string s2 in s.Value)
+                        {
+                            sb.Append(s + "/n");
+                        }
+                    }
+
+                    MessageBox.Show(sb.ToString());
+                }
+
+                //jsonData = JsonConvert.SerializeObject(request);
+                //var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                //HttpResponseMessage httpResponse = client.PostAsync("api/Login/Login", content).Result;
+                //if (httpResponse.IsSuccessStatusCode)
+                //{
+                //    IEnumerable<string> values;
+                //    httpResponse.Headers.TryGetValues("EO-Header", out values);
+                //    if (values != null && values.ToList().Count == 1)
+                //    {                        
+                //        this.MainContent.Content = new Frame() { Content = new DashboardPage() };
+                //    }
+                //    else
+                //    {
+                //        MessageBox.Show("Unrecognized username / password");
+                //    }
+                //}
             }
             catch(Exception ex)
             {
                 Exception ex2 = new Exception("Admin - Login", ex);
-                ((App)App.Current).LogError(ex2.Message, jsonData);
+                ((App)App.Current).LogError(ex2.Message, JsonConvert.SerializeObject(request));
             }
         }
 
@@ -165,7 +157,31 @@ namespace WpfApp1
         {
             //change page based on who's calling
 
-            if(currentPage is InventoryPage || currentPage is ArrangementPage || currentPage is WorkOrderPage 
+            //if the user is in the process of creating a work order, the nav is slightly different
+            //currently the nav stack is only used in "Create / Edit Work Order" mode
+            if(((App)App.Current).NavigationStack.Count > 0)
+            {
+                if(currentPage is ArrangementPage && ((App)App.Current).NavigationStack.Count == 2)
+                {
+                    //pop the product page
+                    ((App)App.Current).NavigationStack.Pop();
+                }
+
+                Page p = ((App)App.Current).NavigationStack.Pop();
+
+                if(((App)App.Current).WorkOrderMessage.HasMessage())
+                {
+                    if(p is WorkOrderPage)
+                    {
+                        ((WorkOrderPage)p).ProcessMessage(((App)App.Current).WorkOrderMessage);
+                    }
+
+                    ((App)App.Current).WorkOrderMessage = new WorkOrderMessage();
+                }
+
+                this.MainContent.Content = new Frame() { Content = p};
+            }
+            else if(currentPage is InventoryPage || currentPage is ArrangementPage || currentPage is WorkOrderPage 
                 || currentPage is VendorPage || currentPage is ShipmentPage || currentPage is ReportsPage 
                 || currentPage is CustomerPage || currentPage is BugsPage)
             {

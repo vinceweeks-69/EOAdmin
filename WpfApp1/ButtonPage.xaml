@@ -5,12 +5,19 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp1"
       mc:Ignorable="d"
-      Title="ButtonPage" Height="53.092" Width="657.563">
+      Title="ButtonPage" Height="Auto" Width="Auto">
 
-    <Grid Margin="0,0,366,405">
-        <Button Name="BackBtn" Content="Back" HorizontalAlignment="Left" Margin="10,10,0,-30" VerticalAlignment="Top" Width="75" Height="20" Click="BackBtn_Click"/>
-        <Button Name="SaveBtn" Content="Save" HorizontalAlignment="Left" Margin="103,10,0,-30" VerticalAlignment="Top" Width="75" Height="20" Click="SaveBtn_Click"/>
-        <Button Name="CancelBtn" Content="Cancel" HorizontalAlignment="Left" Margin="198,10,0,-30" VerticalAlignment="Top" Width="75" Height="20" RenderTransformOrigin="-0.977,0.423"/>
+    <Grid Margin="10,10,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="8*" />
+        </Grid.ColumnDefinitions>
+        
+        <Button Name="BackBtn" Grid.Column="1" Content="Back" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" MinWidth="80" Width="Auto" Height="20" Click="BackBtn_Click"/>
+        <Button Name="SaveBtn" Grid.Column="2" Content="Save" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" MinWidth="80" Width="Auto" Height="20" Click="SaveBtn_Click"/>
+        <Button Name="CancelBtn" Grid.Column="3" Content="Cancel" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" MinWidth="80" Width="Auto" Height="20" RenderTransformOrigin="-0.977,0.423"/>
 
     </Grid>
 </Page>

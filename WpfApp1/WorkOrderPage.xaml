@@ -5,34 +5,73 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp1"
       mc:Ignorable="d"
-      Title="WorkOrderPage" Height="777.866" Width="793.755">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Width ="800" Height="500" HorizontalAlignment="Left" VerticalAlignment="Top">
-        <StackPanel>
-            <Grid Margin="10,10,-18,-25" Height="793" VerticalAlignment="Top" RenderTransformOrigin="0.509,0.57">
-            <Label Content="Elegant Orchids Work Orders" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
-            <Label Content="Seller" HorizontalAlignment="Left" Margin="57,70,0,0" VerticalAlignment="Top" Width="81" Height="27"/>
-            <TextBox Name="SellerTextBox" HorizontalAlignment="Left" Height="28" Margin="57,102,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.458,-0.261"/>
-            <Label Content="Buyer" HorizontalAlignment="Left" Margin="248,70,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.339,-0.52" Width="79" Height="27"/>
-            <TextBox Name="BuyerTextBox" HorizontalAlignment="Left" Height="28" Margin="248,102,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-            <Label Content="Delivery Date" HorizontalAlignment="Left" Margin="422,70,0,0" VerticalAlignment="Top" Width="99" Height="27"/>
-            <DatePicker Name="DeliveryDatePicker" HorizontalAlignment="Left" Margin="422,102,0,0" VerticalAlignment="Top" Height="28"/>
-            <Label Content="Comments" HorizontalAlignment="Left" Margin="57,359,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.142,0.692" Width="81" Height="30"/>
-            <Label Content="Inventory" HorizontalAlignment="Left" Margin="53,161,0,0" VerticalAlignment="Top" Height="27" Width="130" RenderTransformOrigin="1.36,0.611"/>
-            <TextBox Name="CommentsTextBox" HorizontalAlignment="Left" Height="80" Margin="57,394,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="610" RenderTransformOrigin="0.494,1.682"/>
-            <Button Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="58,193,0,0" VerticalAlignment="Top" Width="119" Height="31" Click="SearchButton_Click"/>
-            <Label Content="Customers" HorizontalAlignment="Left" Margin="248,161,0,0" VerticalAlignment="Top" Height="27" Width="79"/>
-            <Button Name="CustomerSearch" Content="Search" HorizontalAlignment="Left" Margin="248,193,0,0" VerticalAlignment="Top" Width="120" Height="31" Click="CustomerSearch_Click"/>
-            <Label Content="Sub Total" HorizontalAlignment="Left" Margin="58,270,0,0" VerticalAlignment="Top" Width="119" Height="26"/>
-            <Label Content="Tax" HorizontalAlignment="Left" Margin="248,270,0,0" VerticalAlignment="Top" Width="120"/>
-            <Label Content="Total" HorizontalAlignment="Left" Margin="422,270,0,0" VerticalAlignment="Top" Width="102" Height="26"/>
-            <TextBox Name="SubTotal" HorizontalAlignment="Left" Height="25" Margin="57,311,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-            <TextBox Name="Tax" HorizontalAlignment="Left" Height="25" Margin="248,311,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-            <TextBox Name="Total" HorizontalAlignment="Left" Height="23" Margin="422,311,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="102"/>
+      Title="WorkOrderPage" Height="Auto" Width="Auto">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
 
-            <ListView Name="WorkOrderInventoryListView" HorizontalAlignment="Left" Height="252" Margin="57,500,0,0" VerticalAlignment="Top" Width="610" RenderTransformOrigin="0.486,0.853">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="8*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <Label Content="Elegant Orchids Work Orders" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20"/>
+
+            <Label Content="Seller" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+            <Label Content="Pick/Create Buyer" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+            <Label Content="Buyer" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+
+            <ComboBox Name="Seller" Grid.Row="2" Grid.Column="1" Margin="10,10,10,10"/>
+            <ComboBox Name="PickOrCreateBuyer" Grid.Row="2" Grid.Column="2" Margin="10,10,10,10" />
+            <ComboBox Name="Buyer" Grid.Row="2" Grid.Column="3" Margin="10,10,10,10" />
+
+            <Label Content="Comments" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" FontWeight="Bold" />
+            <TextBox Name="CommentsTextBox" Grid.Row="4" Grid.Column =" 1" Grid.ColumnSpan="4" HorizontalAlignment="Left" Height="80" MinWidth="570" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" />
+
+            <Label Content="Order Type" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+            <Label Content="Delivery Type" Grid.Row="5" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+            <Label Content="Work Order Date" Grid.Row="5" Grid.Column="4" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" FontWeight="Bold" />
+
+            <ComboBox Name="OrderType" Grid.Row="6" Grid.Column="1" Margin="10,10,10,10" />
+            <ComboBox Name="DeliveryType" Grid.Row="6" Grid.Column="2" Margin="10,10,10,10" />
+            <DatePicker Name="WorkOrderDate" Grid.Row="6" Grid.Column="4" Margin="10,10,10,10" />
+
+            <Label Content="Pickup Date" Grid.Row="7" Grid.Column="4" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+            <DatePicker Name="PickupDate" Grid.Row="8" Grid.Column="4" Margin="10,10,10,10"/>
+
+            <Button Content="Save" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top" Width="80"/>
+            <Button Content="Clear" Grid.Row="9" Grid.Column="2" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
+            <Button Content="Camera" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
+            <Button Content="Pay" Grid.Row="9" Grid.Column="4" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
+
+            <ListView Name="WorkOrderInventoryListView" Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" MinHeight="200" Height="Auto"  Margin="10,10,10,10" VerticalAlignment="Top" Width="570">
+                <ListView.Resources>
+				    <Style TargetType="{x:Type GridViewColumnHeader}">
+					    <Setter Property="HorizontalContentAlignment" Value="Left" />
+				    </Style>
+			    </ListView.Resources>
+                
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="150"/>
+                        <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="250"/>
                         <GridViewColumn Header="Quantity" Width="60" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -50,16 +89,27 @@
                         <GridViewColumn Header="Delete" Width="100">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                        <Button Content="Delete" CommandParameter="{Binding}" Width="90" Click="DeleteButton_Click" />
-                                    </DataTemplate>
+                                    <Button Content="Delete" CommandParameter="{Binding}" Width="90" Click="DeleteButton_Click" />
+                                </DataTemplate>
                             </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Add" Width="100">
+                              <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Button Name="AddProductToWorkOrder" Content="Add" Click="AddProductToWorkOrder_Click"  MinWidth="40"/>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+                            
+                            <!--<GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Name="AddInventoryToWorkOrder" Content="Add" CommandParameter="{Binding}" Width="90" Click="AddInventoryToWorkOrder_Click" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>-->
                         </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
-
-
         </Grid>
-        </StackPanel>
     </ScrollViewer>
 </Page>
+

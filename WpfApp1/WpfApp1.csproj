@@ -149,6 +149,9 @@
     <Compile Include="ImportPage.xaml.cs">
       <DependentUpon>ImportPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InventoryFilter.xaml.cs">
+      <DependentUpon>InventoryFilter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InventoryPage.xaml.cs">
       <DependentUpon>InventoryPage.xaml</DependentUpon>
     </Compile>
@@ -176,6 +179,8 @@
     <Compile Include="VendorPage.xaml.cs">
       <DependentUpon>VendorPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\WorkOrderMessage.cs" />
+    <Compile Include="ViewModels\WorkOrderViewModel.cs" />
     <Compile Include="WorkOrderPage.xaml.cs">
       <DependentUpon>WorkOrderPage.xaml</DependentUpon>
     </Compile>
@@ -219,6 +224,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ImportPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InventoryFilter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
