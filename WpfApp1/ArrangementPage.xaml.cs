@@ -41,11 +41,14 @@ namespace WpfApp1
         List<InventoryTypeDTO> inventoryTypes = new List<InventoryTypeDTO>();
         List<ArrangementInventoryDTO> arrangementList = new List<ArrangementInventoryDTO>();
         List<ArrangementInventoryItemDTO> arrangementInventoryList = new List<ArrangementInventoryItemDTO>();
-              
+
+        AddArrangementRequest currentArrangement;
 
         public ArrangementPage()
         {
             InitializeComponent();
+
+            currentArrangement = new AddArrangementRequest();
 
             serviceCodes = GetServiceCodes();
 
@@ -66,24 +69,24 @@ namespace WpfApp1
                 list3.Add(kvp);
             }
 
-            this.InventoryCombo.ItemsSource = list3;
+            //this.InventoryCombo.ItemsSource = list3;
 
             ObservableCollection<ArrangementInventoryItemDTO> list4 = new ObservableCollection<ArrangementInventoryItemDTO>();
 
-            this.InventoryListView.ItemsSource = list4;
-
-            //arrangementList = GetArrangements();
-
-            //ObservableCollection<ArrangementInventoryDTO> list5 = new ObservableCollection<ArrangementInventoryDTO>();
-
-            //foreach (ArrangementInventoryDTO arrangement in arrangementList)
-            //{
-            //    list5.Add(arrangement);
-            //}
-
-            //this.ArrangementInventoryListView.ItemsSource = list5;
+            //this.InventoryListView.ItemsSource = list4;
         }
 
+        public ArrangementPage(AddArrangementRequest arrangement)
+        {
+            InitializeComponent();
+
+            currentArrangement = arrangement;
+        }
+
+        /// <summary>
+        /// Add an individual inventory item to this arrangement
+        /// </summary>
+        /// <param name="msg"></param>
         public void LoadWorkOrderData(WorkOrderMessage msg)
         {
             int debug = 1;
@@ -93,16 +96,9 @@ namespace WpfApp1
         {
             ObservableCollection<ArrangementInventoryItemDTO> list4 = new ObservableCollection<ArrangementInventoryItemDTO>();
 
-            this.InventoryListView.ItemsSource = list4;
-
-            //arrangementList = GetArrangements();
+            //this.InventoryListView.ItemsSource = list4;
 
             ObservableCollection<ArrangementInventoryDTO> list5 = new ObservableCollection<ArrangementInventoryDTO>();
-
-            //foreach (ArrangementInventoryDTO arrangement in arrangementList)
-            //{
-            //    list5.Add(arrangement);
-            //}
 
             this.ArrangementInventoryListView.ItemsSource = list5;
         }
@@ -252,6 +248,8 @@ namespace WpfApp1
 
                 if(workOrderPage != null)
                 {
+                    WorkOrderMessage msg = new WorkOrderMessage();
+                    msg.Arrangement = currentArrangement;
                     workOrderPage.LoadWorkOrderData(new WorkOrderMessage());
                 }
 
@@ -352,21 +350,21 @@ namespace WpfApp1
         //add the selected inventory item to the list of inventory items for the current arrangement
         private void InventoryCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            KeyValuePair<long, string> kvp = ((KeyValuePair<long, string>)InventoryCombo.SelectedValue);
-            long inventoryId = kvp.Key;
-            string inventoryName = kvp.Value;
-            arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, 0));
-            this.InventoryListView.ItemsSource = null;
-            this.InventoryListView.ItemsSource = arrangementInventoryList;
+            //KeyValuePair<long, string> kvp = ((KeyValuePair<long, string>)InventoryCombo.SelectedValue);
+            //long inventoryId = kvp.Key;
+            //string inventoryName = kvp.Value;
+            //arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, 0));
+            //this.InventoryListView.ItemsSource = null;
+            //this.InventoryListView.ItemsSource = arrangementInventoryList;
         }
 
         private void OnDeleteArrangementInventory(object sender, RoutedEventArgs e)
         {
-            Button b = sender as Button;
-            ArrangementInventoryItemDTO arrangementInventoryItem = b.CommandParameter as ArrangementInventoryItemDTO;
-            arrangementInventoryList.Remove(arrangementInventoryItem);
-            this.InventoryListView.ItemsSource = null;
-            this.InventoryListView.ItemsSource = arrangementInventoryList;
+            //Button b = sender as Button;
+            //ArrangementInventoryItemDTO arrangementInventoryItem = b.CommandParameter as ArrangementInventoryItemDTO;
+            //arrangementInventoryList.Remove(arrangementInventoryItem);
+            //this.InventoryListView.ItemsSource = null;
+            //this.InventoryListView.ItemsSource = arrangementInventoryList;
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -397,8 +395,43 @@ namespace WpfApp1
         public void AddInventorySelection(long inventoryId, string inventoryName)
         {
             arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, 0));
-            this.InventoryListView.ItemsSource = null;
-            this.InventoryListView.ItemsSource = arrangementInventoryList;
+            //this.InventoryListView.ItemsSource = null;
+            //this.InventoryListView.ItemsSource = arrangementInventoryList;
+        }
+
+        private void Products_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddImage_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void GiftCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ArrangementSearch_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClearArrangement_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SaveArrangement_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddItemNotInInventory_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
