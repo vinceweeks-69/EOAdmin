@@ -28,7 +28,7 @@ namespace WpfApp1
     /// <summary>
     /// Interaction logic for WorkOrderPage.xaml
     /// </summary>
-    public partial class WorkOrderPage : Page
+    public partial class WorkOrderPage : Page, IEOBasePage
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
@@ -62,6 +62,12 @@ namespace WpfApp1
         {
 
         }
+
+        public void LoadWorkOrderData(WorkOrderMessage msg)
+        {
+            int debug = 1;
+        }
+
         public List<InventoryTypeDTO> GetInventoryTypes()
         {
             MainWindow wnd = Application.Current.MainWindow as MainWindow;
@@ -177,14 +183,10 @@ namespace WpfApp1
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            ArrangementFilter filter = new ArrangementFilter();
+            ArrangementFilter filter = new ArrangementFilter(this);
             MainWindow wnd = Application.Current.MainWindow as MainWindow;
-            filter.Owner = wnd;
 
             List<InventoryTypeDTO> inventoryTypes = wnd.GetInventoryTypes();
-
-            filter.mainWnd = wnd;
-            filter.workOrderParentWnd = this;
 
             ObservableCollection<KeyValuePair<long, string>> list3 = new ObservableCollection<KeyValuePair<long, string>>();
             foreach (InventoryTypeDTO inventoryType in inventoryTypes)
@@ -307,16 +309,11 @@ namespace WpfApp1
         private void AddProductToWorkOrder_Click(object sender, RoutedEventArgs e)
         {
             //show the product screen - pass workOrderId
-            ((App)App.Current).NavigationStack.Push(this);
-
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
+            wnd.NavigationStack.Push(this);
             wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
-            wnd.MainContent.Content = new Frame() { Content = new InventoryFilter() };
-        }
-
-        public void ProcessMessage(WorkOrderMessage msg)
-        {
-            int debug = 1;
+            InventoryFilter inventoryFilter = new InventoryFilter(this);
+            wnd.MainContent.Content = new Frame() { Content = inventoryFilter };
         }
     }
 }

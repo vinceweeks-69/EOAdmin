@@ -20,13 +20,14 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ViewModels.ControllerModels;
 using ViewModels.DataModels;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1
 {
     /// <summary>
     /// Interaction logic for ShipmentPage.xaml
     /// </summary>
-    public partial class ShipmentPage : Page
+    public partial class ShipmentPage : Page, IEOBasePage
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
@@ -70,7 +71,11 @@ namespace WpfApp1
             //this.InventoryTypeComboBox.ItemsSource = list2;
 
             //get inventory - based on inventory type
+        }
 
+
+        public void LoadWorkOrderData(WorkOrderMessage msg)
+        {
 
         }
 
@@ -240,14 +245,14 @@ namespace WpfApp1
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            ArrangementFilter filter = new ArrangementFilter();
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
-            filter.Owner = wnd;
+            ArrangementFilter filter = new ArrangementFilter(this);
+            //MainWindow wnd = Application.Current.MainWindow as MainWindow;
+            //filter.Owner = wnd;
 
             List<InventoryTypeDTO> inventoryTypes = wnd.GetInventoryTypes();
 
-            filter.mainWnd = wnd;
-            filter.shipmentParentWnd = this;
+            //filter.mainWnd = wnd;
+            //filter.shipmentParentWnd = this;
 
             ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
             foreach (InventoryTypeDTO inventoryType in inventoryTypes)

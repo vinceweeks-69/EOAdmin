@@ -64,6 +64,7 @@ namespace WpfApp1
         private void ArrangementsButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
+            //add event handlers for "Save"
             wnd.MainContent.Content = new Frame() { Content = new ArrangementPage() };
         }
 

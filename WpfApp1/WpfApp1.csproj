@@ -179,6 +179,8 @@
     <Compile Include="VendorPage.xaml.cs">
       <DependentUpon>VendorPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\EOPageBase.cs" />
+    <Compile Include="ViewModels\WorkOrderEventArgs.cs" />
     <Compile Include="ViewModels\WorkOrderMessage.cs" />
     <Compile Include="ViewModels\WorkOrderViewModel.cs" />
     <Compile Include="WorkOrderPage.xaml.cs">

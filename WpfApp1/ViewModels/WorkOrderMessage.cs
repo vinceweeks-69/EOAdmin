@@ -8,7 +8,7 @@ using ViewModels.DataModels;
 
 namespace WpfApp1.ViewModels
 {
-    public class WorkOrderMessage
+    public class WorkOrderMessage : EventArgs
     {
         public WorkOrderMessage()
         {

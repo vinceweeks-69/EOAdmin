@@ -32,10 +32,6 @@ namespace WpfApp1
 
         public string Dootster { get { return "Orchids@5185"; } }
 
-        public Stack<Page> NavigationStack = new Stack<Page>();
-
-        public WorkOrderMessage WorkOrderMessage { get; set; }
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -165,19 +161,6 @@ namespace WpfApp1
                 return new TOut();
             }
         }
-
-        public bool PageIsOnStack(Type page)
-        {
-            bool pageIsOnStack = false;
-
-            if(NavigationStack.Count > 0)
-            {
-                pageIsOnStack = NavigationStack.Any(p => p.GetType() == page);
-            }
-
-            return pageIsOnStack;
-        }
-
         public void LogError(string message, string payload)
         {
             try

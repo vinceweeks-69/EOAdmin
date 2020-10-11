@@ -33,11 +33,16 @@ namespace WpfApp1
         public string User { get; private set; }
         public string Pwd { get; private set; }
 
+        public Stack<Page> NavigationStack = new Stack<Page>();
+        public WorkOrderMessage WorkOrderMessage { get; set; }
+
         public MainWindow()
         {
             try
             {
                 InitializeComponent();
+
+                WorkOrderMessage = new WorkOrderMessage();
 
                 MainContent.Content = new Frame() { Content = new LoginPage() };
             }
@@ -46,7 +51,40 @@ namespace WpfApp1
                 int debug = 1;
             }
         }
-      
+
+        public void AddInventoryToWorkOrder(object sender, AddInventoryToWorkOrderEventArgs e)
+        {
+            int debug = 1;
+        }
+
+        public void AddInventoryToArrangement(object sender, AddInventoryToArrangementEventArgs e)
+        {
+            int debug = 1;
+        }
+
+        public bool PageIsOnStack(Type page)
+        {
+            bool pageIsOnStack = false;
+
+            if (NavigationStack.Count > 0)
+            {
+                pageIsOnStack = NavigationStack.Any(p => p.GetType() == page);
+            }
+
+            return pageIsOnStack;
+        }
+
+        public IEOBasePage GetEOBasePage(Type page )
+        {
+            IEOBasePage basePage = null;
+
+            if(PageIsOnStack(page))
+            {
+                basePage = (IEOBasePage)NavigationStack.Where(a => a.GetType() == page).First();
+            }
+
+            return basePage;
+        }
 
         public async void OnLogInClick(object sender, RoutedEventArgs e)
         {
@@ -153,31 +191,22 @@ namespace WpfApp1
 
             return response;
         }
+
         public void OnBackClick(object currentPage)
         {
             //change page based on who's calling
 
             //if the user is in the process of creating a work order, the nav is slightly different
             //currently the nav stack is only used in "Create / Edit Work Order" mode
-            if(((App)App.Current).NavigationStack.Count > 0)
+            if(NavigationStack.Count > 0)
             {
-                if(currentPage is ArrangementPage && ((App)App.Current).NavigationStack.Count == 2)
+                if(NavigationStack.Count == 2)
                 {
                     //pop the product page
-                    ((App)App.Current).NavigationStack.Pop();
+                    NavigationStack.Pop();
                 }
 
-                Page p = ((App)App.Current).NavigationStack.Pop();
-
-                if(((App)App.Current).WorkOrderMessage.HasMessage())
-                {
-                    if(p is WorkOrderPage)
-                    {
-                        ((WorkOrderPage)p).ProcessMessage(((App)App.Current).WorkOrderMessage);
-                    }
-
-                    ((App)App.Current).WorkOrderMessage = new WorkOrderMessage();
-                }
+                Page p = NavigationStack.Pop();
 
                 this.MainContent.Content = new Frame() { Content = p};
             }
@@ -211,7 +240,7 @@ namespace WpfApp1
             }
             else if(currentPage is ArrangementPage)
             {
-                ((ArrangementPage)currentPage).AddArrangement();
+                ((ArrangementPage)currentPage).OnSave(this, new EventArgs());
             }
             else if(currentPage is VendorPage)
             {

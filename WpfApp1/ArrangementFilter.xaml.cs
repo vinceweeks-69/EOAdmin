@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ViewModels.ControllerModels;
 using ViewModels.DataModels;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1
 {
@@ -32,13 +33,25 @@ namespace WpfApp1
         List<ContainerTypeDTO> containerTypes = new List<ContainerTypeDTO>();
         public List<ContainerInventoryDTO> containers = new List<ContainerInventoryDTO>();
 
+        public IEOBasePage basePage;
         public MainWindow mainWnd { get; set; }
-        public ArrangementPage arrangementParentWnd { get; set; }
-        public WorkOrderPage workOrderParentWnd { get; set; }
-        public ShipmentPage  shipmentParentWnd { get; set; }
+
+        //public ArrangementPage arrangementParentWnd { get; set; }
+        //public WorkOrderPage workOrderParentWnd { get; set; }
+        //public ShipmentPage  shipmentParentWnd { get; set; }
+
         public ArrangementFilter()
         {
             InitializeComponent();
+
+            ArrangementInventoryList.SelectionChanged += ArrangementInventoryList_SelectionChanged;
+
+            mainWnd = (MainWindow)Application.Current.MainWindow;
+        }
+
+        public ArrangementFilter(IEOBasePage page) : this()
+        {
+            basePage = page;
         }
 
         private void InventoryTypeCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -292,20 +305,9 @@ namespace WpfApp1
 
             if (item != null)
             {
-                if (arrangementParentWnd != null)
+                if(basePage != null)
                 {
-                    arrangementParentWnd.AddInventorySelection(item.Id, item.Name);
-                    arrangementParentWnd = null;
-                }
-                else if(workOrderParentWnd != null)
-                {
-                    workOrderParentWnd.AddInventorySelection(item.Id, item.Name);
-                    workOrderParentWnd = null;
-                }
-                else if(shipmentParentWnd != null)
-                {
-                    shipmentParentWnd.AddInventorySelection(item.Id, item.Name);
-                    shipmentParentWnd = null;
+                    basePage.LoadWorkOrderData(new WorkOrderMessage());
                 }
             }
             this.Close();

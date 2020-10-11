@@ -23,11 +23,18 @@ namespace WpfApp1
     /// </summary>
     public partial class InventoryFilter : Page
     {
+        IEOBasePage page = null;
+
         public InventoryFilter()
         {
             InitializeComponent();
 
             LoadProductTypes();
+        }
+
+        public InventoryFilter(IEOBasePage page) : this()
+        {
+            this.page = page;
         }
 
         //load the type combo on Init
@@ -38,13 +45,15 @@ namespace WpfApp1
             list1.Add(new KeyValuePair<long, string>(1, "Orchids"));
             list1.Add(new KeyValuePair<long, string>(2, "Containers"));
 
-            if (!((App)App.Current).PageIsOnStack(typeof(ArrangementPage)))
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
+
+            if (!wnd.PageIsOnStack(typeof(ArrangementPage)))
             {
                 list1.Add(new KeyValuePair<long, string>(3, "Arrangements"));
             }
 
             list1.Add(new KeyValuePair<long, string>(4, "Foliage"));
-            list1.Add(new KeyValuePair<long, string>(1, "Materials"));
+            list1.Add(new KeyValuePair<long, string>(5, "Materials"));
 
             ProductType.ItemsSource = list1;
         }
@@ -56,13 +65,16 @@ namespace WpfApp1
             //send selection back to caller - this filter is used when creating a work order or an arrangement
             //either way, in either of these two modes, use the Navigation Stack
 
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
-
             WorkOrderMessage msg = new WorkOrderMessage();
 
             msg.Inventory = (InventoryDTO)((ListView)sender).SelectedItem;
 
-            ((App)App.Current).WorkOrderMessage = msg;
+            if(page != null)
+            {
+                page.LoadWorkOrderData(msg);
+            }
+
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
             wnd.OnBackClick(this);
         }
@@ -73,18 +85,29 @@ namespace WpfApp1
             {
                 KeyValuePair<long, string> kvp = (KeyValuePair<long,string>) ((ComboBox)sender).SelectedItem;
 
-                MainWindow wnd = Application.Current.MainWindow as MainWindow;
-
-                List<InventoryDTO> inventoryList = wnd.GetInventoryByType(kvp.Key);
-
-                ObservableCollection<InventoryDTO> list1 = new ObservableCollection<InventoryDTO>();
-
-                foreach(InventoryDTO i in inventoryList)
+                if (kvp.Key == 3) //arrangement
                 {
-                    list1.Add(i);
+                    //load arrangementPage
+                    MainWindow wnd = Application.Current.MainWindow as MainWindow;
+                    wnd.NavigationStack.Push(this);
+                    wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
+                    wnd.MainContent.Content = new Frame() { Content = new ArrangementPage() };
                 }
+                else
+                {
+                    MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
-                InventoryFilterListView.ItemsSource = list1;
+                    List<InventoryDTO> inventoryList = wnd.GetInventoryByType(kvp.Key);
+
+                    ObservableCollection<InventoryDTO> list1 = new ObservableCollection<InventoryDTO>();
+
+                    foreach (InventoryDTO i in inventoryList)
+                    {
+                        list1.Add(i);
+                    }
+
+                    InventoryFilterListView.ItemsSource = list1;
+                }
             }
         }
     }

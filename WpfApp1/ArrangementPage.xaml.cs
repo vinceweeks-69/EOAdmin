@@ -20,13 +20,14 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ViewModels.ControllerModels;
 using ViewModels.DataModels;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1
 {
     /// <summary>
     /// Interaction logic for ArrangementPage.xaml
     /// </summary>
-    public partial class ArrangementPage : Page
+    public partial class ArrangementPage : IEOBasePage
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
@@ -81,6 +82,11 @@ namespace WpfApp1
             //}
 
             //this.ArrangementInventoryListView.ItemsSource = list5;
+        }
+
+        public void LoadWorkOrderData(WorkOrderMessage msg)
+        {
+            int debug = 1;
         }
 
         public void Reload()
@@ -217,6 +223,7 @@ namespace WpfApp1
         {
             Button b = sender as Button;
         }
+
         private void AddImageButton_Click(object sender, RoutedEventArgs e)
         {
             //add a check to see if this plant already has an image and warn if
@@ -234,6 +241,28 @@ namespace WpfApp1
             //MessageBox.Show(productCategory.Id);
         }
         
+        public void OnSave(object sender, EventArgs e)
+        {
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
+
+            if(wnd.PageIsOnStack(typeof(WorkOrderPage)))
+            {
+                //save this arangement to the work order in progress
+                IEOBasePage workOrderPage = wnd.GetEOBasePage(typeof(WorkOrderPage));
+
+                if(workOrderPage != null)
+                {
+                    workOrderPage.LoadWorkOrderData(new WorkOrderMessage());
+                }
+
+                wnd.OnBackClick(this);
+            }
+            else
+            {
+                //AddArrangement();
+            }
+        }
+
         public void AddArrangement()
         {
             long image_id = 0;
@@ -342,14 +371,14 @@ namespace WpfApp1
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            ArrangementFilter filter = new ArrangementFilter();
+            ArrangementFilter filter = new ArrangementFilter(this);
             MainWindow wnd = Application.Current.MainWindow as MainWindow;
-            filter.Owner = wnd;
+            //filter.Owner = wnd;
             
             inventoryTypes = wnd.GetInventoryTypes();
 
-            filter.mainWnd = wnd;
-            filter.arrangementParentWnd = this;
+            //filter.mainWnd = wnd;
+            //filter.arrangementParentWnd = this;
 
             ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
             foreach (InventoryTypeDTO inventoryType in inventoryTypes)
