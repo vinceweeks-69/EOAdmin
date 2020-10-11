@@ -7,8 +7,8 @@
       mc:Ignorable="d" d:DesignWidth="800"
       Title="ArrangementPage" Height="500">
 
-    <ScrollViewer>
-        <Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" DockPanel.Dock="Top" VerticalAlignment="Stretch">
+        <Grid ScrollViewer.CanContentScroll="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="25*"/>
                 <ColumnDefinition Width="25*"/>
@@ -94,7 +94,7 @@
                     FontWeight="Bold" />
             
                 <!--  ItemDisplayBinding="{Binding Value}" SelectedItem="{Binding SelectedItem}"  -->
-                <ComboBox Name="Container" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" Margin="10,10,10,10" />
+                <ComboBox Name="Container" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" SelectionChanged="Container_SelectionChanged" Margin="10,10,10,10" />
                 
                 <Label Name="CustomerContainerLabel"
                     Content="Label"
@@ -219,8 +219,6 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Button Content="Search" HorizontalAlignment="Left" Margin="339,106,0,0" VerticalAlignment="Top" Width="111" Height="29" Click="SearchButton_Click"/>
-
         </Grid>
     </ScrollViewer>
 </Page>

@@ -42,45 +42,50 @@ namespace WpfApp1
         List<ArrangementInventoryDTO> arrangementList = new List<ArrangementInventoryDTO>();
         List<ArrangementInventoryItemDTO> arrangementInventoryList = new List<ArrangementInventoryItemDTO>();
 
-        AddArrangementRequest currentArrangement;
+        List<CustomerContainerDTO> customerContainers = new List<CustomerContainerDTO>();
+
+        AddArrangementRequest currentArrangement = new AddArrangementRequest();
+
+        ObservableCollection<KeyValuePair<long, string>> containers = new ObservableCollection<KeyValuePair<long, string>>();
 
         public ArrangementPage()
         {
             InitializeComponent();
 
-            currentArrangement = new AddArrangementRequest();
+            ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
+            list1.Add(new KeyValuePair<long, string>(1, "Vicky"));
+            list1.Add(new KeyValuePair<long, string>(2, "Marguerita"));
 
-            serviceCodes = GetServiceCodes();
+            Designer.ItemsSource = list1;
 
             ObservableCollection<KeyValuePair<long, string>> list2 = new ObservableCollection<KeyValuePair<long, string>>();
-            foreach (ServiceCodeDTO code in serviceCodes)
-            {
-                list2.Add(new KeyValuePair<long, string>(code.ServiceCodeId, code.ServiceCode + "($ " + code.Price.ToString() + ")"));
-            }
+            list2.Add(new KeyValuePair<long, string>(1, "180"));
+            list2.Add(new KeyValuePair<long, string>(2, "360"));
 
-            //this.ServiceCodes.ItemsSource = list2;
+            Style.ItemsSource = list2;
 
-            List<KeyValuePair<long, string>> inventoryList = GetInventoryList();
-            
-            ObservableCollection<KeyValuePair<long, string>> list3 = new ObservableCollection<KeyValuePair<long, string>>();
+            containers.Add(new KeyValuePair<long, string>(1, "New container"));
 
-            foreach(KeyValuePair<long,string> kvp in inventoryList)
-            {
-                list3.Add(kvp);
-            }
+            ///TEMP TEMP TEMP - load these based on work order customer (if there is one)
+            containers.Add(new KeyValuePair<long, string>(2, "Customer container at EO"));
+            containers.Add(new KeyValuePair<long, string>(3, "Customer container at customer location"));
 
-            //this.InventoryCombo.ItemsSource = list3;
+            Container.ItemsSource = containers;
 
-            ObservableCollection<ArrangementInventoryItemDTO> list4 = new ObservableCollection<ArrangementInventoryItemDTO>();
-
-            //this.InventoryListView.ItemsSource = list4;
+            EnableCustomerContainerSecondaryControls(false);   
         }
 
-        public ArrangementPage(AddArrangementRequest arrangement)
+        public ArrangementPage(AddArrangementRequest arrangement) : this()
         {
             InitializeComponent();
 
             currentArrangement = arrangement;
+        }
+
+        private void EnableCustomerContainerSecondaryControls(bool shouldShow)
+        {
+            CustomerContainerLabel.Visibility = Visibility.Hidden;
+            CustomerContainerLabelEntry.Visibility = Visibility.Hidden;
         }
 
         /// <summary>
@@ -432,6 +437,35 @@ namespace WpfApp1
         private void AddItemNotInInventory_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Container_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //if container type is "Customer container at EO" pick from  customer containers on site
+
+            //if container type is "Customer container at customer site" means use liner
+
+            //if container type is "New container" pick container from inventory
+
+            ComboBox p = sender as ComboBox;
+
+            if (p != null)
+            {
+                if (p.SelectedIndex == 0)
+                {
+                    EnableCustomerContainerSecondaryControls(false);
+                }
+                else
+                {
+                    EnableCustomerContainerSecondaryControls(true);
+
+                    MainWindow wnd = Application.Current.MainWindow as MainWindow;
+
+                    wnd.NavigationStack.Push(this);
+                    wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
+                    wnd.MainContent.Content = new Frame() { Content = new CustomerContainerPage(this) };
+                }
+            }
         }
     }
 }
