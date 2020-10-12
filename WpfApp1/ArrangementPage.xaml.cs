@@ -42,6 +42,8 @@ namespace WpfApp1
         List<ArrangementInventoryDTO> arrangementList = new List<ArrangementInventoryDTO>();
         List<ArrangementInventoryItemDTO> arrangementInventoryList = new List<ArrangementInventoryItemDTO>();
 
+        List<NotInInventoryDTO> notInInventory = new List<NotInInventoryDTO>();
+
         List<CustomerContainerDTO> customerContainers = new List<CustomerContainerDTO>();
 
         CustomerContainerDTO CustomerContainer;
@@ -55,6 +57,12 @@ namespace WpfApp1
         public  ArrangementPage()
         {
             InitializeComponent();
+
+            Random r = new Random();
+            if(currentArrangement.Arrangement.ArrangementId == 0)
+            {
+                currentArrangement.Arrangement.UnsavedId = r.Next(-500, -1);
+            }
 
             ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
             list1.Add(new KeyValuePair<long, string>(1, "Vicky"));
@@ -89,6 +97,11 @@ namespace WpfApp1
             }
         }
 
+        public ArrangementPage(AddArrangementRequest arrangement) : this()
+        {
+            currentArrangement = arrangement;
+        }
+
         private async void LoadCustomerContainers(long customer_id)
         {
             CustomerContainerRequest request = new CustomerContainerRequest();
@@ -111,13 +124,6 @@ namespace WpfApp1
             }
         }
 
-        public ArrangementPage(AddArrangementRequest arrangement) : this()
-        {
-            InitializeComponent();
-
-            currentArrangement = arrangement;
-        }
-
         private void EnableCustomerContainerSecondaryControls(bool shouldShow)
         {
             if (shouldShow)
@@ -133,7 +139,7 @@ namespace WpfApp1
         }
 
         /// <summary>
-        /// Add an individual inventory item to this arrangement
+        /// Add data from a subordinate page to this arrangement
         /// </summary>
         /// <param name="msg"></param>
         public void LoadWorkOrderData(WorkOrderMessage msg)
@@ -155,16 +161,26 @@ namespace WpfApp1
                         Quantity = 1
                     });
 
-                    ObservableCollection<WorkOrderViewModel> list4 = new ObservableCollection<WorkOrderViewModel>();
-
-                    foreach(ArrangementInventoryItemDTO aiid in arrangementInventoryList)
-                    {
-                        list4.Add(new WorkOrderViewModel(aiid,0));
-                    }
-
-                    ArrangementInventoryListView.ItemsSource = list4;
+                    ReloadListData();
                 }
             }
+        }
+
+        private void ReloadListData()
+        {
+            ObservableCollection<WorkOrderViewModel> list4 = new ObservableCollection<WorkOrderViewModel>();
+
+            foreach (ArrangementInventoryItemDTO aiid in arrangementInventoryList)
+            {
+                list4.Add(new WorkOrderViewModel(aiid, 0));
+            }
+
+            foreach (NotInInventoryDTO notIn in notInInventory)
+            {
+                list4.Add(new WorkOrderViewModel(notIn));
+            }
+
+            ArrangementInventoryListView.ItemsSource = list4;
         }
 
         private List<KeyValuePair<long,string>> GetInventoryList()
@@ -325,6 +341,42 @@ namespace WpfApp1
             }
         }
 
+        void GetArrangementData()
+        {
+            currentArrangement.Arrangement.ArrangementName = ArrangementName.Text;
+            if (CustomerContainer != null)
+            {
+                currentArrangement.Arrangement.CustomerContainerId = CustomerContainer.CustomerContainerId;
+            }
+
+            if (Designer.SelectedItem != null)
+            {
+                currentArrangement.Arrangement.DesignerName = ((KeyValuePair<long, string>)Designer.SelectedItem).Value;
+            }
+
+            if (GiftCheckBox.IsChecked.HasValue)
+            {
+                currentArrangement.Arrangement.IsGift = GiftCheckBox.IsChecked.Value == true  ? 1 : 0;
+            }
+
+            currentArrangement.Arrangement.GiftMessage = GiftMessage.Text;
+            currentArrangement.Arrangement.LocationName = Location.Text;
+
+            if (Style.SelectedItem != null)
+            {
+                currentArrangement.Arrangement._180or360 = ((KeyValuePair<long, string>)Style.SelectedItem).Value == "180" ? 0 : 1;
+            }
+
+            currentArrangement.ArrangementInventory.Clear();
+
+            foreach(ArrangementInventoryItemDTO mfr in arrangementInventoryList)
+            {
+                currentArrangement.ArrangementInventory.Add(new ArrangementInventoryDTO(mfr));
+            }
+
+            currentArrangement.NotInInventory = notInInventory;
+        }
+
         public void AddArrangement()
         {
             long image_id = 0;
@@ -431,31 +483,6 @@ namespace WpfApp1
             //this.InventoryListView.ItemsSource = arrangementInventoryList;
         }
 
-        //private void SearchButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    ArrangementFilter filter = new ArrangementFilter(this);
-        //    MainWindow wnd = Application.Current.MainWindow as MainWindow;
-        //    //filter.Owner = wnd;
-            
-        //    inventoryTypes = wnd.GetInventoryTypes();
-
-        //    //filter.mainWnd = wnd;
-        //    //filter.arrangementParentWnd = this;
-
-        //    ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
-        //    foreach (InventoryTypeDTO inventoryType in inventoryTypes)
-        //    {
-        //        if (inventoryType.InventoryTypeName != "Arrangements")
-        //        {
-        //            list1.Add(new KeyValuePair<long, string>(inventoryType.InventoryTypeId, inventoryType.InventoryTypeName));
-        //        }
-        //    }
-
-        //    filter.InventoryTypeCombo.ItemsSource = list1;
-
-        //    filter.ShowDialog();
-        //}
-
         public void AddInventorySelection(long inventoryId, string inventoryName)
         {
             arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, 0));
@@ -524,9 +551,11 @@ namespace WpfApp1
 
                 if (workOrderPage != null)
                 {
+                    GetArrangementData();
+
                     WorkOrderMessage msg = new WorkOrderMessage();
                     msg.Arrangement = currentArrangement;
-                    workOrderPage.LoadWorkOrderData(new WorkOrderMessage());
+                    workOrderPage.LoadWorkOrderData(msg);
                 }
 
                 wnd.OnBackClick(this);
@@ -539,7 +568,21 @@ namespace WpfApp1
 
         private void AddItemNotInInventory_Click(object sender, RoutedEventArgs e)
         {
+            if(NotInInventoryName.Text != String.Empty && NotInInventoryQuantity.Text != String.Empty && NotInInventorySize.Text != String.Empty && NotInInventoryPrice.Text != String.Empty)
+            {
+                if(!notInInventory.Where(a => a.NotInInventoryName != NotInInventoryName.Text && a.NotInInventoryQuantity != Convert.ToInt32(NotInInventoryQuantity.Text) &&
+                    a.NotInInventorySize != NotInInventorySize.Text && a.NotInInventoryPrice != Convert.ToDecimal(NotInInventoryPrice.Text)).Any())
+                {
+                    NotInInventoryDTO notIn = new NotInInventoryDTO();
+                    notIn.NotInInventoryName = NotInInventoryName.Text;
+                    notIn.NotInInventoryQuantity = Convert.ToInt32(NotInInventoryQuantity.Text);
+                    notIn.NotInInventorySize = NotInInventorySize.Text;
+                    notIn.NotInInventoryPrice = Convert.ToDecimal(NotInInventoryPrice.Text);
+                    notInInventory.Add(notIn);
 
+                    ReloadListData();
+                }
+            }
         }
 
         private void Container_SelectionChanged(object sender, SelectionChangedEventArgs e)

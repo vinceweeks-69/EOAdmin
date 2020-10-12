@@ -41,6 +41,8 @@ namespace WpfApp1
         List<WorkOrderInventoryItemDTO> workOrderInventoryList = new List<WorkOrderInventoryItemDTO>();
         List<NotInInventoryDTO> notInInventory = new List<NotInInventoryDTO>();
 
+        AddWorkOrderRequest currentWorkOrder = new AddWorkOrderRequest();
+
         public PersonDTO Customer { get; set; }
 
         public WorkOrderPage()
@@ -181,9 +183,93 @@ namespace WpfApp1
                     Customer = msg.Person;
                     Buyer.Text = Customer.CustomerName;
                 }
+
+                if(msg.Inventory.InventoryId != 0)
+                {
+                    if (!workOrderInventoryList.Where(a => a.InventoryId == msg.Inventory.InventoryId).Any())
+                    {
+                        WorkOrderInventoryItemDTO dto = new WorkOrderInventoryItemDTO(msg.Inventory);
+                        dto.WorkOrderId = currentWorkOrder.WorkOrder.WorkOrderId;
+                        workOrderInventoryList.Add(dto);
+                    }
+                }
+
+
+                if(msg.Arrangement.Arrangement.ArrangementId != 0 || msg.Arrangement.Arrangement.UnsavedId != 0)
+                {
+                    if (msg.Arrangement.Arrangement.ArrangementId != 0)
+                    {
+                        if (arrangementList.Where(a => a.Arrangement.ArrangementId == msg.Arrangement.Arrangement.ArrangementId).Any())
+                        {
+                            AddArrangementRequest aar = arrangementList.Where(a => a.Arrangement.ArrangementId == msg.Arrangement.Arrangement.ArrangementId).First();
+                            arrangementList.Remove(aar);
+                        }
+
+                        arrangementList.Add(msg.Arrangement);
+                    }
+                    else if (msg.Arrangement.Arrangement.UnsavedId != 0)
+                    {
+                        if (arrangementList.Where(a => a.Arrangement.UnsavedId == msg.Arrangement.Arrangement.UnsavedId).Any())
+                        {
+                            AddArrangementRequest aar = arrangementList.Where(a => a.Arrangement.UnsavedId == msg.Arrangement.Arrangement.UnsavedId).First();
+                            arrangementList.Remove(aar);
+                        }
+
+                        arrangementList.Add(msg.Arrangement);
+                    }
+                }
+
+                ReloadItemList();
             }
         }
 
+        void ReloadItemList()
+        {
+            ObservableCollection<WorkOrderViewModel> list1 = new ObservableCollection<WorkOrderViewModel>();
+
+            foreach(WorkOrderInventoryItemDTO dto in workOrderInventoryList)
+            {
+                list1.Add(new WorkOrderViewModel(dto));
+            }
+
+            foreach(NotInInventoryDTO dto in notInInventory)
+            {
+                list1.Add(new WorkOrderViewModel(dto));
+            }
+
+            foreach(AddArrangementRequest aar in arrangementList)
+            {
+                //blank row
+                WorkOrderViewModel vm = new WorkOrderViewModel();
+
+                list1.Add(vm);
+
+                //header row
+
+                vm = new WorkOrderViewModel();
+                vm.InventoryName = "Arrangement";
+                list1.Add(vm);
+
+                //items
+                foreach(ArrangementInventoryDTO ai in aar.ArrangementInventory)
+                {
+                    vm = new WorkOrderViewModel(ai,currentWorkOrder.WorkOrder.WorkOrderId);
+                    list1.Add(vm);
+                }
+
+                foreach(NotInInventoryDTO notIn in aar.NotInInventory)
+                {
+                    vm = new WorkOrderViewModel(notIn);
+                    list1.Add(vm);
+                }
+
+                //blank row
+                vm = new WorkOrderViewModel();
+                list1.Add(vm);
+            }
+
+            WorkOrderInventoryListView.ItemsSource = list1;
+        }
 
         public void AddWorkOrder()
         {
