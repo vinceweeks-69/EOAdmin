@@ -21,13 +21,14 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ViewModels.ControllerModels;
 using ViewModels.DataModels;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1
 {
     /// <summary>
     /// Interaction logic for CustomerPage.xaml
     /// </summary>
-    public partial class CustomerPage : Page
+    public partial class CustomerPage : Page, IEOBasePage
     {
         Dictionary<int, string> columnIndicesAndNames = new Dictionary<int, string>();
 
@@ -36,6 +37,8 @@ namespace WpfApp1
         List<PersonDTO> customers = new List<PersonDTO>();
 
         ObservableCollection<PersonDTO> list1 = new ObservableCollection<PersonDTO>();
+
+        IEOBasePage basePage;
 
         public CustomerPage()
         {
@@ -62,6 +65,16 @@ namespace WpfApp1
             }
 
             CustomerListView.ItemsSource = list1;
+        }
+
+        public CustomerPage(IEOBasePage page) : this()
+        {
+            basePage = page;
+        }
+
+        public void LoadWorkOrderData(WorkOrderMessage msg)
+        {
+            int debug = 1;
         }
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)
@@ -292,32 +305,24 @@ namespace WpfApp1
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            PersonFilter filter = new PersonFilter();
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
-            filter.Owner = wnd;
-
-           // inventoryTypes = wnd.GetInventoryTypes();
-
-            filter.mainWnd = wnd;
-            filter.customerParentWnd = this;
-
-            ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
-            //foreach (InventoryTypeDTO inventoryType in inventoryTypes)
-            //{
-            //    if (inventoryType.InventoryTypeName != "Arrangements")
-            //    {
-            //        list1.Add(new KeyValuePair<long, string>(inventoryType.InventoryTypeId, inventoryType.InventoryTypeName));
-            //    }
-            //}
-
-            //filter.InventoryTypeCombo.ItemsSource = list1;
+            PersonFilter filter = new PersonFilter(this);
 
             filter.ShowDialog();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
+            if (wnd.PageIsOnStack(typeof(CustomerPage)))
+            {
+                if (basePage != null)
+                {
+                    basePage.LoadWorkOrderData(new WorkOrderMessage());
+                }
+
+                wnd.OnBackClick(this);
+            }
         }
 
         private void DeleteCustomer(object sender, RoutedEventArgs e)
@@ -379,11 +384,11 @@ namespace WpfApp1
                 LastNameTextBox.Text = item.last_name;
                 EmailTextBox.Text = item.email;
                 PhoneTextBox.Text = item.phone_primary;
-                Address1.Text = item.street_address;
-                Address2.Text = item.unit_apt_suite;
-                City.Text = item.city;
-                State.Text = item.state;
-                Zip.Text = item.zipcode;
+                Address1TextBox.Text = item.street_address;
+                Address2TextBox.Text = item.unit_apt_suite;
+                CityTextBox.Text = item.city;
+                StateTextBox.Text = item.state;
+                ZipCodeTextBox.Text = item.zipcode;
             }
         }
     }

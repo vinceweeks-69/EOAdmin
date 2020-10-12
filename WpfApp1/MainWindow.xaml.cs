@@ -200,13 +200,13 @@ namespace WpfApp1
             //currently the nav stack is only used in "Create / Edit Work Order" mode
             if(NavigationStack.Count > 0)
             {
-                if(NavigationStack.Count == 2)
+                //if(NavigationStack.Count == 2)
                 {
                     //pop the product page
                     NavigationStack.Pop();
                 }
 
-                Page p = NavigationStack.Pop();
+                Page p = NavigationStack.ElementAt(0);
 
                 this.MainContent.Content = new Frame() { Content = p};
             }

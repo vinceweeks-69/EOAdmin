@@ -43,7 +43,9 @@ namespace WpfApp1
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
             wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
-            wnd.MainContent.Content = new Frame() { Content = new WorkOrderPage() };
+            WorkOrderPage workOrderPage = new WorkOrderPage();
+            wnd.NavigationStack.Push(workOrderPage);
+            wnd.MainContent.Content = new Frame() { Content = workOrderPage };
         }
 
         private void VendorsButton_Click(object sender, RoutedEventArgs e)

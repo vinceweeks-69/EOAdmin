@@ -45,20 +45,127 @@ namespace WpfApp1
         {
             InitializeComponent();
 
-            //get inventory type
-            inventoryTypeList = GetInventoryTypes();
+            ObservableCollection<KeyValuePair<int, string>> list0 = new ObservableCollection<KeyValuePair<int, string>>();
+            list0.Add(new KeyValuePair<int, string>(0, "Melissa"));
+            list0.Add(new KeyValuePair<int, string>(1, "Thom"));
+            list0.Add(new KeyValuePair<int, string>(2, "Roseanne"));
+            list0.Add(new KeyValuePair<int, string>(3, "Vicky"));
+            list0.Add(new KeyValuePair<int, string>(4, "Marguerita"));
 
-            ObservableCollection<KeyValuePair<long, string>> list2 = new ObservableCollection<KeyValuePair<long, string>>();
-            foreach (InventoryTypeDTO itDTO in inventoryTypeList)
-            {
-                list2.Add(new KeyValuePair<long, string>(itDTO.InventoryTypeId, itDTO.InventoryTypeName));
-            }
+            Seller.ItemsSource = list0;
 
-            //this.InventoryTypeComboBox.ItemsSource = list2;
-      
+            ObservableCollection<KeyValuePair<int, string>> list1 = new ObservableCollection<KeyValuePair<int, string>>();
+            list1.Add(new KeyValuePair<int, string>(0, "Walk In"));
+            list1.Add(new KeyValuePair<int, string>(1, "Phone"));
+            list1.Add(new KeyValuePair<int, string>(2, "Email"));
+
+            OrderType.ItemsSource = list1;
+
+            ObservableCollection<KeyValuePair<int, string>> list2 = new ObservableCollection<KeyValuePair<int, string>>();
+            list2.Add(new KeyValuePair<int, string>(1, "Pickup"));
+            list2.Add(new KeyValuePair<int, string>(2, "Delivery"));
+            list2.Add(new KeyValuePair<int, string>(3, "Site Service"));
+
+            DeliveryType.ItemsSource = list2;
+            DeliveryType.SelectionChanged += DeliveryType_SelectionChanged;
+
+            ObservableCollection<KeyValuePair<int, string>> list3 = new ObservableCollection<KeyValuePair<int, string>>();
+            list3.Add(new KeyValuePair<int, string>(1, "Melissa"));
+            list3.Add(new KeyValuePair<int, string>(2, "Thom"));
+            list3.Add(new KeyValuePair<int, string>(3, "Danny"));
+            list3.Add(new KeyValuePair<int, string>(3, "Robert"));
+
+            DeliveryPerson.ItemsSource = list3;
+            DeliveryPerson.SelectionChanged += DeliveryPerson_SelectionChanged;
+
+            DeliveryPerson.Visibility = Visibility.Hidden;
+            DeliveryPersonLabel.Visibility = Visibility.Hidden;
+
+            DeliveryDate.Visibility = Visibility.Hidden;
+            DeliveryDateLabel.Visibility = Visibility.Hidden;
+
+            ObservableCollection<KeyValuePair<int, string>> list4 = new ObservableCollection<KeyValuePair<int, string>>();
+            list4.Add(new KeyValuePair<int, string>(1, "Pick one"));
+            list4.Add(new KeyValuePair<int, string>(2, "Choose existing"));
+            list4.Add(new KeyValuePair<int, string>(3, "Create new"));
+
+            PickOrCreateBuyer.ItemsSource = list4;
+            PickOrCreateBuyer.SelectionChanged += PickOrCreateBuyer_SelectionChanged;
         }
 
-        public WorkOrderPage(WorkOrderResponse workOrderResponse)
+        private void DeliveryType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox cb = sender as ComboBox;
+
+            if(cb != null)
+            {
+                if(cb.SelectedIndex > 0)
+                {
+                    DeliveryPerson.Visibility = Visibility.Visible;
+                    DeliveryPersonLabel.Visibility = Visibility.Visible;
+
+                    DeliveryDate.Visibility = Visibility.Visible;
+                    DeliveryDateLabel.Visibility = Visibility.Visible;
+
+                    PickupDate.Visibility = Visibility.Hidden;
+                    PickupDateLabel.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    DeliveryPerson.Visibility = Visibility.Hidden;
+                    DeliveryPersonLabel.Visibility = Visibility.Hidden;
+
+                    DeliveryDate.Visibility = Visibility.Hidden;
+                    DeliveryDateLabel.Visibility = Visibility.Hidden;
+
+                    PickupDate.Visibility = Visibility.Visible;
+                    PickupDateLabel.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+        private void PickOrCreateBuyer_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox cb = sender as ComboBox;
+
+            if (cb != null)
+            {
+                if (cb.SelectedIndex == 1)
+                {
+                    PersonFilter pFilter = new PersonFilter(this);
+
+                    pFilter.ShowDialog();
+                }
+                else if(cb.SelectedIndex == 2)
+                {
+                    MainWindow wnd = Application.Current.MainWindow as MainWindow;
+                    CustomerPage customerPage = new CustomerPage(this);
+                    wnd.NavigationStack.Push(customerPage);
+                    wnd.MainContent.Content = new Frame() { Content = customerPage };
+                }
+            }
+        }
+
+        private void DeliveryPerson_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox cb = sender as ComboBox;
+
+            if(cb != null)
+            {
+                if(cb.SelectedIndex > 0)
+                {
+                    DeliveryPerson.Visibility = Visibility.Visible;
+                    DeliveryPersonLabel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    DeliveryPerson.Visibility = Visibility.Hidden;
+                    DeliveryPersonLabel.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
+        public WorkOrderPage(WorkOrderResponse workOrderResponse) : this()
         {
 
         }
@@ -68,44 +175,6 @@ namespace WpfApp1
             int debug = 1;
         }
 
-        public List<InventoryTypeDTO> GetInventoryTypes()
-        {
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
-
-            return wnd.GetInventoryTypes();
-        }
-
-        public List<InventoryDTO> GetInventory(long inventoryType)
-        {
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
-
-            return wnd.GetInventoryByType(inventoryType);
-        }
-
-        private void InventoryTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //load inventory combo box based on current selection
-            //get the inventory type selected and fill the inventory combo
-            //List<InventoryDTO> inventoryList = new List<InventoryDTO>();
-
-            //ComboBox cb = sender as ComboBox;
-            //KeyValuePair<long, string> kvp = (KeyValuePair<long, string>)cb.SelectedItem;
-            //inventoryList = GetInventory(kvp.Key);
-
-            //ObservableCollection<KeyValuePair<long, string>> list3 = new ObservableCollection<KeyValuePair<long, string>>();
-
-            //foreach (InventoryDTO iDTO in inventoryList)
-            //{
-            //    list3.Add(new KeyValuePair<long, string>(iDTO.InventoryId, iDTO.InventoryName));
-            //}
-
-            //this.InventoryComboBox.ItemsSource = list3;
-        }
-
-        private void InventoryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
-        }
 
         public void AddWorkOrder()
         {
@@ -181,35 +250,6 @@ namespace WpfApp1
             }
         }
 
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            ArrangementFilter filter = new ArrangementFilter(this);
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
-
-            List<InventoryTypeDTO> inventoryTypes = wnd.GetInventoryTypes();
-
-            ObservableCollection<KeyValuePair<long, string>> list3 = new ObservableCollection<KeyValuePair<long, string>>();
-            foreach (InventoryTypeDTO inventoryType in inventoryTypes)
-            {
-                list3.Add(new KeyValuePair<long, string>(inventoryType.InventoryTypeId, inventoryType.InventoryTypeName));
-            }
-
-            filter.InventoryTypeCombo.ItemsSource = list3;
-
-            filter.ShowDialog();
-        }
-
-        public void AddInventorySelection(long inventoryId, string inventoryName)
-        {
-            WorkOrderInventoryItemDTO dto = new WorkOrderInventoryItemDTO(0, inventoryId, inventoryName, String.Empty, 0);
-
-            workOrderInventoryList.Add(dto);
-            list1.Add(dto);
-            this.WorkOrderInventoryListView.ItemsSource = list1;
-
-            SetWorkOrderSalesData();
-        }
-
         public GetWorkOrderSalesDetailResponse GetWorkOrderDetail()
         {
             GetWorkOrderSalesDetailResponse response = new GetWorkOrderSalesDetailResponse();
@@ -254,27 +294,7 @@ namespace WpfApp1
 
         private void CustomerSearch_Click(object sender, RoutedEventArgs e)
         {
-            PersonFilter filter = new PersonFilter();
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
-            filter.Owner = wnd;
-
-            //GetPersonResponse response = wnd.GetCustomers(new GetPersonRequest());
-
-            //List<PersonDTO> people = response.PersonAndAddress;
-
-            filter.mainWnd = wnd;
-            filter.workOrderParentWnd = this;
-
-            ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
-            //foreach (InventoryTypeDTO inventoryType in inventoryTypes)
-            //{
-            //    if (inventoryType.InventoryTypeName != "Arrangements")
-            //    {
-            //        list1.Add(new KeyValuePair<long, string>(inventoryType.InventoryTypeId, inventoryType.InventoryTypeName));
-            //    }
-            //}
-
-            //filter.InventoryTypeCombo.ItemsSource = list1;
+            PersonFilter filter = new PersonFilter(this);
 
             filter.ShowDialog();
         }
@@ -310,10 +330,9 @@ namespace WpfApp1
         {
             //show the product screen - pass workOrderId
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
-            wnd.NavigationStack.Push(this);
-            wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
             InventoryFilter inventoryFilter = new InventoryFilter(this);
-            wnd.MainContent.Content = new Frame() { Content = inventoryFilter };
+            wnd.NavigationStack.Push(inventoryFilter);
+            wnd.MainContent.Content = new Frame() { Content = inventoryFilter};
         }
     }
 }

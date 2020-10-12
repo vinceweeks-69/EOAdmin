@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ViewModels.ControllerModels;
 using ViewModels.DataModels;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1
 {
@@ -22,6 +23,7 @@ namespace WpfApp1
     /// </summary>
     public partial class PersonFilter : Window
     {
+        IEOBasePage basePage;
         public MainWindow mainWnd { get; set; }
         public CustomerPage customerParentWnd { get; set; }
         public VendorPage vendorParentWnd { get; set; }
@@ -30,6 +32,11 @@ namespace WpfApp1
         public PersonFilter()
         {
             InitializeComponent();
+        }
+
+        public PersonFilter(IEOBasePage page) : this()
+        {
+            basePage = page;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -42,6 +49,7 @@ namespace WpfApp1
             request.PhonePrimary = Phone.Text;
             request.Email = Email.Text;
 
+            MainWindow mainWnd = Application.Current.MainWindow as MainWindow;
             GetPersonResponse response = mainWnd.GetCustomers(request);
             ObservableCollection<PersonDTO> list1 = new ObservableCollection<PersonDTO>();
             foreach (PersonAndAddressDTO p in response.PersonAndAddress)
@@ -58,23 +66,12 @@ namespace WpfApp1
 
             PersonDTO item = (sender as ListView).SelectedValue as PersonDTO;
 
-            if (item != null)
+            if (basePage != null)
             {
-                if (customerParentWnd != null)
-                {
-                    customerParentWnd.AddPersonSelection(item);
-                    customerParentWnd = null;
-                }
-                else if (vendorParentWnd != null)
-                {
-                    vendorParentWnd.AddPersonSelection(item);
-                    vendorParentWnd = null;
-                }
-                else if (workOrderParentWnd != null)
-                {
-                    workOrderParentWnd.AddPersonSelection(item);
-                    workOrderParentWnd = null;
-                }
+                WorkOrderMessage msg = new WorkOrderMessage();
+                msg.Person = item;
+
+                basePage.LoadWorkOrderData(msg);
             }
 
             this.Close();

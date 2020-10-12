@@ -89,9 +89,9 @@ namespace WpfApp1
                 {
                     //load arrangementPage
                     MainWindow wnd = Application.Current.MainWindow as MainWindow;
-                    //wnd.NavigationStack.Push(this);
-                    wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
-                    wnd.MainContent.Content = new Frame() { Content = new ArrangementPage() };
+                    ArrangementPage arrangementPage = new ArrangementPage();
+                    wnd.NavigationStack.Push(arrangementPage);
+                    wnd.MainContent.Content = new Frame() { Content = arrangementPage };
                 }
                 else
                 {

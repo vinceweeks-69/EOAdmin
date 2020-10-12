@@ -431,7 +431,31 @@ namespace WpfApp1
 
         private void SaveArrangement_Click(object sender, RoutedEventArgs e)
         {
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
+            if (wnd.PageIsOnStack(typeof(WorkOrderPage)))
+            {
+                if (wnd.PageIsOnStack(typeof(InventoryFilter)))
+                {
+                    wnd.NavigationStack.Pop();
+                }
+
+                //save this arangement to the work order in progress
+                IEOBasePage workOrderPage = wnd.GetEOBasePage(typeof(WorkOrderPage));
+
+                if (workOrderPage != null)
+                {
+                    WorkOrderMessage msg = new WorkOrderMessage();
+                    msg.Arrangement = currentArrangement;
+                    workOrderPage.LoadWorkOrderData(new WorkOrderMessage());
+                }
+
+                wnd.OnBackClick(this);
+            }
+            else
+            {
+                //AddArrangement();
+            }
         }
 
         private void AddItemNotInInventory_Click(object sender, RoutedEventArgs e)
@@ -460,10 +484,9 @@ namespace WpfApp1
                     EnableCustomerContainerSecondaryControls(true);
 
                     MainWindow wnd = Application.Current.MainWindow as MainWindow;
-
-                    wnd.NavigationStack.Push(this);
-                    wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
-                    wnd.MainContent.Content = new Frame() { Content = new CustomerContainerPage(this) };
+                    CustomerContainerPage customerContainerPage = new CustomerContainerPage(this);
+                    wnd.NavigationStack.Push(customerContainerPage);
+                    wnd.MainContent.Content = new Frame() { Content = customerContainerPage };
                 }
             }
         }
