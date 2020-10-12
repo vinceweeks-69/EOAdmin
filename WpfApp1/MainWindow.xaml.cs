@@ -74,6 +74,16 @@ namespace WpfApp1
             return pageIsOnStack;
         }
 
+        public Page GetPageFromStack(Type pageType) 
+        {
+            if(PageIsOnStack(pageType))
+            {
+                return NavigationStack.Where(a => a.GetType() == pageType).First();
+            }
+
+            return null;
+        }
+
         public IEOBasePage GetEOBasePage(Type page )
         {
             IEOBasePage basePage = null;

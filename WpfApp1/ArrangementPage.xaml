@@ -70,16 +70,14 @@
                  Grid.Row="3"
                  FontWeight="Bold" />
             
-            <!-- ItemDisplayBinding="{Binding Value}" SelectedItem="{Binding SelectedItem}"-->
-              <ComboBox Name="Designer" Grid.Column="0" Grid.Row="4"   Margin="10,10,10,10" />
+              <ComboBox Name="Designer" Grid.Column="0" Grid.Row="4"   SelectedValuePath="Key" DisplayMemberPath="Value" Margin="10,10,10,10" />
                 
                 <Label Content="180/360"
                     Grid.Column="1"
                     Grid.Row="3"
                     FontWeight="Bold" />
             
-                <!-- ItemDisplayBinding="{Binding Value}" SelectedItem="{Binding SelectedItem}" -->
-                <ComboBox Name="Style" Grid.Column="1" Grid.Row="4"   Margin="10,10,10,10" />
+                <ComboBox Name="Style" Grid.Column="1" Grid.Row="4"  SelectedValuePath="Key" DisplayMemberPath="Value" Margin="10,10,10,10" />
                 
                 <Label Content="Location"
                     Grid.Column="2"
@@ -93,8 +91,7 @@
                     Grid.Row="5"
                     FontWeight="Bold" />
             
-                <!--  ItemDisplayBinding="{Binding Value}" SelectedItem="{Binding SelectedItem}"  -->
-                <ComboBox Name="Container" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" SelectionChanged="Container_SelectionChanged" Margin="10,10,10,10" />
+                <ComboBox Name="Container" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6"  SelectedValuePath="Key" DisplayMemberPath="Value" SelectionChanged="Container_SelectionChanged" Margin="10,10,10,10" />
                 
                 <Label Name="CustomerContainerLabel"
                     Content="Label"
@@ -198,11 +195,22 @@
                         FontWeight="Bold" />
             
             <ListView Name="ArrangementInventoryListView" HorizontalAlignment="Left" MinHeight="200" Margin="10,10,10,10" VerticalAlignment="Top" MinWidth="750" Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="4">
+                <ListView.Resources>
+				    <Style TargetType="{x:Type GridViewColumnHeader}">
+					    <Setter Property="HorizontalContentAlignment" Value="Left" />
+				    </Style>
+			    </ListView.Resources>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding Arrangement.ArrangementName}" Width="150"/>
-                        <GridViewColumn Header="Quantity" Width="240" />
-                        <GridViewColumn Header="View" Width="240" >
+                        <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="340"/>
+                        <GridViewColumn Header="Quantity" Width="100" >
+                             <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox  Text="{Binding Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>    
+                        </GridViewColumn>
+                        <GridViewColumn Header="View" Width="90" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Image" Click="ShowImage" CommandParameter="{Binding}" Width="70"/>

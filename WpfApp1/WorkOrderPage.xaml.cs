@@ -41,6 +41,8 @@ namespace WpfApp1
         List<WorkOrderInventoryItemDTO> workOrderInventoryList = new List<WorkOrderInventoryItemDTO>();
         List<NotInInventoryDTO> notInInventory = new List<NotInInventoryDTO>();
 
+        public PersonDTO Customer { get; set; }
+
         public WorkOrderPage()
         {
             InitializeComponent();
@@ -172,7 +174,14 @@ namespace WpfApp1
 
         public void LoadWorkOrderData(WorkOrderMessage msg)
         {
-            int debug = 1;
+            if(msg.HasMessage())
+            {
+                if(msg.Person.person_id != 0)
+                {
+                    Customer = msg.Person;
+                    Buyer.Text = Customer.CustomerName;
+                }
+            }
         }
 
 

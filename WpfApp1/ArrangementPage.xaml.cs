@@ -44,11 +44,15 @@ namespace WpfApp1
 
         List<CustomerContainerDTO> customerContainers = new List<CustomerContainerDTO>();
 
+        CustomerContainerDTO CustomerContainer;
+
         AddArrangementRequest currentArrangement = new AddArrangementRequest();
 
         ObservableCollection<KeyValuePair<long, string>> containers = new ObservableCollection<KeyValuePair<long, string>>();
 
-        public ArrangementPage()
+        PersonDTO Customer { get; set; }
+
+        public  ArrangementPage()
         {
             InitializeComponent();
 
@@ -66,13 +70,45 @@ namespace WpfApp1
 
             containers.Add(new KeyValuePair<long, string>(1, "New container"));
 
-            ///TEMP TEMP TEMP - load these based on work order customer (if there is one)
-            containers.Add(new KeyValuePair<long, string>(2, "Customer container at EO"));
-            containers.Add(new KeyValuePair<long, string>(3, "Customer container at customer location"));
-
             Container.ItemsSource = containers;
 
-            EnableCustomerContainerSecondaryControls(false);   
+            EnableCustomerContainerSecondaryControls(false);
+
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
+
+            WorkOrderPage workOrder = (WorkOrderPage)wnd.GetPageFromStack(typeof(WorkOrderPage));
+
+            if(workOrder != null)
+            {
+                Customer = workOrder.Customer;
+
+                if(Customer != null && Customer.person_id != 0)
+                {
+                    LoadCustomerContainers(Customer.person_id);
+                }
+            }
+        }
+
+        private async void LoadCustomerContainers(long customer_id)
+        {
+            CustomerContainerRequest request = new CustomerContainerRequest();
+            request.CustomerContainer.CustomerId = Customer.person_id;
+            ((App)App.Current).PostRequest<CustomerContainerRequest, CustomerContainerResponse>("GetCustomerContainers", request).ContinueWith(a => 
+            {
+                CustomerContainersLoaded(a.Result);
+            });
+        }
+
+        private void CustomerContainersLoaded(CustomerContainerResponse response)
+        {
+            if(response.CustomerContainers.Count > 0)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    containers.Add(new KeyValuePair<long, string>(2, "Customer container at EO"));
+                    containers.Add(new KeyValuePair<long, string>(3, "Customer container at customer location"));
+                });
+            }
         }
 
         public ArrangementPage(AddArrangementRequest arrangement) : this()
@@ -84,8 +120,16 @@ namespace WpfApp1
 
         private void EnableCustomerContainerSecondaryControls(bool shouldShow)
         {
-            CustomerContainerLabel.Visibility = Visibility.Hidden;
-            CustomerContainerLabelEntry.Visibility = Visibility.Hidden;
+            if (shouldShow)
+            {
+                CustomerContainerLabel.Visibility = Visibility.Visible;
+                CustomerContainerLabelEntry.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                CustomerContainerLabel.Visibility = Visibility.Hidden;
+                CustomerContainerLabelEntry.Visibility = Visibility.Hidden;
+            }
         }
 
         /// <summary>
@@ -94,18 +138,33 @@ namespace WpfApp1
         /// <param name="msg"></param>
         public void LoadWorkOrderData(WorkOrderMessage msg)
         {
-            int debug = 1;
-        }
+            if(msg.HasMessage())
+            {
+                if(msg.CustomerContainer.CustomerContainerId != 0)
+                {
+                    CustomerContainer = msg.CustomerContainer;
+                    CustomerContainerLabelEntry.Text = CustomerContainer.Label;
+                }
 
-        public void Reload()
-        {
-            ObservableCollection<ArrangementInventoryItemDTO> list4 = new ObservableCollection<ArrangementInventoryItemDTO>();
+                if(msg.Inventory.InventoryId != 0)
+                {
+                    arrangementInventoryList.Add(new ArrangementInventoryItemDTO()
+                    {
+                        InventoryId = msg.Inventory.InventoryId,
+                        InventoryName = msg.Inventory.InventoryTypeName + " " + msg.Inventory.InventoryName +  " " + msg.Inventory.Size,
+                        Quantity = 1
+                    });
 
-            //this.InventoryListView.ItemsSource = list4;
+                    ObservableCollection<WorkOrderViewModel> list4 = new ObservableCollection<WorkOrderViewModel>();
 
-            ObservableCollection<ArrangementInventoryDTO> list5 = new ObservableCollection<ArrangementInventoryDTO>();
+                    foreach(ArrangementInventoryItemDTO aiid in arrangementInventoryList)
+                    {
+                        list4.Add(new WorkOrderViewModel(aiid,0));
+                    }
 
-            this.ArrangementInventoryListView.ItemsSource = list5;
+                    ArrangementInventoryListView.ItemsSource = list4;
+                }
+            }
         }
 
         private List<KeyValuePair<long,string>> GetInventoryList()
@@ -338,7 +397,7 @@ namespace WpfApp1
                 HttpResponseMessage httpResponse = client.PostAsync("api/Login/AddArrangement", content).Result;
                 if (httpResponse.IsSuccessStatusCode)
                 {
-                    Reload();
+                    //Reload();
                 }
                 else
                 {
@@ -372,12 +431,44 @@ namespace WpfApp1
             //this.InventoryListView.ItemsSource = arrangementInventoryList;
         }
 
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        //private void SearchButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ArrangementFilter filter = new ArrangementFilter(this);
+        //    MainWindow wnd = Application.Current.MainWindow as MainWindow;
+        //    //filter.Owner = wnd;
+            
+        //    inventoryTypes = wnd.GetInventoryTypes();
+
+        //    //filter.mainWnd = wnd;
+        //    //filter.arrangementParentWnd = this;
+
+        //    ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
+        //    foreach (InventoryTypeDTO inventoryType in inventoryTypes)
+        //    {
+        //        if (inventoryType.InventoryTypeName != "Arrangements")
+        //        {
+        //            list1.Add(new KeyValuePair<long, string>(inventoryType.InventoryTypeId, inventoryType.InventoryTypeName));
+        //        }
+        //    }
+
+        //    filter.InventoryTypeCombo.ItemsSource = list1;
+
+        //    filter.ShowDialog();
+        //}
+
+        public void AddInventorySelection(long inventoryId, string inventoryName)
+        {
+            arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, 0));
+            //this.InventoryListView.ItemsSource = null;
+            //this.InventoryListView.ItemsSource = arrangementInventoryList;
+        }
+
+        private void Products_Click(object sender, RoutedEventArgs e)
         {
             ArrangementFilter filter = new ArrangementFilter(this);
             MainWindow wnd = Application.Current.MainWindow as MainWindow;
             //filter.Owner = wnd;
-            
+
             inventoryTypes = wnd.GetInventoryTypes();
 
             //filter.mainWnd = wnd;
@@ -395,18 +486,6 @@ namespace WpfApp1
             filter.InventoryTypeCombo.ItemsSource = list1;
 
             filter.ShowDialog();
-        }
-
-        public void AddInventorySelection(long inventoryId, string inventoryName)
-        {
-            arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, 0));
-            //this.InventoryListView.ItemsSource = null;
-            //this.InventoryListView.ItemsSource = arrangementInventoryList;
-        }
-
-        private void Products_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void AddImage_Click(object sender, RoutedEventArgs e)
@@ -484,7 +563,7 @@ namespace WpfApp1
                     EnableCustomerContainerSecondaryControls(true);
 
                     MainWindow wnd = Application.Current.MainWindow as MainWindow;
-                    CustomerContainerPage customerContainerPage = new CustomerContainerPage(this);
+                    CustomerContainerPage customerContainerPage = new CustomerContainerPage(this, this.Customer);
                     wnd.NavigationStack.Push(customerContainerPage);
                     wnd.MainContent.Content = new Frame() { Content = customerContainerPage };
                 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ViewModels.ControllerModels;
+using ViewModels.DataModels;
 using WpfApp1.ViewModels;
 
 namespace WpfApp1
@@ -23,14 +26,54 @@ namespace WpfApp1
     {
         IEOBasePage basePage;
 
-        public CustomerContainerPage()
+        PersonDTO Customer { get; set; }
+
+        CustomerContainerDTO CustomerContainer { get; set; }
+
+        public CustomerContainerPage(PersonDTO customer)
         {
             InitializeComponent();
+
+            Customer = customer;
+
+            FirstName.Text = Customer.first_name;
+            LastName.Text = Customer.last_name;
+            Phone.Text = Customer.phone_primary;
+
+            LoadCustomerContainers();
         }
 
-        public CustomerContainerPage(IEOBasePage page) : this()
+        public CustomerContainerPage(IEOBasePage page, PersonDTO customer) : this(customer)
         {
             basePage = page;
+        }
+
+        private async void LoadCustomerContainers()
+        {
+            CustomerContainerRequest request = new CustomerContainerRequest();
+            request.CustomerContainer.CustomerId = Customer.person_id;
+            ((App)App.Current).PostRequest<CustomerContainerRequest, CustomerContainerResponse>("GetCustomerContainers", request).ContinueWith(a =>
+            {
+                CustomerContainersLoaded(a.Result);
+            });
+        }
+
+        private void CustomerContainersLoaded(CustomerContainerResponse response)
+        {
+            if (response.CustomerContainers.Count > 0)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    ObservableCollection<CustomerContainerDTO> containers = new ObservableCollection<CustomerContainerDTO>();
+
+                    foreach(CustomerContainerDTO cc in response.CustomerContainers)
+                    {
+                        containers.Add(cc);
+                    }
+
+                    CustomerContainerListView.ItemsSource = containers;
+                });
+            }
         }
 
         private void Camera_Click(object sender, RoutedEventArgs e)
@@ -49,6 +92,7 @@ namespace WpfApp1
             if(basePage != null)
             {
                 WorkOrderMessage msg = new WorkOrderMessage();
+                msg.CustomerContainer = CustomerContainer;
                 basePage.LoadWorkOrderData(msg);
                 wnd.OnBackClick(this);
             }
@@ -62,6 +106,22 @@ namespace WpfApp1
         private void ContainerDelete_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void CustomerContainerListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListView lv = sender as ListView;
+
+            if(lv != null)
+            {
+                CustomerContainerDTO sel = (CustomerContainerDTO)lv.SelectedItem;
+
+                if(sel != null)
+                {
+                    CustomerContainer = sel;
+                    Label.Text = sel.Label;
+                }
+            }
         }
     }
 }

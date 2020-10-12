@@ -59,6 +59,17 @@ namespace WpfApp1.ViewModels
             GroupId = dto.ArrangementId;
         }
 
+        public WorkOrderViewModel(ArrangementInventoryItemDTO dto, long workOrderId)
+        {
+            WorkOrderId = workOrderId;
+            InventoryId = dto.InventoryId;
+            InventoryName = dto.InventoryName;
+            Quantity = dto.Quantity;
+            ImageId = dto.ImageId;
+            //Size = dto..Size;
+            GroupId = dto.ArrangementId;
+        }
+
         public long WorkOrderId { get; set; }
 
         public long InventoryId { get; set; }

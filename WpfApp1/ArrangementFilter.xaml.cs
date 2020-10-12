@@ -307,7 +307,18 @@ namespace WpfApp1
             {
                 if(basePage != null)
                 {
-                    basePage.LoadWorkOrderData(new WorkOrderMessage());
+                    WorkOrderMessage msg = new WorkOrderMessage();
+
+                    msg.Inventory = new InventoryDTO()
+                    {
+                        InventoryId = item.Id,
+                        InventoryName = item.Name,
+                        InventoryTypeName = item.Type,
+                        InventoryTypeId = item.InventoryTypeId,
+                        Size = item.Size
+                    };
+
+                    basePage.LoadWorkOrderData(msg);
                 }
             }
             this.Close();
