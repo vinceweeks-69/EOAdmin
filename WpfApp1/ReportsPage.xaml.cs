@@ -28,7 +28,9 @@ namespace WpfApp1
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
-            wnd.MainContent.Content = new Frame() { Content = new WorkOrderReportPage() };
+            WorkOrderReportPage reportPage = new WorkOrderReportPage();
+            wnd.NavigationStack.Push(reportPage);
+            wnd.MainContent.Content = new Frame() { Content = reportPage };
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

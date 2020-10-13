@@ -32,16 +32,13 @@ namespace WpfApp1
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
-        private List<InventoryTypeDTO> inventoryTypeList;
-        //private List<WorkOrderInventoryMapDTO> workOrderInventoryMap = new List<WorkOrderInventoryMapDTO>();
-        //private List<WorkOrderInventoryItemDTO> workOrderInventoryList = new List<WorkOrderInventoryItemDTO>();
-        ObservableCollection<WorkOrderInventoryItemDTO> list1 = new ObservableCollection<WorkOrderInventoryItemDTO>();
-
         List<AddArrangementRequest> arrangementList = new List<AddArrangementRequest>();
-        List<WorkOrderInventoryItemDTO> workOrderInventoryList = new List<WorkOrderInventoryItemDTO>();
-        List<NotInInventoryDTO> notInInventory = new List<NotInInventoryDTO>();
 
-        AddWorkOrderRequest currentWorkOrder = new AddWorkOrderRequest();
+        ObservableCollection<WorkOrderInventoryMapDTO> list1 = new ObservableCollection<WorkOrderInventoryMapDTO>();
+
+        WorkOrderResponse currentWorkOrder = new WorkOrderResponse();
+
+        public long CurrentWorkOrderId { get { return currentWorkOrder.Id; } }
 
         public PersonDTO Customer { get; set; }
 
@@ -95,6 +92,21 @@ namespace WpfApp1
 
             PickOrCreateBuyer.ItemsSource = list4;
             PickOrCreateBuyer.SelectionChanged += PickOrCreateBuyer_SelectionChanged;
+
+            if(currentWorkOrder.WorkOrder.WorkOrderId <= 0)
+            {
+                PayButton.IsEnabled = false;  
+            }
+        }
+
+        public WorkOrderPage(WorkOrderResponse workOrderResponse) : this()
+        {
+            currentWorkOrder = workOrderResponse;
+            arrangementList = workOrderResponse.ArrangementRequestList();
+
+            LoadPageData();
+
+            ReloadItemList();
         }
 
         private void DeliveryType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -168,12 +180,6 @@ namespace WpfApp1
                 }
             }
         }
-
-        public WorkOrderPage(WorkOrderResponse workOrderResponse) : this()
-        {
-
-        }
-
         public void LoadWorkOrderData(WorkOrderMessage msg)
         {
             if(msg.HasMessage())
@@ -186,53 +192,104 @@ namespace WpfApp1
 
                 if(msg.Inventory.InventoryId != 0)
                 {
-                    if (!workOrderInventoryList.Where(a => a.InventoryId == msg.Inventory.InventoryId).Any())
-                    {
-                        WorkOrderInventoryItemDTO dto = new WorkOrderInventoryItemDTO(msg.Inventory);
-                        dto.WorkOrderId = currentWorkOrder.WorkOrder.WorkOrderId;
-                        workOrderInventoryList.Add(dto);
-                    }
+                    ProcessInventoryData(msg.Inventory);  
                 }
 
-
-                if(msg.Arrangement.Arrangement.ArrangementId != 0 || msg.Arrangement.Arrangement.UnsavedId != 0)
+                if(!String.IsNullOrEmpty(msg.NotInInventory.NotInInventoryName))
                 {
-                    if (msg.Arrangement.Arrangement.ArrangementId != 0)
-                    {
-                        if (arrangementList.Where(a => a.Arrangement.ArrangementId == msg.Arrangement.Arrangement.ArrangementId).Any())
-                        {
-                            AddArrangementRequest aar = arrangementList.Where(a => a.Arrangement.ArrangementId == msg.Arrangement.Arrangement.ArrangementId).First();
-                            arrangementList.Remove(aar);
-                        }
+                    ProcessNotInInventoryData(msg.NotInInventory);    
+                }
 
-                        arrangementList.Add(msg.Arrangement);
-                    }
-                    else if (msg.Arrangement.Arrangement.UnsavedId != 0)
-                    {
-                        if (arrangementList.Where(a => a.Arrangement.UnsavedId == msg.Arrangement.Arrangement.UnsavedId).Any())
-                        {
-                            AddArrangementRequest aar = arrangementList.Where(a => a.Arrangement.UnsavedId == msg.Arrangement.Arrangement.UnsavedId).First();
-                            arrangementList.Remove(aar);
-                        }
-
-                        arrangementList.Add(msg.Arrangement);
-                    }
+                if((msg.Arrangement.Arrangement.ArrangementId != 0 || msg.Arrangement.Arrangement.UnsavedId != 0) && 
+                    (msg.Arrangement.ArrangementInventory.Count > 0 || msg.Arrangement.NotInInventory.Count > 0))
+                {
+                    ProcessArrangementData(msg);  
                 }
 
                 ReloadItemList();
             }
         }
 
+        void ProcessInventoryData(WorkOrderInventoryMapDTO dto)
+        {
+            if(currentWorkOrder.WorkOrderList.Where(a => a.InventoryId == dto.InventoryId).Any())
+            {
+                WorkOrderInventoryMapDTO i = currentWorkOrder.WorkOrderList.Where(a => a.InventoryId == dto.InventoryId).First();
+                currentWorkOrder.WorkOrderList.Remove(i);
+            }
+                        
+            currentWorkOrder.WorkOrderList.Add(dto);
+        }
+
+        void ProcessNotInInventoryData(NotInInventoryDTO notIn)
+        {
+            if(notIn.NotInInventoryId != 0)
+            {
+                if(currentWorkOrder.NotInInventory.Where(a => a.NotInInventoryId == notIn.NotInInventoryId).Any())
+                {
+                    NotInInventoryDTO dto = currentWorkOrder.NotInInventory.Where(a => a.NotInInventoryId == notIn.NotInInventoryId).First();
+                    currentWorkOrder.NotInInventory.Remove(dto);
+                }
+            }
+            else if (notIn.UnsavedId != 0)
+            {
+                if (currentWorkOrder.NotInInventory.Where(a => a.UnsavedId == notIn.UnsavedId).Any())
+                {
+                    NotInInventoryDTO dto = currentWorkOrder.NotInInventory.Where(a => a.UnsavedId == notIn.UnsavedId).First();
+                    currentWorkOrder.NotInInventory.Remove(dto);
+                }
+            }
+
+            //names must be unique
+            if(!currentWorkOrder.NotInInventory.Where(a => a.NotInInventoryName == notIn.NotInInventoryName).Any())
+            {
+                currentWorkOrder.NotInInventory.Add(notIn);
+            }
+            else
+            {
+                MessageBox.Show("Duplicate name for not in inventory item.", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+            }
+        }
+
+        void ProcessArrangementData(WorkOrderMessage msg)
+        {
+            if (msg.Arrangement.Arrangement.ArrangementId != 0)
+            {
+                if (currentWorkOrder.Arrangements.Where(a => a.Arrangement.ArrangementId == msg.Arrangement.Arrangement.ArrangementId).Any())
+                {
+                    AddArrangementRequest aar = arrangementList.Where(a => a.Arrangement.ArrangementId == msg.Arrangement.Arrangement.ArrangementId).First();
+
+                    arrangementList.Remove(aar);
+                }
+
+                arrangementList.Add(msg.Arrangement);
+            }
+            else if (msg.Arrangement.Arrangement.UnsavedId != 0)
+            {
+                if (arrangementList.Where(a => a.Arrangement.UnsavedId == msg.Arrangement.Arrangement.UnsavedId).Any())
+                {
+                    AddArrangementRequest aar = arrangementList.Where(a => a.Arrangement.UnsavedId == msg.Arrangement.Arrangement.UnsavedId).First();
+                    arrangementList.Remove(aar);
+                }
+
+                arrangementList.Add(msg.Arrangement);
+            }
+        }
+
+        void LoadPageData()
+        {
+            //set page form values from currentArrangement
+        }
         void ReloadItemList()
         {
             ObservableCollection<WorkOrderViewModel> list1 = new ObservableCollection<WorkOrderViewModel>();
 
-            foreach(WorkOrderInventoryItemDTO dto in workOrderInventoryList)
+            foreach(WorkOrderInventoryMapDTO dto in currentWorkOrder.WorkOrderList)
             {
                 list1.Add(new WorkOrderViewModel(dto));
             }
 
-            foreach(NotInInventoryDTO dto in notInInventory)
+            foreach(NotInInventoryDTO dto in currentWorkOrder.NotInInventory)
             {
                 list1.Add(new WorkOrderViewModel(dto));
             }
@@ -251,7 +308,7 @@ namespace WpfApp1
                 list1.Add(vm);
 
                 //items
-                foreach(ArrangementInventoryDTO ai in aar.ArrangementInventory)
+                foreach(ArrangementInventoryItemDTO ai in aar.ArrangementInventory)
                 {
                     vm = new WorkOrderViewModel(ai,currentWorkOrder.WorkOrder.WorkOrderId);
                     list1.Add(vm);
@@ -271,77 +328,61 @@ namespace WpfApp1
             WorkOrderInventoryListView.ItemsSource = list1;
         }
 
-        public void AddWorkOrder()
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            AddWorkOrder();
+        }
+
+        public async void AddWorkOrder()
+        {
+            AddWorkOrderRequest addWorkOrderRequest = new AddWorkOrderRequest();
+
             try
             {
-                AddWorkOrderRequest addWorkOrderRequest = new AddWorkOrderRequest();
-
-                WorkOrderDTO dto = new WorkOrderDTO()
+                currentWorkOrder.WorkOrder.Buyer = Buyer.Text;
+                currentWorkOrder.WorkOrder.Seller = Seller.Text;
+                currentWorkOrder.WorkOrder.CreateDate = DateTime.Now;
+                currentWorkOrder.WorkOrder.Comments = CommentsTextBox.Text;
+                
+                if(Customer.person_id != 0)
                 {
-                    Seller = this.Seller.Text,
-                    Buyer = this.Buyer.Text,
-                    CreateDate = DateTime.Now,
-                    Comments = this.CommentsTextBox.Text
-                };
+                    currentWorkOrder.WorkOrder.CustomerId = Customer.person_id;
+                }
 
-                //foreach(WorkOrderInventoryItemDTO woii in workOrderInventoryList)
-                //{
-                //    workOrderInventoryMap.Add(new WorkOrderInventoryMapDTO()
-                //    {
-                //        InventoryId = woii.InventoryId,
-                //        InventoryName = woii.InventoryName,
-                //        Quantity = woii.Quantity
-                //    });
-                //}
-
-                addWorkOrderRequest.WorkOrder = dto;
-                //addWorkOrderRequest.WorkOrderInventoryMap = workOrderInventoryMap;
-
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-                client.DefaultRequestHeaders.Accept.Add(
-                   new MediaTypeWithQualityHeaderValue("application/json"));
-
-                client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
-
-                string jsonData = JsonConvert.SerializeObject(addWorkOrderRequest);
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage httpResponse = client.PostAsync("api/Login/AddWorkOrder", content).Result;
-                if (httpResponse.IsSuccessStatusCode)
+                currentWorkOrder.WorkOrder.OrderType = OrderType.SelectedItem != null ? ((KeyValuePair<int, string>)OrderType.SelectedItem).Key : 1;
+                currentWorkOrder.WorkOrder.DeliveryType = DeliveryType.SelectedItem != null ? ((KeyValuePair<int, string>)DeliveryType.SelectedItem).Key : 1;
+                if(currentWorkOrder.WorkOrder.DeliveryType > 1)
                 {
-                    Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
-                    StreamReader strReader = new StreamReader(streamData);
-                    string strData = strReader.ReadToEnd();
-                    strReader.Close();
-                    ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(strData);
+                    currentWorkOrder.WorkOrder.IsDelivery = true;
+                }
 
-                    if (apiResponse.Messages.Count > 0)
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        foreach (KeyValuePair<string, List<string>> messages in apiResponse.Messages)
-                        {
-                            foreach (string msg in messages.Value)
-                            {
-                                sb.AppendLine(msg);
-                            }
-                        }
+                currentWorkOrder.WorkOrder.DeliveredBy = DeliveryPerson.SelectedItem != null ? ((KeyValuePair<int, string>)DeliveryPerson.SelectedItem).Value : String.Empty;
+                currentWorkOrder.WorkOrder.DeliveryDate = DeliveryDate.SelectedDate.HasValue ? DeliveryDate.SelectedDate.Value : DateTime.MinValue;
+                if (!currentWorkOrder.WorkOrder.IsDelivery)
+                {
+                    currentWorkOrder.WorkOrder.DeliveryDate = PickupDate.SelectedDate.HasValue ? PickupDate.SelectedDate.Value : DateTime.MinValue;
+                }
 
-                        MessageBox.Show(sb.ToString());
-                    }
-                    else
-                    {
-                        this.WorkOrderInventoryListView.ItemsSource = null;
-                    }
+                addWorkOrderRequest.WorkOrder = currentWorkOrder.WorkOrder;
+                addWorkOrderRequest.WorkOrderInventoryMap = currentWorkOrder.WorkOrderList;
+                addWorkOrderRequest.NotInInventory = currentWorkOrder.NotInInventory;
+                addWorkOrderRequest.Arrangements = arrangementList;
+
+                ApiResponse response = await ((App)App.Current).PostRequest<AddWorkOrderRequest, ApiResponse>("AddWorkOrder", addWorkOrderRequest);
+
+                if(!response.Success)
+                {
+                    MessageBox.Show("Error adding Work Order");
                 }
                 else
                 {
-                    MessageBox.Show("Error adding Work Order");
+                    //clear form?
+                    MessageBox.Show("Work Order saved");
                 }
             }
             catch (Exception ex)
             {
-
+                ((App)App.Current).LogError(ex.Message, JsonConvert.SerializeObject(addWorkOrderRequest));
             }
         }
 
@@ -349,35 +390,35 @@ namespace WpfApp1
         {
             GetWorkOrderSalesDetailResponse response = new GetWorkOrderSalesDetailResponse();
 
-            try
-            {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            //try
+            //{
+            //    HttpClient client = new HttpClient();
+            //    client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
+            //    client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
 
-                string jsonData = JsonConvert.SerializeObject(new GetWorkOrderSalesDetailRequest(workOrderInventoryList,0,0));
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage httpResponse = client.PostAsync("api/Login/GetWorkOrderDetail", content).Result;
+            //    string jsonData = JsonConvert.SerializeObject(new GetWorkOrderSalesDetailRequest(workOrderInventoryList,0,0));
+            //    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            //    HttpResponseMessage httpResponse = client.PostAsync("api/Login/GetWorkOrderDetail", content).Result;
 
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
-                    StreamReader strReader = new StreamReader(streamData);
-                    string strData = strReader.ReadToEnd();
-                    strReader.Close();
-                    response = JsonConvert.DeserializeObject<GetWorkOrderSalesDetailResponse>(strData);
-                }
-                else
-                {
-                    MessageBox.Show("There was an error retreiving work order sales detail");
-                }
-            }
-            catch(Exception ex)
-            {
+            //    if (httpResponse.IsSuccessStatusCode)
+            //    {
+            //        Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
+            //        StreamReader strReader = new StreamReader(streamData);
+            //        string strData = strReader.ReadToEnd();
+            //        strReader.Close();
+            //        response = JsonConvert.DeserializeObject<GetWorkOrderSalesDetailResponse>(strData);
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("There was an error retreiving work order sales detail");
+            //    }
+            //}
+            //catch(Exception ex)
+            //{
 
-            }
+            //}
 
             return response;
         }
@@ -396,7 +437,7 @@ namespace WpfApp1
 
         private void SetWorkOrderSalesData()
         {
-            GetWorkOrderSalesDetailResponse response = GetWorkOrderDetail();
+            //GetWorkOrderSalesDetailResponse response = GetWorkOrderDetail();
 
             //SubTotal.Text = response.SubTotal.ToString("C", CultureInfo.CurrentCulture);
             //Tax.Text = response.Tax.ToString("C", CultureInfo.CurrentCulture);
@@ -410,15 +451,49 @@ namespace WpfApp1
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            WorkOrderInventoryItemDTO workOrderInventoryItemDTO = (sender as Button).CommandParameter as WorkOrderInventoryItemDTO;
+            WorkOrderViewModel dto = (sender as Button).CommandParameter as WorkOrderViewModel;
 
-            workOrderInventoryList.Remove(workOrderInventoryItemDTO);
+            if (dto != null)
+            {
+                if (dto.InventoryId != 0)
+                {
+                    if (dto.GroupId.HasValue && dto.GroupId.Value != 0)
+                    {
+                        if (arrangementList.Where(a => a.Arrangement.ArrangementId == dto.GroupId.Value).Any())
+                        {
+                            AddArrangementRequest aar = arrangementList.Where(b => b.Arrangement.ArrangementId == dto.GroupId.Value).First();
 
-            list1.Remove(workOrderInventoryItemDTO);
+                            if (aar.ArrangementInventory.Where(c => c.InventoryId == dto.InventoryId).Any())
+                            {
+                                ArrangementInventoryItemDTO item = aar.ArrangementInventory.Where(c => c.InventoryId == dto.InventoryId).First();
 
-            this.WorkOrderInventoryListView.ItemsSource = list1;
+                                aar.ArrangementInventory.Remove(item);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (currentWorkOrder.WorkOrderList.Where(a => a.InventoryId == dto.InventoryId).Any())
+                        {
+                            WorkOrderInventoryMapDTO map = currentWorkOrder.WorkOrderList.Where(b => b.InventoryId == dto.InventoryId).First();
+                            currentWorkOrder.WorkOrderList.Remove(map);
+                        }
+                    }
+                }
+                else if (dto.NotInInventoryId != 0)
+                {
+                    if (currentWorkOrder.NotInInventory.Where(a => a.NotInInventoryId == dto.NotInInventoryId).Any())
+                    {
+                        NotInInventoryDTO notIn = currentWorkOrder.NotInInventory.Where(a => a.NotInInventoryId == dto.NotInInventoryId).First();
 
-            SetWorkOrderSalesData();
+                        currentWorkOrder.NotInInventory.Remove(notIn);
+                    }
+                }
+
+                ReloadItemList();
+
+                SetWorkOrderSalesData();
+            }
         }
 
         private void AddProductToWorkOrder_Click(object sender, RoutedEventArgs e)

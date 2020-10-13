@@ -36,10 +36,6 @@ namespace WpfApp1
         public IEOBasePage basePage;
         public MainWindow mainWnd { get; set; }
 
-        //public ArrangementPage arrangementParentWnd { get; set; }
-        //public WorkOrderPage workOrderParentWnd { get; set; }
-        //public ShipmentPage  shipmentParentWnd { get; set; }
-
         public ArrangementFilter()
         {
             InitializeComponent();
@@ -312,16 +308,15 @@ namespace WpfApp1
 
             if (item != null)
             {
-                if(basePage != null)
+                if (basePage != null)
                 {
                     WorkOrderMessage msg = new WorkOrderMessage();
 
-                    msg.Inventory = new InventoryDTO()
+                    msg.Inventory = new WorkOrderInventoryMapDTO()
                     {
                         InventoryId = item.Id,
                         InventoryName = item.Name,
-                        InventoryTypeName = item.Type,
-                        InventoryTypeId = item.InventoryTypeId,
+                        Quantity = 1,
                         Size = item.Size
                     };
 
@@ -333,18 +328,20 @@ namespace WpfApp1
 
         private void AddNotInInventory_Click(object sender, RoutedEventArgs e)
         {
-            if (NotInName.Text != String.Empty &&  NotInSize.Text != String.Empty && NotInPrice.Text != String.Empty)
+            if (NotInName.Text != String.Empty && NotInSize.Text != String.Empty && NotInPrice.Text != String.Empty)
             {
                 //if (!notInInventory.Where(a => a.NotInInventoryName != NotInName.Text && a.NotInInventoryQuantity != Convert.ToInt32(NotInInventoryQuantity.Text) &&
                 //     a.NotInInventorySize != NotInInventorySize.Text && a.NotInInventoryPrice != Convert.ToDecimal(NotInInventoryPrice.Text)).Any())
                 {
+                    Random r = new Random();
                     NotInInventoryDTO notIn = new NotInInventoryDTO();
+                    notIn.NotInInventoryId = r.Next(-5000, -1);
                     notIn.NotInInventoryName = NotInName.Text;
-                    //notIn.NotInInventoryQuantity = Convert.ToInt32(NotInInventoryQuantity.Text);
+                    notIn.NotInInventoryQuantity = 1;
                     notIn.NotInInventorySize = NotInSize.Text;
                     notIn.NotInInventoryPrice = Convert.ToDecimal(NotInPrice.Text);
 
-                    if(basePage != null)
+                    if (basePage != null)
                     {
                         WorkOrderMessage msg = new WorkOrderMessage();
 

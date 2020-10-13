@@ -13,7 +13,7 @@ namespace WpfApp1.ViewModels
         public WorkOrderMessage()
         {
             Person = new PersonDTO();
-            Inventory = new InventoryDTO();
+            Inventory = new WorkOrderInventoryMapDTO();
             NotInInventory = new NotInInventoryDTO();
             Arrangement = new AddArrangementRequest();
             CustomerContainer = new CustomerContainerDTO();
@@ -21,7 +21,7 @@ namespace WpfApp1.ViewModels
 
         public PersonDTO Person { get; set; }
 
-        public InventoryDTO Inventory { get; set; }
+        public WorkOrderInventoryMapDTO Inventory { get; set; }
 
         public NotInInventoryDTO NotInInventory { get; set; }
 
@@ -33,7 +33,7 @@ namespace WpfApp1.ViewModels
         {
             bool hasMessage = false;
 
-            if(Person.person_id != 0 || Inventory.InventoryId != 0 || NotInInventory.NotInInventoryId != 0 || Arrangement.ArrangementInventory.Count > 0 || Arrangement.NotInInventory.Count > 0 || CustomerContainer.CustomerContainerId > 0)
+            if(Person.person_id != 0 || Inventory.InventoryId != 0 || !String.IsNullOrEmpty(NotInInventory.NotInInventoryName) || Arrangement.ArrangementInventory.Count > 0 || Arrangement.NotInInventory.Count > 0 || CustomerContainer.CustomerContainerId > 0)
             {
                 hasMessage = true;
             }

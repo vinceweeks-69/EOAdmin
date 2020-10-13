@@ -32,10 +32,9 @@ namespace WpfApp1
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
-        List<WorkOrderInventoryDTO> workOrderList = new List<WorkOrderInventoryDTO>();
-        ObservableCollection<WorkOrderInventoryDTO> list1 = new ObservableCollection<WorkOrderInventoryDTO>();
-        ObservableCollection<WorkOrderInventoryMapDTO> list2 = new ObservableCollection<WorkOrderInventoryMapDTO>();
-        List<InventoryDTO> inventory = new List<InventoryDTO>(); 
+        List<WorkOrderInventoryMapDTO> workOrderList = new List<WorkOrderInventoryMapDTO>();
+        ObservableCollection<WorkOrderInventoryMapDTO> list1 = new ObservableCollection<WorkOrderInventoryMapDTO>();
+        List<InventoryDTO> inventory = new List<InventoryDTO>();
 
         public WorkOrderReportPage()
         {
@@ -47,16 +46,19 @@ namespace WpfApp1
         }
                
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             //get work orders for the dates specified - if from and to dates are specified
 
-            if (((this.FromDatePicker.SelectedDate != null && this.FromDatePicker.SelectedDate != DateTime.MinValue) &&
-               (this.ToDatePicker.SelectedDate != null && this.ToDatePicker.SelectedDate != DateTime.MinValue)) &&
-               (this.FromDatePicker.SelectedDate < this.ToDatePicker.SelectedDate))
+            if (((this.FromDatePicker.SelectedDate.HasValue && this.FromDatePicker.SelectedDate.Value != DateTime.MinValue) &&
+               (this.ToDatePicker.SelectedDate.HasValue && this.ToDatePicker.SelectedDate.Value != DateTime.MinValue)) &&
+               (this.FromDatePicker.SelectedDate.Value < this.ToDatePicker.SelectedDate.Value))
             {
-                //workOrderList = GetWorkOrders();
-                List<WorkOrderResponse> response = GetWorkOrders();
+                WorkOrderListFilter filter = new WorkOrderListFilter();
+                filter.FromDate = FromDatePicker.SelectedDate.Value;
+                filter.ToDate = ToDatePicker.SelectedDate.Value;
+
+                List<WorkOrderResponse> response = await  ((App)App.Current).PostRequest<WorkOrderListFilter,List<WorkOrderResponse>>("GetWorkOrders", filter);
 
                 ObservableCollection<WorkOrderResponse>  list1 = new ObservableCollection<WorkOrderResponse>();
 
@@ -73,49 +75,49 @@ namespace WpfApp1
             }
         }
 
-        private List<WorkOrderResponse> GetWorkOrders()
-        {
-           List<WorkOrderResponse> workOrders = new List<WorkOrderResponse>();
+        //private List<WorkOrderResponse> GetWorkOrders()
+        //{
+        //   List<WorkOrderResponse> workOrders = new List<WorkOrderResponse>();
 
-            try
-            {
-                WorkOrderListFilter filter = new WorkOrderListFilter();
-                filter.FromDate = this.FromDatePicker.SelectedDate.Value;
-                filter.ToDate = this.ToDatePicker.SelectedDate.Value;
+        //    try
+        //    {
+        //        WorkOrderListFilter filter = new WorkOrderListFilter();
+        //        filter.FromDate = this.FromDatePicker.SelectedDate.Value;
+        //        filter.ToDate = this.ToDatePicker.SelectedDate.Value;
 
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //        HttpClient client = new HttpClient();
+        //        client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
+        //        client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
 
-                string jsonData = JsonConvert.SerializeObject(filter);
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+        //        string jsonData = JsonConvert.SerializeObject(filter);
+        //        var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage httpResponse =
-                    client.PostAsync("api/Login/GetWorkOrders",content).Result;
+        //        HttpResponseMessage httpResponse =
+        //            client.PostAsync("api/Login/GetWorkOrders",content).Result;
 
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
-                    StreamReader strReader = new StreamReader(streamData);
-                    string strData = strReader.ReadToEnd();
-                    strReader.Close();
-                    List<WorkOrderResponse> response = JsonConvert.DeserializeObject<List<WorkOrderResponse>>(strData);
-                    workOrders = response;
-                }
-                else
-                {
-                    MessageBox.Show("There was an error retreiving Work Orders");
-                }
-            }
-            catch (Exception ex)
-            {
+        //        if (httpResponse.IsSuccessStatusCode)
+        //        {
+        //            Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
+        //            StreamReader strReader = new StreamReader(streamData);
+        //            string strData = strReader.ReadToEnd();
+        //            strReader.Close();
+        //            List<WorkOrderResponse> response = JsonConvert.DeserializeObject<List<WorkOrderResponse>>(strData);
+        //            workOrders = response;
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("There was an error retreiving Work Orders");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-            }
+        //    }
 
-            return workOrders;
-        }
+        //    return workOrders;
+        //}
 
         private void ShowWorkOrderItems_Clicked(object sender, RoutedEventArgs e)
         {
@@ -144,7 +146,7 @@ namespace WpfApp1
                     InventoryName = "Arrangement"
                 });
 
-                foreach (ArrangementInventoryDTO ai in arrangement.ArrangementList)
+                foreach (ArrangementInventoryItemDTO ai in arrangement.ArrangementList)
                 {
                     list1.Add(new WorkOrderViewModel(ai, r.WorkOrder.WorkOrderId));
                 }
@@ -167,19 +169,19 @@ namespace WpfApp1
             try
             {
 
-                //they've slected an individual shipment - fill the details list view
-                WorkOrderInventoryDTO item = (sender as ListView).SelectedValue as WorkOrderInventoryDTO;
+                //they've selected an individual shipment - fill the details list view
+                WorkOrderInventoryMapDTO item = (sender as ListView).SelectedValue as WorkOrderInventoryMapDTO;
 
-                WorkOrderInventoryDTO r = workOrderList.Where(a => a.WorkOrder.WorkOrderId == item.WorkOrder.WorkOrderId).FirstOrDefault();
+                //WorkOrderInventoryMapDTO r = workOrderList.Where(a => a.WorkOrder.WorkOrderId == item.WorkOrder.WorkOrderId).FirstOrDefault();
 
-                list2.Clear();
+                //list2.Clear();
 
-                foreach (WorkOrderInventoryMapDTO m in r.InventoryList)
-                {
-                    list2.Add(m);
-                }
+                //foreach (WorkOrderInventoryMapDTO m in r.InventoryList)
+                //{
+                //    list2.Add(m);
+                //}
 
-                WorkOrderDetailListView.ItemsSource = list2;
+                //WorkOrderDetailListView.ItemsSource = list2;
             }
             catch(Exception ex)
             {
@@ -189,9 +191,21 @@ namespace WpfApp1
 
         private void EditWorkOrder_Click(object sender, RoutedEventArgs e)
         {
-            //the button's command parmeter is a WoorkOrderResponse object
+            Button b = sender as Button;
+            if (b != null)
+            {
+                //the button's command parmeter is a WoorkOrderResponse object
+                WorkOrderResponse response = (WorkOrderResponse)b.CommandParameter;
 
-            //navigate to the Work Order page and load this selection
+                if (response != null)
+                {
+                    //navigate to the Work Order page and load this selection
+                    MainWindow wnd = Application.Current.MainWindow as MainWindow;
+                    WorkOrderPage workOrderPage = new WorkOrderPage(response);
+                    wnd.NavigationStack.Push(workOrderPage);
+                    wnd.MainContent.Content = new Frame() { Content = workOrderPage };
+                }
+            }
         }
     }
 }

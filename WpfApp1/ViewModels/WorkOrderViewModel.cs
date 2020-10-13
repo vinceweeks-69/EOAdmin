@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using ViewModels.DataModels;
 
 namespace WpfApp1.ViewModels
@@ -18,7 +19,10 @@ namespace WpfApp1.ViewModels
         public WorkOrderViewModel(NotInInventoryDTO dto)
         {
             WorkOrderId = dto.WorkOrderId;
-            InventoryId = 387;    //temp constant
+            //InventoryId = 387;    //temp constant
+            InventoryId = 0;
+            NotInInventoryId = dto.NotInInventoryId;
+            UnsavedId = dto.UnsavedId;
             InventoryName = dto.NotInInventoryName;
             Quantity = dto.NotInInventoryQuantity;
             ImageId = 0;
@@ -40,6 +44,7 @@ namespace WpfApp1.ViewModels
         public WorkOrderViewModel(WorkOrderInventoryMapDTO dto)
         {
             WorkOrderId = dto.WorkOrderId;
+            WorkOrderInventoryMapId = dto.WorkOrderInventoryMapId;
             InventoryId = dto.InventoryId;
             InventoryName = dto.InventoryName;
             Quantity = dto.Quantity;
@@ -72,7 +77,13 @@ namespace WpfApp1.ViewModels
 
         public long WorkOrderId { get; set; }
 
+        public long WorkOrderInventoryMapId { get; set; }
+
         public long InventoryId { get; set; }
+
+        public long NotInInventoryId { get; set; }
+
+        public long UnsavedId { get; set; }
 
         public string InventoryName { get; set; }
 
@@ -83,6 +94,21 @@ namespace WpfApp1.ViewModels
         public string Size { get; set; }
 
         public long? GroupId { get; set; }
+
+        private Visibility visibility { get; set; }
+
+        public Visibility ItemVisibility
+        {
+            set
+            {
+                visibility = value;
+                OnPropertyChanged(nameof(ItemVisibility))
+;            }
+            get
+            {
+                return Quantity == 0 ? Visibility.Hidden : Visibility.Visible;
+            }
+        }
 
         private bool shouldShow;
         public bool ShouldShow

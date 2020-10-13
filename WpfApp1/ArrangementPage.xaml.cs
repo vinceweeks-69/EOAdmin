@@ -58,10 +58,15 @@ namespace WpfApp1
         {
             InitializeComponent();
 
-            Random r = new Random();
-            if(currentArrangement.Arrangement.ArrangementId == 0)
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
+            if(wnd.PageIsOnStack(typeof(WorkOrderPage)))
             {
-                currentArrangement.Arrangement.UnsavedId = r.Next(-500, -1);
+                WorkOrderPage wo = (WorkOrderPage)wnd.GetPageFromStack(typeof(WorkOrderPage));
+
+                if(wo != null)
+                {
+                    currentArrangement.Arrangement.WorkOrderId = wo.CurrentWorkOrderId;
+                }
             }
 
             ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
@@ -81,8 +86,6 @@ namespace WpfApp1
             Container.ItemsSource = containers;
 
             EnableCustomerContainerSecondaryControls(false);
-
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
             WorkOrderPage workOrder = (WorkOrderPage)wnd.GetPageFromStack(typeof(WorkOrderPage));
 
@@ -154,18 +157,43 @@ namespace WpfApp1
 
                 if(msg.Inventory.InventoryId != 0)
                 {
-                    arrangementInventoryList.Add(new ArrangementInventoryItemDTO()
+                    if(currentArrangement.ArrangementInventory.Where(a => a.InventoryId == msg.Inventory.InventoryId).Any())
                     {
+                        ArrangementInventoryItemDTO dto = currentArrangement.ArrangementInventory.Where(a => a.InventoryId == msg.Inventory.InventoryId).First();
+                        currentArrangement.ArrangementInventory.Remove(dto);
+                    }
+
+                    currentArrangement.ArrangementInventory.Add(new ArrangementInventoryItemDTO()
+                    {
+                        ArrangementId = currentArrangement.Arrangement.ArrangementId,
                         InventoryId = msg.Inventory.InventoryId,
-                        InventoryName = msg.Inventory.InventoryTypeName + " " + msg.Inventory.InventoryName +  " " + msg.Inventory.Size,
+                        InventoryName = msg.Inventory.InventoryName + " " + msg.Inventory.Size,
                         Quantity = 1
-                    });
+                    }); ;
                 }
 
                 if(!String.IsNullOrEmpty(msg.NotInInventory.NotInInventoryName))
                 {
+                    if(msg.NotInInventory.NotInInventoryId != 0)
+                    {
+                        if(currentArrangement.NotInInventory.Where(a => a.NotInInventoryId == msg.NotInInventory.NotInInventoryId).Any())
+                        {
+                            NotInInventoryDTO dto = currentArrangement.NotInInventory.Where(a => a.NotInInventoryId == msg.NotInInventory.NotInInventoryId).First();
+                            currentArrangement.NotInInventory.Remove(dto);
+                        }
+                    }
+                    else if(msg.NotInInventory.UnsavedId != 0)
+                    {
+                        if (currentArrangement.NotInInventory.Where(a => a.UnsavedId == msg.NotInInventory.UnsavedId).Any())
+                        {
+                            NotInInventoryDTO dto = currentArrangement.NotInInventory.Where(a => a.UnsavedId == msg.NotInInventory.UnsavedId).First();
+                            currentArrangement.NotInInventory.Remove(dto);
+                        }
+                    }
+
                     //validate - no dupes
-                    notInInventory.Add(msg.NotInInventory);
+                    msg.NotInInventory.ArrangementId = currentArrangement.Arrangement.ArrangementId;
+                    currentArrangement.NotInInventory.Add(msg.NotInInventory);
                 }
 
                 ReloadListData();
@@ -176,12 +204,12 @@ namespace WpfApp1
         {
             ObservableCollection<WorkOrderViewModel> list4 = new ObservableCollection<WorkOrderViewModel>();
 
-            foreach (ArrangementInventoryItemDTO aiid in arrangementInventoryList)
+            foreach (ArrangementInventoryItemDTO aiid in currentArrangement.ArrangementInventory)
             {
                 list4.Add(new WorkOrderViewModel(aiid, 0));
             }
 
-            foreach (NotInInventoryDTO notIn in notInInventory)
+            foreach (NotInInventoryDTO notIn in currentArrangement.NotInInventory)
             {
                 list4.Add(new WorkOrderViewModel(notIn));
             }
@@ -232,42 +260,42 @@ namespace WpfApp1
         }
 
         //see the mobile app - there is a new dto called SimpleArrangmentResponse - validate that the user has enetered a name to search with
-        private List<ArrangementInventoryDTO> GetArrangements()
-        {
-            List<ArrangementInventoryDTO> arrangementList = new List<ArrangementInventoryDTO>();
+        //private List<ArrangementInventoryItemDTO> GetArrangements()
+        //{
+        //    List<ArrangementInventoryItemDTO> arrangementList = new List<ArrangementInventoryItemDTO>();
 
-            try
-            {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //    try
+        //    {
+        //        HttpClient client = new HttpClient();
+        //        client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
+        //        client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
 
-                HttpResponseMessage httpResponse =
-                    client.GetAsync("api/Login/GetArrangements").Result;
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
-                    StreamReader strReader = new StreamReader(streamData);
-                    string strData = strReader.ReadToEnd();
-                    strReader.Close();
-                    GetArrangementResponse response = JsonConvert.DeserializeObject<GetArrangementResponse>(strData);
+        //        HttpResponseMessage httpResponse =
+        //            client.GetAsync("api/Login/GetArrangements").Result;
+        //        if (httpResponse.IsSuccessStatusCode)
+        //        {
+        //            Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
+        //            StreamReader strReader = new StreamReader(streamData);
+        //            string strData = strReader.ReadToEnd();
+        //            strReader.Close();
+        //            GetArrangementResponse response = JsonConvert.DeserializeObject<GetArrangementResponse>(strData);
 
-                    arrangementList = response.ArrangementList;
-                }
-                else
-                {
-                    MessageBox.Show("There was an error retreiving arrangements");
-                }
-            }
-            catch (Exception ex)
-            {
+        //            arrangementList = response.ArrangementList;
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("There was an error retreiving arrangements");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-            }
+        //    }
 
-            return arrangementList;
-        }
+        //    return arrangementList;
+        //}
 
         private void ShowImage(object sender, RoutedEventArgs e)
         {
@@ -335,6 +363,8 @@ namespace WpfApp1
                 if(workOrderPage != null)
                 {
                     WorkOrderMessage msg = new WorkOrderMessage();
+                    //load the currennt object with data from the form
+                    GetArrangementData();
                     msg.Arrangement = currentArrangement;
                     workOrderPage.LoadWorkOrderData(new WorkOrderMessage());
                 }
@@ -373,14 +403,7 @@ namespace WpfApp1
                 currentArrangement.Arrangement._180or360 = ((KeyValuePair<long, string>)Style.SelectedItem).Value == "180" ? 0 : 1;
             }
 
-            currentArrangement.ArrangementInventory.Clear();
-
-            foreach(ArrangementInventoryItemDTO mfr in arrangementInventoryList)
-            {
-                currentArrangement.ArrangementInventory.Add(new ArrangementInventoryDTO(mfr));
-            }
-
-            currentArrangement.NotInInventory = notInInventory;
+            //currentArrangment has current inventory and non inventory lists
         }
 
         public void AddArrangement()
@@ -426,15 +449,17 @@ namespace WpfApp1
                 iDTO.InventoryTypeId = 3; //"Arrangements"
                 //iDTO.ServiceCodeId = serviceCode.Key;
 
-                foreach (ArrangementInventoryItemDTO ai in arrangementInventoryList)
-                {
-                    addArrangementRequest.ArrangementInventory.Add(new ArrangementInventoryDTO()
-                    {
-                        ArrangementInventoryName = ai.InventoryName,
-                        InventoryId = ai.InventoryId,
-                        Quantity = ai.Quantity,
-                    });
-                }
+                //foreach (ArrangementInventoryItemDTO ai in arrangementInventoryList)
+                //{
+                //    addArrangementRequest.ArrangementInventory.Add(new ArrangementInventoryItemDTO()
+                //    {
+                //        ArrangementInventoryName = ai.InventoryName,
+                //        InventoryId = ai.InventoryId,
+                //        Quantity = ai.Quantity,
+                //    });
+                //}
+
+                ///ADD FROM currentArrangement
 
                 addArrangementRequest.Arrangement = aDTO;
                 addArrangementRequest.Inventory = iDTO;
@@ -522,9 +547,37 @@ namespace WpfApp1
 
         }
 
-        private void GiftCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void GiftCheckBox_Clicked(object sender, RoutedEventArgs e)
         {
+            CheckBox cb = sender as CheckBox;
 
+            if(cb != null)
+            {
+                if(cb.IsChecked.HasValue)
+                {
+                    if (cb.IsChecked.Value)
+                    {
+                        GiftMessageBorder.Visibility = Visibility.Visible;
+                        GiftMessageLabel.Visibility = Visibility.Visible;
+                        GiftMessage.Visibility = Visibility.Visible;
+                        GiftMessage.IsEnabled = true;
+                    }
+                    else
+                    {
+                        GiftMessageBorder.Visibility = Visibility.Hidden;
+                        GiftMessageLabel.Visibility = Visibility.Hidden;
+                        GiftMessage.Visibility = Visibility.Hidden;
+                        GiftMessage.IsEnabled = false;
+                    }
+                }
+                else
+                {
+                    GiftMessageBorder.Visibility = Visibility.Hidden;
+                    GiftMessageLabel.Visibility = Visibility.Hidden;
+                    GiftMessage.Visibility = Visibility.Hidden;
+                    GiftMessage.IsEnabled = false;
+                }
+            }
         }
 
         private void ArrangementSearch_Click(object sender, RoutedEventArgs e)

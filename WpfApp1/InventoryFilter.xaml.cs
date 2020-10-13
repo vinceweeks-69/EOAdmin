@@ -67,7 +67,7 @@ namespace WpfApp1
 
             WorkOrderMessage msg = new WorkOrderMessage();
 
-            msg.Inventory = (InventoryDTO)((ListView)sender).SelectedItem;
+            msg.Inventory = (WorkOrderInventoryMapDTO)((ListView)sender).SelectedItem;
 
             if(page != null)
             {

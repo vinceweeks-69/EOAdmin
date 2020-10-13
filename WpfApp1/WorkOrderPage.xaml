@@ -62,10 +62,10 @@
             <Label Name="PickupDateLabel" Content="Pickup Date" Grid.Row="7" Grid.Column="4" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
             <DatePicker Name="PickupDate" Grid.Row="8" Grid.Column="4" Margin="10,10,10,10"/>
 
-            <Button Content="Save" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top" Width="80"/>
+            <Button Name="SaveButton" Content="Save" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top" Width="80" Click="SaveButton_Click"/>
             <Button Content="Clear" Grid.Row="9" Grid.Column="2" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
             <Button Content="Camera" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
-            <Button Content="Pay" Grid.Row="9" Grid.Column="4" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
+            <Button Name="PayButton"  Content="Pay" Grid.Row="9" Grid.Column="4" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
 
             <ListView Name="WorkOrderInventoryListView" Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" MinHeight="200" Height="Auto"  Margin="10,10,10,10" VerticalAlignment="Top" Width="570">
                 <ListView.Resources>
@@ -80,21 +80,21 @@
                         <GridViewColumn Header="Quantity" Width="60" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Text="{Binding Path=Quantity, Mode=TwoWay}"  TextChanged="QuantityTextBox_TextChanged"/>
+                                    <TextBox Text="{Binding Path=Quantity, Mode=TwoWay}"  Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldShow}" TextChanged="QuantityTextBox_TextChanged"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Edit" Width="100">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Edit" CommandParameter="{Binding}" Width="90"/>
+                                    <Button Content="Edit" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShowShow}" Width="90"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Delete" Width="100">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Delete" CommandParameter="{Binding}" Width="90" Click="DeleteButton_Click" />
+                                    <Button Content="Delete" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldShow}" Click="DeleteButton_Click" Width="90" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -105,11 +105,11 @@
                                 </DataTemplate>
                             </GridViewColumn.HeaderTemplate>
                             
-                            <!--<GridViewColumn.CellTemplate>
+                            <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Name="AddInventoryToWorkOrder" Content="Add" CommandParameter="{Binding}" Width="90" Click="AddInventoryToWorkOrder_Click" />
+                                    <Button Name="AddInventoryToWorkOrder" Content="Add" Visibility="Hidden" />
                                 </DataTemplate>
-                            </GridViewColumn.CellTemplate>-->
+                            </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                     </GridView>
                 </ListView.View>
