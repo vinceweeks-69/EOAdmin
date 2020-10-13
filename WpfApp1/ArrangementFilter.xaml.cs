@@ -64,6 +64,14 @@ namespace WpfApp1
 
             switch (kvp.Value)
             {
+                case "Arrangements":
+                    MainWindow wnd = Application.Current.MainWindow as MainWindow;
+                    ArrangementPage arrangementPage = new ArrangementPage();
+                    wnd.NavigationStack.Push(arrangementPage);
+                    wnd.MainContent.Content = new Frame() { Content = arrangementPage };
+                    this.Close();
+                    break;
+
                 case "Orchids":
                     if(plantTypes.Count == 0)
                     {
@@ -90,9 +98,6 @@ namespace WpfApp1
 
                     break;
 
-                case "Arrangements":
-
-                    break;
 
                 case "Materials":
                     if (materialTypes.Count == 0)
@@ -147,7 +152,7 @@ namespace WpfApp1
 
             switch(inventoryType)
             {
-                case "Orchids":
+               case "Orchids":
                     plantNames = mainWnd.GetPlantNamesByType(kvp.Key);
 
                     foreach (PlantNameDTO plantName in plantNames)
@@ -194,9 +199,11 @@ namespace WpfApp1
                     NameCombo.ItemsSource = list1;
                     break;
             }
+
+            ShowInventory();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ShowInventory()
         {
             string inventoryType = ((KeyValuePair<long, string>)InventoryTypeCombo.SelectedValue).Value;
 
@@ -322,6 +329,33 @@ namespace WpfApp1
                 }
             }
             this.Close();
+        }
+
+        private void AddNotInInventory_Click(object sender, RoutedEventArgs e)
+        {
+            if (NotInName.Text != String.Empty &&  NotInSize.Text != String.Empty && NotInPrice.Text != String.Empty)
+            {
+                //if (!notInInventory.Where(a => a.NotInInventoryName != NotInName.Text && a.NotInInventoryQuantity != Convert.ToInt32(NotInInventoryQuantity.Text) &&
+                //     a.NotInInventorySize != NotInInventorySize.Text && a.NotInInventoryPrice != Convert.ToDecimal(NotInInventoryPrice.Text)).Any())
+                {
+                    NotInInventoryDTO notIn = new NotInInventoryDTO();
+                    notIn.NotInInventoryName = NotInName.Text;
+                    //notIn.NotInInventoryQuantity = Convert.ToInt32(NotInInventoryQuantity.Text);
+                    notIn.NotInInventorySize = NotInSize.Text;
+                    notIn.NotInInventoryPrice = Convert.ToDecimal(NotInPrice.Text);
+
+                    if(basePage != null)
+                    {
+                        WorkOrderMessage msg = new WorkOrderMessage();
+
+                        msg.NotInInventory = notIn;
+
+                        basePage.LoadWorkOrderData(msg);
+                    }
+
+                    this.Close();
+                }
+            }
         }
     }
 }

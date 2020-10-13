@@ -160,9 +160,15 @@ namespace WpfApp1
                         InventoryName = msg.Inventory.InventoryTypeName + " " + msg.Inventory.InventoryName +  " " + msg.Inventory.Size,
                         Quantity = 1
                     });
-
-                    ReloadListData();
                 }
+
+                if(!String.IsNullOrEmpty(msg.NotInInventory.NotInInventoryName))
+                {
+                    //validate - no dupes
+                    notInInventory.Add(msg.NotInInventory);
+                }
+
+                ReloadListData();
             }
         }
 
@@ -494,12 +500,8 @@ namespace WpfApp1
         {
             ArrangementFilter filter = new ArrangementFilter(this);
             MainWindow wnd = Application.Current.MainWindow as MainWindow;
-            //filter.Owner = wnd;
 
             inventoryTypes = wnd.GetInventoryTypes();
-
-            //filter.mainWnd = wnd;
-            //filter.arrangementParentWnd = this;
 
             ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
             foreach (InventoryTypeDTO inventoryType in inventoryTypes)
@@ -568,21 +570,21 @@ namespace WpfApp1
 
         private void AddItemNotInInventory_Click(object sender, RoutedEventArgs e)
         {
-            if(NotInInventoryName.Text != String.Empty && NotInInventoryQuantity.Text != String.Empty && NotInInventorySize.Text != String.Empty && NotInInventoryPrice.Text != String.Empty)
-            {
-                if(!notInInventory.Where(a => a.NotInInventoryName != NotInInventoryName.Text && a.NotInInventoryQuantity != Convert.ToInt32(NotInInventoryQuantity.Text) &&
-                    a.NotInInventorySize != NotInInventorySize.Text && a.NotInInventoryPrice != Convert.ToDecimal(NotInInventoryPrice.Text)).Any())
-                {
-                    NotInInventoryDTO notIn = new NotInInventoryDTO();
-                    notIn.NotInInventoryName = NotInInventoryName.Text;
-                    notIn.NotInInventoryQuantity = Convert.ToInt32(NotInInventoryQuantity.Text);
-                    notIn.NotInInventorySize = NotInInventorySize.Text;
-                    notIn.NotInInventoryPrice = Convert.ToDecimal(NotInInventoryPrice.Text);
-                    notInInventory.Add(notIn);
+            //if(NotInInventoryName.Text != String.Empty && NotInInventoryQuantity.Text != String.Empty && NotInInventorySize.Text != String.Empty && NotInInventoryPrice.Text != String.Empty)
+            //{
+            //    if(!notInInventory.Where(a => a.NotInInventoryName != NotInInventoryName.Text && a.NotInInventoryQuantity != Convert.ToInt32(NotInInventoryQuantity.Text) &&
+            //        a.NotInInventorySize != NotInInventorySize.Text && a.NotInInventoryPrice != Convert.ToDecimal(NotInInventoryPrice.Text)).Any())
+            //    {
+            //        NotInInventoryDTO notIn = new NotInInventoryDTO();
+            //        notIn.NotInInventoryName = NotInInventoryName.Text;
+            //        notIn.NotInInventoryQuantity = Convert.ToInt32(NotInInventoryQuantity.Text);
+            //        notIn.NotInInventorySize = NotInInventorySize.Text;
+            //        notIn.NotInInventoryPrice = Convert.ToDecimal(NotInInventoryPrice.Text);
+            //        notInInventory.Add(notIn);
 
-                    ReloadListData();
-                }
-            }
+            //        ReloadListData();
+            //    }
+            //}
         }
 
         private void Container_SelectionChanged(object sender, SelectionChangedEventArgs e)

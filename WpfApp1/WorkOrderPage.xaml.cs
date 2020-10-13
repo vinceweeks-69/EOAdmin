@@ -424,10 +424,28 @@ namespace WpfApp1
         private void AddProductToWorkOrder_Click(object sender, RoutedEventArgs e)
         {
             //show the product screen - pass workOrderId
-            MainWindow wnd = Window.GetWindow(this) as MainWindow;
-            InventoryFilter inventoryFilter = new InventoryFilter(this);
-            wnd.NavigationStack.Push(inventoryFilter);
-            wnd.MainContent.Content = new Frame() { Content = inventoryFilter};
+            //MainWindow wnd = Window.GetWindow(this) as MainWindow;
+            //InventoryFilter inventoryFilter = new InventoryFilter(this);
+            //wnd.NavigationStack.Push(inventoryFilter);
+            //wnd.MainContent.Content = new Frame() { Content = inventoryFilter};
+
+            ArrangementFilter filter = new ArrangementFilter(this);
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
+
+            List<InventoryTypeDTO> inventoryTypes = wnd.GetInventoryTypes();
+
+            ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
+            foreach (InventoryTypeDTO inventoryType in inventoryTypes)
+            {
+                //if (inventoryType.InventoryTypeName != "Arrangements")
+                {
+                    list1.Add(new KeyValuePair<long, string>(inventoryType.InventoryTypeId, inventoryType.InventoryTypeName));
+                }
+            }
+
+            filter.InventoryTypeCombo.ItemsSource = list1;
+
+            filter.ShowDialog();
         }
     }
 }

@@ -138,14 +138,14 @@
 
                 <Button Name="SaveArrangement" Click="SaveArrangement_Click"  Content="Save" Grid.Column="3" Grid.Row="11"  Margin="10,10,10,10"/>
 
-                 <Label
+                 <!--<Label
                         Content="Add item not in inventory"
                         Grid.Column="0"
                         Grid.Row="12"
                         Grid.ColumnSpan="2"
-                        FontWeight="Bold" />
+                        FontWeight="Bold" />-->
                     
-                  <Button
+                  <!--<Button
                         Name="AddItemNotInInventory"
                         Content="Add"
                         Grid.Column="3"
@@ -185,7 +185,7 @@
                         Grid.Row="13"
                         FontWeight="Bold" />
                     
-                    <TextBox Name="NotInInventoryPrice" Grid.Column="3" Grid.Row="14" Margin ="10,10,10,10"/>            
+                    <TextBox Name="NotInInventoryPrice" Grid.Column="3" Grid.Row="14" Margin ="10,10,10,10"/>-->            
 
 
                     <Label
