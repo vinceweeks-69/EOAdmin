@@ -29,12 +29,14 @@ namespace WpfApp1
         private void InventoryButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
+            wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
             wnd.MainContent.Content = new Frame() { Content = new InventoryPage() };
         }
 
         private void ArrangementsButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
+            wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
             wnd.MainContent.Content = new Frame() { Content = new ArrangementPage(new AddArrangementRequest()) };
         }
 
@@ -44,18 +46,21 @@ namespace WpfApp1
             wnd.NavigationStack.Push(this);
             WorkOrderPage workOrderPage = new WorkOrderPage();
             wnd.NavigationStack.Push(workOrderPage);
+            wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
             wnd.MainContent.Content = new Frame() { Content = workOrderPage };
         }
 
         private void VendorsButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
+            wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
             wnd.MainContent.Content = new Frame() { Content = new VendorPage() };
         }
 
         private void ShipmentsButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
+            wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
             wnd.MainContent.Content = new Frame() { Content = new ShipmentPage() };
         }
 
@@ -65,12 +70,14 @@ namespace WpfApp1
             wnd.NavigationStack.Push(this);
             ReportsPage reportsPage = new ReportsPage();
             wnd.NavigationStack.Push(reportsPage);
+            wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
             wnd.MainContent.Content = new Frame() { Content = reportsPage };
         }
 
         private void CustomersButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
+            wnd.ButtonContent.Content = new Frame() { Content = new ButtonPage(), Visibility = Visibility.Visible };
             wnd.MainContent.Content = new Frame() { Content = new CustomerPage() };
         }
 

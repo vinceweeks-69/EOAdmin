@@ -237,5 +237,33 @@ namespace WpfApp1
 
             filter.ShowDialog();
         }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridView gView = VendorListView.View as GridView;
+
+            var workingWidth = PageGrid.ActualWidth - 32;             // SystemParameters.VerticalScrollBarWidth; // take into account vertical scrollbar
+            VendorListView.Width = workingWidth;
+
+            var col1 = 0.20;
+            var col2 = 0.10;
+            var col3 = 0.10;
+            var col4 = 0.10;
+            var col5 = 0.10;
+            var col6 = 0.10;
+            var col7 = 0.10;
+
+            gView.Columns[0].Width = workingWidth * col1;
+            gView.Columns[1].Width = workingWidth * col2;
+            gView.Columns[2].Width = workingWidth * col3;
+            gView.Columns[3].Width = workingWidth * col4;
+            gView.Columns[4].Width = workingWidth * col5;
+            gView.Columns[5].Width = workingWidth * col6;
+            gView.Columns[6].Width = workingWidth * col7;
+
+            var workingHeight = PageGrid.RowDefinitions.ElementAt(8).ActualHeight;
+
+            VendorListView.Height = workingHeight * 0.9;
+        }
     }
 }

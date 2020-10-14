@@ -8,40 +8,73 @@
       d:DesignHeight="632" d:DesignWidth="800"
       Title="VendorPage">
 
-    <Grid Margin="0,0,0,-59" Height="540" VerticalAlignment="Top">
-        <Label Content="Elegant Orchids Vendors" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
-        <TextBox x:Name="VendorName" HorizontalAlignment="Left" Height="26" Margin="31,87,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="112" RenderTransformOrigin="0.531,1.362"/>
-        <Label Content="Name" HorizontalAlignment="Left" Margin="31,56,0,0" VerticalAlignment="Top" Width="101" Height="26"/>
-        <TextBox x:Name="VendorPhone" HorizontalAlignment="Left" Height="26" Margin="159,87,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="103" RenderTransformOrigin="0.531,1.362"/>
-        <Label Content="Phone" HorizontalAlignment="Left" Margin="159,56,0,0" VerticalAlignment="Top" Width="90" Height="26" RenderTransformOrigin="0.5,0.5"/>
-        <Label Content="Email" HorizontalAlignment="Left" Margin="278,56,0,0" VerticalAlignment="Top" Height="26" Width="73"/>
-        <TextBox Name="VendorEmail" HorizontalAlignment="Left" Height="26" Margin="278,87,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="191"/>
-        <Label Content="Address 1" HorizontalAlignment="Left" Margin="31,138,0,0" VerticalAlignment="Top" Width="54"/>
-        <TextBox Name="Address1" HorizontalAlignment="Left" Height="21" Margin="31,169,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="231" RenderTransformOrigin="0.65,0.626"/>
-        <Label Content="Unit / Apt / Suite" HorizontalAlignment="Left" Margin="278,138,0,0" VerticalAlignment="Top" Width="103" Height="26"/>
-        <TextBox Name="Address2" HorizontalAlignment="Left" Height="21" Margin="278,169,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="103"/>
-        <Label Content="City" HorizontalAlignment="Left" Margin="31,220,0,0" VerticalAlignment="Top" Width="53" Height="28"/>
-        <TextBox Name="City" HorizontalAlignment="Left" Height="27" Margin="31,253,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="112"/>
-        <Label Content="State" HorizontalAlignment="Left" Margin="159,220,0,0" VerticalAlignment="Top" Height="28" Width="54"/>
-        <TextBox Name="State" HorizontalAlignment="Left" Height="27" Margin="159,253,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="103"/>
-        <Label Content="Zip Code" HorizontalAlignment="Left" Margin="278,220,0,0" VerticalAlignment="Top" Width="84" Height="28"/>
-        <TextBox Name="Zip" HorizontalAlignment="Left" Height="27" Margin="278,253,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <ListView Name="VendorListView" HorizontalAlignment="Left" Height="200" Margin="31,314,0,0" VerticalAlignment="Top" Width="543" SelectionChanged="VendorListView_SelectionChanged">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding VendorName}" Width="100"/>
-                    <GridViewColumn Header="Phone" DisplayMemberBinding="{Binding VendorPhone}" Width="100"/>
-                    <GridViewColumn Header="Email" DisplayMemberBinding="{Binding VendorEmail}" Width="100"/>
-                    <GridViewColumn Header="Address" DisplayMemberBinding="{Binding StreetAddress}" Width="100"/>
-                    <GridViewColumn Header="Unit/Apt/Suite" DisplayMemberBinding="{Binding UnitAptSuite}" Width="150"/>
-                    <GridViewColumn Header="City" DisplayMemberBinding="{Binding City}" Width="100"/>
-                    <GridViewColumn Header="State" DisplayMemberBinding="{Binding State}" Width="100"/>
-                    <GridViewColumn Header="Zip" DisplayMemberBinding="{Binding ZipCode}" Width="150"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Button Name="SaveVendorButton" Content="Save" HorizontalAlignment="Left" Margin="471,253,0,0" VerticalAlignment="Top" Width="103" Height="27" Click="SaveVendorButton_Click"/>
-        <Button Content="Search" HorizontalAlignment="Left" Margin="471,169,0,0" VerticalAlignment="Top" Width="103" Height="21" Click="Button_Click"/>
+    <ScrollViewer>
+        <Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />   
+                <ColumnDefinition Width="10*" /> 
+                <ColumnDefinition Width="10*" /> 
+                <ColumnDefinition Width="10*" /> 
+                <ColumnDefinition Width="1*" /> 
+            </Grid.ColumnDefinitions>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />    
+                <RowDefinition Height="1*" />   
+                <RowDefinition Height="1*" />   
+                <RowDefinition Height="1*" />   
+                <RowDefinition Height="1*" />    
+                <RowDefinition Height="1*" />   
+                <RowDefinition Height="1*" />   
+                <RowDefinition Height="1*" />   
+                <RowDefinition Height="1*" />  
+            </Grid.RowDefinitions>
+            
+            <Label Content="Elegant Orchids Vendors" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
 
-    </Grid>
+            <Label Content="Name" Grid.Row="1" Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="101" Height="26"/>
+            <TextBox x:Name="VendorName" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Height="26" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MinWidth="180" Width="Auto" />
+
+            <Label Content="Phone" Grid.Row="1" Grid.Column="2" FontWeight="Bold"  HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="90" Height="26" RenderTransformOrigin="0.5,0.5"/>            
+            <TextBox x:Name="VendorPhone" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Height="26" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top"  MinWidth="180" Width="Auto"/>
+
+            <Label Content="Email" Grid.Row="1" Grid.Column="3" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Height="26" Width="73"/>
+            <TextBox Name="VendorEmail" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Height="26" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top"  MinWidth="180" Width="Auto"/>
+            
+            <Label Content="Address 1" Grid.Row="3" Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="54"/>
+            <TextBox Name="Address1" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Height="21" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top"  MinWidth="180" Width="Auto"  />
+            
+            <Label Content="Unit / Apt / Suite" Grid.Row="3" Grid.Column="2" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="103" Height="26"/>
+            <TextBox Name="Address2" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Left" Height="21" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top"  MinWidth="180" Width="Auto" />
+            
+            <Label Content="City" Grid.Row="3" Grid.Column="3" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="53" Height="26"/>
+            <TextBox Name="City" Grid.Row="4" Grid.Column="3" HorizontalAlignment="Left" Height="27" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top"   MinWidth="180" Width="Auto" />
+            
+            <Label Content="State" Grid.Row="5" Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Height="26" Width="54"/>
+            <TextBox Name="State" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" Height="27" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="103"/>
+            
+            <Label Content="Zip Code" Grid.Row="5" Grid.Column="2" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="84" Height="26"/>
+            <TextBox Name="Zip" Grid.Row="6" Grid.Column="2" HorizontalAlignment="Left" Height="27" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+          
+            <Button Content="Search" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="103" Height="21" Click="Button_Click"/>
+          
+            <Button Name="SaveVendorButton" Grid.Row="7" Grid.Column="3" Content="Save" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="103" Height="27" Click="SaveVendorButton_Click"/>
+            
+            <ListView Name="VendorListView" Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="200" Margin="10,10,10,10" VerticalAlignment="Top"  Width ="{Binding Path=ActualWidth, ElementName=PageGrid}" ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="VendorListView_SelectionChanged">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding VendorName}" Width="100"/>
+                        <GridViewColumn Header="Phone" DisplayMemberBinding="{Binding VendorPhone}" Width="100"/>
+                        <GridViewColumn Header="Email" DisplayMemberBinding="{Binding VendorEmail}" Width="100"/>
+                        <GridViewColumn Header="Address" DisplayMemberBinding="{Binding StreetAddress}" Width="100"/>
+                        <GridViewColumn Header="Unit/Apt/Suite" DisplayMemberBinding="{Binding UnitAptSuite}" Width="150"/>
+                        <GridViewColumn Header="City" DisplayMemberBinding="{Binding City}" Width="100"/>
+                        <GridViewColumn Header="State" DisplayMemberBinding="{Binding State}" Width="100"/>
+                        <GridViewColumn Header="Zip" DisplayMemberBinding="{Binding ZipCode}" Width="150"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </ScrollViewer>
 </Page>

@@ -8,31 +8,56 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ShipmentReportPage">
 
-    <Grid>
-        <Label Content="Elegant Orchids Shipment Reports" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="398" Height="41" FontFamily="Verdana" FontSize="20"/>
-        <Label Content="From" HorizontalAlignment="Left" Margin="42,56,0,0" VerticalAlignment="Top" Width="84" Height="29"/>
-        <Label Content="To" HorizontalAlignment="Left" Margin="215,56,0,0" VerticalAlignment="Top" Height="29" Width="51"/>
-        <DatePicker Name="FromDatePicker" HorizontalAlignment="Left" Margin="42,90,0,0" VerticalAlignment="Top" Width="117" Height="30"/>
-        <DatePicker Name="ToDatePicker" HorizontalAlignment="Left" Margin="215,90,0,0" VerticalAlignment="Top" Height="30"/>
-        <Button Content="Show Reports" HorizontalAlignment="Left" Margin="373,90,0,0" VerticalAlignment="Top" Width="79" Height="30" Click="Button_Click"/>
-        <ListView Name="ShipmentReportListView" HorizontalAlignment="Left" Height="153" Margin="42,145,0,0" VerticalAlignment="Top" Width="410" RenderTransformOrigin="0.488,0.273" SelectionChanged="ShipmentReportListView_SelectionChanged">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Shipment Date" DisplayMemberBinding="{Binding ShipmentDate}" Width="150"/>
-                    <GridViewColumn Header="Vendor" DisplayMemberBinding="{Binding VendorName}" Width="150"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ListView Name="ShipmentDetailListView" HorizontalAlignment="Left" Height="100" Margin="42,324,0,0" VerticalAlignment="Top" Width="410">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="150"/>
-                    <GridViewColumn Header="Quantity" DisplayMemberBinding="{Binding Quantity}" Width="150"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Label Content="Shipments" HorizontalAlignment="Left" Margin="42,120,0,0" VerticalAlignment="Top" Width="72" Height="25"/>
-        <Label Content="Detail" HorizontalAlignment="Left" Margin="42,298,0,0" VerticalAlignment="Top" Width="72" Height="26"/>
-
-    </Grid>
+    <ScrollViewer>
+        <Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+        
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+        
+            <Label Content="Elegant Orchids Shipment Reports" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20"/>
+            <Label Content="From" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top"  />
+            <Label Content="To" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" />
+            <DatePicker Name="FromDatePicker" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" />
+            <DatePicker Name="ToDatePicker" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" />
+            <Button Content="Show Reports" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Click="Button_Click"/>
+            
+            <Label Content="Shipments" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" />
+            
+            <ListView Name="ShipmentReportListView" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="155" Margin="10,10,10,10" VerticalAlignment="Top" MinWidth="410" SelectionChanged="ShipmentReportListView_SelectionChanged"  Width ="{Binding Path=ActualWidth, ElementName=PageGrid}" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Shipment Date" DisplayMemberBinding="{Binding ShipmentDate}" Width="150"/>
+                        <GridViewColumn Header="Vendor" DisplayMemberBinding="{Binding VendorName}" Width="150"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            
+            <Label Content="Detail"  Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="72" Height="26"/>
+            
+            <ListView Name="ShipmentDetailListView" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="150" Margin="10,10,10,10" VerticalAlignment="Top"  Width ="{Binding Path=ActualWidth, ElementName=PageGrid}" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="150"/>
+                        <GridViewColumn Header="Quantity" DisplayMemberBinding="{Binding Quantity}" Width="150"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </ScrollViewer>
 </Page>

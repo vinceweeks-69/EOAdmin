@@ -142,5 +142,35 @@ namespace WpfApp1
 
             }
         }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridView gView1 = ShipmentReportListView.View as GridView;
+            var workingWidth = PageGrid.ActualWidth - 80;   //SystemParameters.VerticalScrollBarWidth; // = 17 not the actual displayed width 
+
+            ShipmentReportListView.Width = workingWidth;
+            ShipmentDetailListView.Width = workingWidth;
+
+            var col1 = 0.50;
+            var col2 = 0.50;
+
+            gView1.Columns[0].Width = workingWidth * col1;
+            gView1.Columns[1].Width = workingWidth * col2;
+
+            GridView gView2 = ShipmentDetailListView.View as GridView;
+
+            col1 = 0.50;
+            col2 = 0.50;
+
+            gView2.Columns[0].Width = workingWidth * col1;
+            gView2.Columns[1].Width = workingWidth * col2;
+
+            var workingHeight = PageGrid.RowDefinitions.ElementAt(5).ActualHeight;
+            workingHeight += PageGrid.RowDefinitions.ElementAt(6).ActualHeight;
+            workingHeight += PageGrid.RowDefinitions.ElementAt(7).ActualHeight;
+
+            ShipmentReportListView.Height = workingHeight * 0.5;
+            ShipmentDetailListView.Height = workingHeight * 0.5;
+        }
     }
 }

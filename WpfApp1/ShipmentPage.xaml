@@ -4,44 +4,67 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp1"
-      Title="ShipmentPage" Height="513.793">
+      Title="ShipmentPage">
 
-    <Grid>
-        <Label Content="Elegant Orchids Shipments" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
-        <Label Content="Vendor" HorizontalAlignment="Left" Margin="43,95,0,0" VerticalAlignment="Top" Width="85"/>
-        <ComboBox Name="VendorComboBox" HorizontalAlignment="Left" Margin="43,143,0,0" VerticalAlignment="Top" Width="120"  DisplayMemberPath="Value"/>
-        <Label  Content="Shipment Date" HorizontalAlignment="Left" Margin="191,95,0,0" VerticalAlignment="Top"/>
-        <DatePicker Name="ShipmentDate" HorizontalAlignment="Left" Margin="191,143,0,0" VerticalAlignment="Top" Width="106"/>
-        <Label Content="Inventory" HorizontalAlignment="Left" Margin="321,95,0,0" VerticalAlignment="Top" Height="26" Width="116" RenderTransformOrigin="2.95,-3.292"/>
-        <ListView Name="ShipmentListView" HorizontalAlignment="Left" Height="244" Margin="46,245,0,0" VerticalAlignment="Top" Width="468">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="150"/>
-                    <GridViewColumn Header="Quantity" Width="60" >
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Path=Quantity, Mode=TwoWay}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Edit" Width="100">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Edit" CommandParameter="{Binding}" Width="90"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Delete" Width="100">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Delete" Click="OnDeleteShipmentInventory" CommandParameter="{Binding}" Width="90"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Button Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="321,143,0,0" VerticalAlignment="Top" Width="105" Click="SearchButton_Click" Height="22"/>
-        
-    </Grid>
+    <ScrollViewer>
+        <Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="8*" />
+                <ColumnDefinition Width="8*" />
+                <ColumnDefinition Width="8*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            
+            <Grid.RowDefinitions>
+                 <RowDefinition Height="1*" />
+                 <RowDefinition Height="1*" />
+                 <RowDefinition Height="1*" />
+                 <RowDefinition Height="1*" />
+                 <RowDefinition Height="2*" />                    
+                 <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            
+            <Label Content="Elegant Orchids Shipments" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20"/>
+            
+            <Label Content="Vendor" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="85"/>
+            <ComboBox  Name="VendorComboBox" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="120"  DisplayMemberPath="Value"/>
+            
+            <Label   Content="Shipment Date" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top"/>
+            <DatePicker Name="ShipmentDate"  Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="106"/>
+            
+            <Button Name="SearchButton" Grid.Row="2" Grid.Column =" 3" Content="Search" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="105" Click="SearchButton_Click" Height="22"/>
+            
+            <Label Content="Inventory" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Height="26" Width="116" />
+            
+            <ListView Name="ShipmentListView" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="244" Margin="10,10,10,10" VerticalAlignment="Top" MinWidth="468" Width ="{Binding Path=ActualWidth, ElementName=PageGrid}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="150"/>
+                        <GridViewColumn Header="Quantity" Width="60" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Path=Quantity, Mode=TwoWay}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Edit" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Edit" CommandParameter="{Binding}" Width="90"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Delete" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Delete" Click="OnDeleteShipmentInventory" CommandParameter="{Binding}" Width="90"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </ScrollViewer>
 </local:EOStackPage>
