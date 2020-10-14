@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ViewModels.ControllerModels;
 using ViewModels.DataModels;
 using WpfApp1.ViewModels;
 
@@ -21,9 +22,9 @@ namespace WpfApp1
     /// <summary>
     /// Interaction logic for InventoryFilter.xaml
     /// </summary>
-    public partial class InventoryFilter : Page
+    public partial class InventoryFilter : EOStackPage
     {
-        IEOBasePage page = null;
+        EOStackPage page = null;
 
         public InventoryFilter()
         {
@@ -32,7 +33,7 @@ namespace WpfApp1
             LoadProductTypes();
         }
 
-        public InventoryFilter(IEOBasePage page) : this()
+        public InventoryFilter(EOStackPage page) : this()
         {
             this.page = page;
         }
@@ -89,7 +90,7 @@ namespace WpfApp1
                 {
                     //load arrangementPage
                     MainWindow wnd = Application.Current.MainWindow as MainWindow;
-                    ArrangementPage arrangementPage = new ArrangementPage();
+                    ArrangementPage arrangementPage = new ArrangementPage(new AddArrangementRequest());
                     wnd.NavigationStack.Push(arrangementPage);
                     wnd.MainContent.Content = new Frame() { Content = arrangementPage };
                 }

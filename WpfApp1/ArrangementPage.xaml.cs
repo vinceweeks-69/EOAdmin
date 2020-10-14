@@ -27,7 +27,7 @@ namespace WpfApp1
     /// <summary>
     /// Interaction logic for ArrangementPage.xaml
     /// </summary>
-    public partial class ArrangementPage : IEOBasePage
+    public partial class ArrangementPage : EOStackPage
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
@@ -54,9 +54,27 @@ namespace WpfApp1
 
         PersonDTO Customer { get; set; }
 
-        public  ArrangementPage()
+        public  ArrangementPage(AddArrangementRequest arrangementRequest)
         {
             InitializeComponent();
+
+            currentArrangement = arrangementRequest;
+
+            ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
+            list1.Add(new KeyValuePair<long, string>(1, "Vicky"));
+            list1.Add(new KeyValuePair<long, string>(2, "Marguerita"));
+
+            Designer.ItemsSource = list1;
+
+            ObservableCollection<KeyValuePair<long, string>> list2 = new ObservableCollection<KeyValuePair<long, string>>();
+            list2.Add(new KeyValuePair<long, string>(0, "180"));
+            list2.Add(new KeyValuePair<long, string>(1, "360"));
+
+            Style.ItemsSource = list2;
+
+            containers.Add(new KeyValuePair<long, string>(1, "New container"));
+
+            Container.ItemsSource = containers;
 
             MainWindow wnd = Application.Current.MainWindow as MainWindow;
             if(wnd.PageIsOnStack(typeof(WorkOrderPage)))
@@ -66,50 +84,22 @@ namespace WpfApp1
                 if(wo != null)
                 {
                     currentArrangement.Arrangement.WorkOrderId = wo.CurrentWorkOrderId;
-                }
-            }
 
-            ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
-            list1.Add(new KeyValuePair<long, string>(1, "Vicky"));
-            list1.Add(new KeyValuePair<long, string>(2, "Marguerita"));
+                    Customer = wo.Customer;
 
-            Designer.ItemsSource = list1;
-
-            ObservableCollection<KeyValuePair<long, string>> list2 = new ObservableCollection<KeyValuePair<long, string>>();
-            list2.Add(new KeyValuePair<long, string>(1, "180"));
-            list2.Add(new KeyValuePair<long, string>(2, "360"));
-
-            Style.ItemsSource = list2;
-
-            containers.Add(new KeyValuePair<long, string>(1, "New container"));
-
-            Container.ItemsSource = containers;
-
-            EnableCustomerContainerSecondaryControls(false);
-
-            WorkOrderPage workOrder = (WorkOrderPage)wnd.GetPageFromStack(typeof(WorkOrderPage));
-
-            if(workOrder != null)
-            {
-                Customer = workOrder.Customer;
-
-                if(Customer != null && Customer.person_id != 0)
-                {
-                    LoadCustomerContainers(Customer.person_id);
+                    if (Customer != null && Customer.person_id != 0)
+                    {
+                        LoadCustomerContainers(Customer.person_id);
+                    }
                 }
             }
         }
 
-        public ArrangementPage(AddArrangementRequest arrangement) : this()
-        {
-            currentArrangement = arrangement;
-        }
-
-        private async void LoadCustomerContainers(long customer_id)
+        private async void LoadCustomerContainers(long customerId)
         {
             CustomerContainerRequest request = new CustomerContainerRequest();
             request.CustomerContainer.CustomerId = Customer.person_id;
-            ((App)App.Current).PostRequest<CustomerContainerRequest, CustomerContainerResponse>("GetCustomerContainers", request).ContinueWith(a => 
+            ((App)App.Current).PostRequest<CustomerContainerRequest, CustomerContainerResponse>("GetCustomerContainers", request).ContinueWith(a =>
             {
                 CustomerContainersLoaded(a.Result);
             });
@@ -117,14 +107,78 @@ namespace WpfApp1
 
         private void CustomerContainersLoaded(CustomerContainerResponse response)
         {
-            if(response.CustomerContainers.Count > 0)
+            Dispatcher.Invoke(() =>
             {
-                Dispatcher.Invoke(() =>
+                if (response.CustomerContainers.Count > 0)
                 {
+                    EnableCustomerContainerSecondaryControls(true);
+
                     containers.Add(new KeyValuePair<long, string>(2, "Customer container at EO"));
                     containers.Add(new KeyValuePair<long, string>(3, "Customer container at customer location"));
-                });
+
+                    if (currentArrangement.Arrangement.CustomerContainerId.HasValue)
+                    {
+                        customerContainers = response.CustomerContainers;
+                        SetComboBoxSelection(Container, currentArrangement.Arrangement.Container);
+
+                        if(customerContainers.Where(a => a.CustomerContainerId == currentArrangement.Arrangement.CustomerContainerId).Any())
+                        {
+                            CustomerContainer = customerContainers.Where(a => a.CustomerContainerId == currentArrangement.Arrangement.CustomerContainerId).First();
+                            CustomerContainerLabelEntry.Text = CustomerContainer.Label;
+                        }
+                    }
+                }
+                else
+                {
+                    EnableCustomerContainerSecondaryControls(false);
+                }
+
+                if(currentArrangement.Arrangement.ArrangementId > 0)
+                {
+                    LoadPageData();
+
+                    ReloadListData();
+                }
+
+                //set the handler last - selection change triggers a page load
+                Container.SelectionChanged += Container_SelectionChanged;
+            });
+        }
+
+        private void LoadPageData()
+        {
+            ArrangementName.Text = currentArrangement.Arrangement.ArrangementName;
+
+            SetComboBoxSelection(Designer, currentArrangement.Arrangement.DesignerName);
+
+            SetComboBoxSelection(Style, currentArrangement.Arrangement._180or360);
+
+            Location.Text = currentArrangement.Arrangement.LocationName;
+
+            CustomerContainerLabelEntry.Text = CustomerContainer != null && CustomerContainer.CustomerContainerId != 0 ? CustomerContainer.Label : String.Empty;
+
+            GiftCheckBox.IsChecked = currentArrangement.Arrangement.IsGift == 0 ? false : true;
+
+            GiftCheckBox_Clicked(GiftCheckBox, new RoutedEventArgs());
+
+            GiftMessage.Text = currentArrangement.Arrangement.GiftMessage;
+        }
+
+        private void ReloadListData()
+        {
+            ObservableCollection<WorkOrderViewModel> list4 = new ObservableCollection<WorkOrderViewModel>();
+
+            foreach (ArrangementInventoryItemDTO aiid in currentArrangement.ArrangementInventory)
+            {
+                list4.Add(new WorkOrderViewModel(aiid, 0));
             }
+
+            foreach (NotInInventoryDTO notIn in currentArrangement.NotInInventory)
+            {
+                list4.Add(new WorkOrderViewModel(notIn));
+            }
+
+            ArrangementInventoryListView.ItemsSource = list4;
         }
 
         private void EnableCustomerContainerSecondaryControls(bool shouldShow)
@@ -199,24 +253,6 @@ namespace WpfApp1
                 ReloadListData();
             }
         }
-
-        private void ReloadListData()
-        {
-            ObservableCollection<WorkOrderViewModel> list4 = new ObservableCollection<WorkOrderViewModel>();
-
-            foreach (ArrangementInventoryItemDTO aiid in currentArrangement.ArrangementInventory)
-            {
-                list4.Add(new WorkOrderViewModel(aiid, 0));
-            }
-
-            foreach (NotInInventoryDTO notIn in currentArrangement.NotInInventory)
-            {
-                list4.Add(new WorkOrderViewModel(notIn));
-            }
-
-            ArrangementInventoryListView.ItemsSource = list4;
-        }
-
         private List<KeyValuePair<long,string>> GetInventoryList()
         {
             List<KeyValuePair<long, string>> inventoryList = new List<KeyValuePair<long, string>>();
@@ -358,7 +394,7 @@ namespace WpfApp1
             if(wnd.PageIsOnStack(typeof(WorkOrderPage)))
             {
                 //save this arangement to the work order in progress
-                IEOBasePage workOrderPage = wnd.GetEOBasePage(typeof(WorkOrderPage));
+                IEOStackPage workOrderPage = wnd.GetEOStackPage(typeof(WorkOrderPage));
 
                 if(workOrderPage != null)
                 {
@@ -602,7 +638,7 @@ namespace WpfApp1
                 }
 
                 //save this arangement to the work order in progress
-                IEOBasePage workOrderPage = wnd.GetEOBasePage(typeof(WorkOrderPage));
+                IEOStackPage workOrderPage = wnd.GetEOStackPage(typeof(WorkOrderPage));
 
                 if (workOrderPage != null)
                 {
@@ -666,6 +702,50 @@ namespace WpfApp1
                     wnd.MainContent.Content = new Frame() { Content = customerContainerPage };
                 }
             }
+        }
+
+        public void SetComboBoxSelection(ComboBox cb, string value)
+        {
+            foreach (KeyValuePair<long, string> kvp in cb.ItemsSource as ObservableCollection<KeyValuePair<long, string>>)
+            {
+                if (kvp.Value == value)
+                {
+                    cb.SelectedItem = kvp;
+                }
+            }
+        }
+
+        public void SetComboBoxSelection(ComboBox cb, long key)
+        {
+            foreach (KeyValuePair<long, string> kvp in cb.ItemsSource as ObservableCollection<KeyValuePair<long, string>>)
+            {
+                if (kvp.Key == key)
+                {
+                    cb.SelectedItem = kvp;
+                }
+            }
+        }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridView gView = ArrangementInventoryListView.View as GridView;
+
+            var workingWidth = PageGrid.ActualWidth - 32;             // SystemParameters.VerticalScrollBarWidth; // take into account vertical scrollbar
+            ArrangementInventoryListView.Width = workingWidth;
+
+            var col1 = 0.50;
+            var col2 = 0.10;
+            var col3 = 0.20;
+            var col4 = 0.20;
+
+            gView.Columns[0].Width = workingWidth * col1;
+            gView.Columns[1].Width = workingWidth * col2;
+            gView.Columns[2].Width = workingWidth * col3;
+            gView.Columns[3].Width = workingWidth * col4;
+
+            var workingHeight = PageGrid.RowDefinitions.ElementAt(12).ActualHeight;
+
+            ArrangementInventoryListView.Height = workingHeight * 0.9;
         }
     }
 }

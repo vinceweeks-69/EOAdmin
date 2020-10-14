@@ -12,13 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ViewModels.ControllerModels;
 
 namespace WpfApp1
 {
     /// <summary>
     /// Interaction logic for DashboardPage.xaml
     /// </summary>
-    public partial class DashboardPage : Page
+    public partial class DashboardPage : EOBasePage
     {
         public DashboardPage()
         {
@@ -34,7 +35,7 @@ namespace WpfApp1
         private void ArrangementsButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
-            wnd.MainContent.Content = new Frame() { Content = new ArrangementPage() };
+            wnd.MainContent.Content = new Frame() { Content = new ArrangementPage(new AddArrangementRequest()) };
         }
 
         private void WorkOrdersButton_Click(object sender, RoutedEventArgs e)

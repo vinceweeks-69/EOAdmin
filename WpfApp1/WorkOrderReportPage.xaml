@@ -1,14 +1,15 @@
-﻿<Page x:Class="WpfApp1.WorkOrderReportPage"
+﻿<local:EOStackPage x:Class="WpfApp1.WorkOrderReportPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp1"
-      mc:Ignorable="d" d:DesignWidth="800"
-      Title="WorkOrderReportPage" Width="Auto" Height="Auto">
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="500"
+      Title="WorkOrderReportPage">
 
     <ScrollViewer>
-        <Grid>
+        <Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="10*" />
@@ -16,33 +17,33 @@
                 <ColumnDefinition Width="10*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            
+
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />   
-                <RowDefinition Height="1*" />     
-                <RowDefinition Height="1*" />  
-                <RowDefinition Height="1*" /> 
-                <RowDefinition Height="8*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="8*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            
+
             <Label Content="Elegant Orchids Work Order Reports" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontFamily="Verdana" FontSize="20"/>
             <Label Content="From" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
             <Label Content="To" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="Auto" Width="Auto" FontWeight="Bold"/>
             <DatePicker x:Name="FromDatePicker" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto"/>
             <DatePicker x:Name="ToDatePicker" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto"/>
             <Button Content="Show Reports" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" MinWidth="100" Width="Auto" Height="Auto" Click="Button_Click"/>
-            
+
             <Label Content="Work Orders" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
-            
-            <ListView x:Name="WorkOrderReportListView" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="200" MinWidth="600" Height="Auto" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" SelectionChanged="WorkOrderReportListView_SelectionChanged">
+
+            <ListView x:Name="WorkOrderReportListView" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="230" MinWidth="100" Height="Auto" Margin="10,10,0,0" VerticalAlignment="Top" Width ="{Binding Path=ActualWidth, ElementName=PageGrid}" SelectionChanged="WorkOrderReportListView_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.Resources>
-				    <Style TargetType="{x:Type GridViewColumnHeader}">
-					    <Setter Property="HorizontalContentAlignment" Value="Left" />
-				    </Style>
-			    </ListView.Resources>
+                    <Style TargetType="{x:Type GridViewColumnHeader}">
+                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                    </Style>
+                </ListView.Resources>
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Created Date" DisplayMemberBinding="{Binding WorkOrder.CreateDate}" Width="150"/>
@@ -63,23 +64,29 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            
-            <Label Content="Details" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
-            
-            <ListView Name="WorkOrderDetailListView" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="100" MinWidth="600" Height="Auto" Margin="10,10,10,10" VerticalAlignment="Top" Width="Auto">
+
+            <Label Content="Details" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+
+            <ListView Name="WorkOrderDetailListView" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="100" MinWidth="430" Height="90" Margin="10,10,0,0" VerticalAlignment="Top" Width ="{Binding Path=ActualWidth, ElementName=PageGrid}" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.Resources>
-				<Style TargetType="{x:Type GridViewColumnHeader}">
-					<Setter Property="HorizontalContentAlignment" Value="Left" />
-				</Style>
-			</ListView.Resources>
+                    <Style TargetType="{x:Type GridViewColumnHeader}">
+                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                    </Style>
+                </ListView.Resources>
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="250" />
-                        <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size}"  Width="175"/>
-                        <GridViewColumn Header="Quantity" DisplayMemberBinding="{Binding Quantity}"  Width="80"/>
+                        <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size}"  Width="125"/>
+                        <GridViewColumn Header="Quantity" Width="80">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Path=Quantity}" Visibility="{Binding ItemVisibility}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
         </Grid>
     </ScrollViewer>
-</Page>
+</local:EOStackPage>

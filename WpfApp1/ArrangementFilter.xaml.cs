@@ -33,7 +33,7 @@ namespace WpfApp1
         List<ContainerTypeDTO> containerTypes = new List<ContainerTypeDTO>();
         public List<ContainerInventoryDTO> containers = new List<ContainerInventoryDTO>();
 
-        public IEOBasePage basePage;
+        public IEOStackPage basePage;
         public MainWindow mainWnd { get; set; }
 
         public ArrangementFilter()
@@ -45,7 +45,7 @@ namespace WpfApp1
             mainWnd = (MainWindow)Application.Current.MainWindow;
         }
 
-        public ArrangementFilter(IEOBasePage page) : this()
+        public ArrangementFilter(EOStackPage page) : this()
         {
             basePage = page;
         }
@@ -62,7 +62,7 @@ namespace WpfApp1
             {
                 case "Arrangements":
                     MainWindow wnd = Application.Current.MainWindow as MainWindow;
-                    ArrangementPage arrangementPage = new ArrangementPage();
+                    ArrangementPage arrangementPage = new ArrangementPage(new AddArrangementRequest());
                     wnd.NavigationStack.Push(arrangementPage);
                     wnd.MainContent.Content = new Frame() { Content = arrangementPage };
                     this.Close();

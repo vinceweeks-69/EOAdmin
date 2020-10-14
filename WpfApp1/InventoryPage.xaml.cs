@@ -65,7 +65,7 @@ namespace WpfApp1
         {
             MainWindow wnd = Window.GetWindow(this) as MainWindow;
             //add event handlers for "Save"
-            wnd.MainContent.Content = new Frame() { Content = new ArrangementPage() };
+            wnd.MainContent.Content = new Frame() { Content = new ArrangementPage(new AddArrangementRequest()) };
         }
 
         private void VendorsButton_Click(object sender, RoutedEventArgs e)

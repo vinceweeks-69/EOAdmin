@@ -28,7 +28,7 @@ namespace WpfApp1
     /// <summary>
     /// Interaction logic for WorkOrderPage.xaml
     /// </summary>
-    public partial class WorkOrderPage : Page, IEOBasePage
+    public partial class WorkOrderPage : EOStackPage
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
@@ -38,7 +38,7 @@ namespace WpfApp1
 
         WorkOrderResponse currentWorkOrder = new WorkOrderResponse();
 
-        public long CurrentWorkOrderId { get { return currentWorkOrder.Id; } }
+        public long CurrentWorkOrderId { get { return currentWorkOrder.WorkOrder.WorkOrderId; } }
 
         public PersonDTO Customer { get; set; }
 
@@ -46,35 +46,35 @@ namespace WpfApp1
         {
             InitializeComponent();
 
-            ObservableCollection<KeyValuePair<int, string>> list0 = new ObservableCollection<KeyValuePair<int, string>>();
-            list0.Add(new KeyValuePair<int, string>(0, "Melissa"));
-            list0.Add(new KeyValuePair<int, string>(1, "Thom"));
-            list0.Add(new KeyValuePair<int, string>(2, "Roseanne"));
-            list0.Add(new KeyValuePair<int, string>(3, "Vicky"));
-            list0.Add(new KeyValuePair<int, string>(4, "Marguerita"));
+            ObservableCollection<KeyValuePair<long, string>> list0 = new ObservableCollection<KeyValuePair<long, string>>();
+            list0.Add(new KeyValuePair<long, string>(0, "Melissa"));
+            list0.Add(new KeyValuePair<long, string>(1, "Thom"));
+            list0.Add(new KeyValuePair<long, string>(2, "Roseanne"));
+            list0.Add(new KeyValuePair<long, string>(3, "Vicky"));
+            list0.Add(new KeyValuePair<long, string>(4, "Marguerita"));
 
             Seller.ItemsSource = list0;
 
-            ObservableCollection<KeyValuePair<int, string>> list1 = new ObservableCollection<KeyValuePair<int, string>>();
-            list1.Add(new KeyValuePair<int, string>(0, "Walk In"));
-            list1.Add(new KeyValuePair<int, string>(1, "Phone"));
-            list1.Add(new KeyValuePair<int, string>(2, "Email"));
+            ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
+            list1.Add(new KeyValuePair<long, string>(0, "Walk In"));
+            list1.Add(new KeyValuePair<long, string>(1, "Phone"));
+            list1.Add(new KeyValuePair<long, string>(2, "Email"));
 
             OrderType.ItemsSource = list1;
 
-            ObservableCollection<KeyValuePair<int, string>> list2 = new ObservableCollection<KeyValuePair<int, string>>();
-            list2.Add(new KeyValuePair<int, string>(1, "Pickup"));
-            list2.Add(new KeyValuePair<int, string>(2, "Delivery"));
-            list2.Add(new KeyValuePair<int, string>(3, "Site Service"));
+            ObservableCollection<KeyValuePair<long, string>> list2 = new ObservableCollection<KeyValuePair<long, string>>();
+            list2.Add(new KeyValuePair<long, string>(1, "Pickup"));
+            list2.Add(new KeyValuePair<long, string>(2, "Delivery"));
+            list2.Add(new KeyValuePair<long, string>(3, "Site Service"));
 
             DeliveryType.ItemsSource = list2;
             DeliveryType.SelectionChanged += DeliveryType_SelectionChanged;
 
-            ObservableCollection<KeyValuePair<int, string>> list3 = new ObservableCollection<KeyValuePair<int, string>>();
-            list3.Add(new KeyValuePair<int, string>(1, "Melissa"));
-            list3.Add(new KeyValuePair<int, string>(2, "Thom"));
-            list3.Add(new KeyValuePair<int, string>(3, "Danny"));
-            list3.Add(new KeyValuePair<int, string>(3, "Robert"));
+            ObservableCollection<KeyValuePair<long, string>> list3 = new ObservableCollection<KeyValuePair<long, string>>();
+            list3.Add(new KeyValuePair<long, string>(1, "Melissa"));
+            list3.Add(new KeyValuePair<long, string>(2, "Thom"));
+            list3.Add(new KeyValuePair<long, string>(3, "Danny"));
+            list3.Add(new KeyValuePair<long, string>(3, "Robert"));
 
             DeliveryPerson.ItemsSource = list3;
             DeliveryPerson.SelectionChanged += DeliveryPerson_SelectionChanged;
@@ -85,10 +85,10 @@ namespace WpfApp1
             DeliveryDate.Visibility = Visibility.Hidden;
             DeliveryDateLabel.Visibility = Visibility.Hidden;
 
-            ObservableCollection<KeyValuePair<int, string>> list4 = new ObservableCollection<KeyValuePair<int, string>>();
-            list4.Add(new KeyValuePair<int, string>(1, "Pick one"));
-            list4.Add(new KeyValuePair<int, string>(2, "Choose existing"));
-            list4.Add(new KeyValuePair<int, string>(3, "Create new"));
+            ObservableCollection<KeyValuePair<long, string>> list4 = new ObservableCollection<KeyValuePair<long, string>>();
+            list4.Add(new KeyValuePair<long, string>(1, "Pick one"));
+            list4.Add(new KeyValuePair<long, string>(2, "Choose existing"));
+            list4.Add(new KeyValuePair<long, string>(3, "Create new"));
 
             PickOrCreateBuyer.ItemsSource = list4;
             PickOrCreateBuyer.SelectionChanged += PickOrCreateBuyer_SelectionChanged;
@@ -104,9 +104,32 @@ namespace WpfApp1
             currentWorkOrder = workOrderResponse;
             arrangementList = workOrderResponse.ArrangementRequestList();
 
-            LoadPageData();
+            LoadCustomer();    
+        }
 
-            ReloadItemList();
+        async void LoadCustomer()
+        {
+            if (currentWorkOrder.WorkOrder.CustomerId != 0)
+            {
+                GetPersonRequest personRequest = new GetPersonRequest();
+                personRequest.PersonId = currentWorkOrder.WorkOrder.CustomerId;
+                ((App)App.Current).PostRequest<GetPersonRequest, GetPersonResponse>("GetPerson", personRequest).ContinueWith(a => CustomerLoaded(a.Result));
+            }
+        }
+
+        void CustomerLoaded(GetPersonResponse personResponse)
+        {
+            Dispatcher.Invoke(() =>
+           {
+               if (personResponse.PersonAndAddress.Count == 1)
+               {
+                   Customer = personResponse.PersonAndAddress.First().Person;
+               }
+
+               LoadPageData();
+
+               ReloadItemList();
+           });
         }
 
         private void DeliveryType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -278,7 +301,18 @@ namespace WpfApp1
 
         void LoadPageData()
         {
+            
             //set page form values from currentArrangement
+            SetComboBoxSelection(Seller, currentWorkOrder.WorkOrder.Seller);
+            Buyer.Text = currentWorkOrder.WorkOrder.Buyer;
+            CommentsTextBox.Text = currentWorkOrder.WorkOrder.Comments;
+            SetComboBoxSelection(OrderType, currentWorkOrder.WorkOrder.OrderType);
+            SetComboBoxSelection(DeliveryType, currentWorkOrder.WorkOrder.DeliveryType);
+            SetComboBoxSelection(DeliveryPerson, currentWorkOrder.WorkOrder.DeliveredBy);
+            WorkOrderDate.SelectedDate = currentWorkOrder.WorkOrder.CreateDate.Date;
+            DeliveryDate.SelectedDate = currentWorkOrder.WorkOrder.DeliveryDate.Date;
+            PickupDate.SelectedDate = currentWorkOrder.WorkOrder.DeliveryDate.Date;
+
         }
         void ReloadItemList()
         {
@@ -521,6 +555,47 @@ namespace WpfApp1
             filter.InventoryTypeCombo.ItemsSource = list1;
 
             filter.ShowDialog();
+        }
+
+        private void EditWorkOrderItem_Click(object sender, RoutedEventArgs e)
+        {
+            Button b = sender as Button;
+
+            if(b != null)
+            {
+                WorkOrderViewModel vm = (WorkOrderViewModel)b.CommandParameter;
+
+                if(vm != null)
+                {
+                    if (arrangementList.Where(a => a.Arrangement.ArrangementId == vm.GroupId).Any())
+                    {
+                        AddArrangementRequest aar = arrangementList.Where(a => a.Arrangement.ArrangementId == vm.GroupId).First();
+
+                        MainWindow wnd = Application.Current.MainWindow as MainWindow;
+                        ArrangementPage arrangementPage = new ArrangementPage(aar);
+                        wnd.NavigationStack.Push(arrangementPage);
+                        wnd.MainContent.Content = new Frame() { Content = arrangementPage };
+                    }
+                }
+            }
+        }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridView gView = WorkOrderInventoryListView.View as GridView;
+
+            var workingWidth = PageGrid.ActualWidth - 80;   //SystemParameters.VerticalScrollBarWidth; // take into account vertical scrollbar
+            WorkOrderInventoryListView.Width = workingWidth;
+
+            var col1 = 0.50;
+            var col2 = 0.20;
+            var col3 = 0.15;
+            var col4 = 0.15;
+
+            gView.Columns[0].Width = workingWidth * col1;
+            gView.Columns[1].Width = workingWidth * col2;
+            gView.Columns[2].Width = workingWidth * col3;
+            gView.Columns[3].Width = workingWidth * col4;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace WpfApp1
     /// </summary>
     public partial class PersonFilter : Window
     {
-        IEOBasePage basePage;
+        EOStackPage basePage;
         public MainWindow mainWnd { get; set; }
         public CustomerPage customerParentWnd { get; set; }
         public VendorPage vendorParentWnd { get; set; }
@@ -34,7 +34,7 @@ namespace WpfApp1
             InitializeComponent();
         }
 
-        public PersonFilter(IEOBasePage page) : this()
+        public PersonFilter(EOStackPage page) : this()
         {
             basePage = page;
         }

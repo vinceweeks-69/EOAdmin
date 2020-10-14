@@ -22,9 +22,9 @@ namespace WpfApp1
     /// <summary>
     /// Interaction logic for CustomerContainerPage.xaml
     /// </summary>
-    public partial class CustomerContainerPage : Page
+    public  partial class CustomerContainerPage : EOStackPage
     {
-        IEOBasePage basePage;
+        EOStackPage basePage;
 
         PersonDTO Customer { get; set; }
 
@@ -43,7 +43,7 @@ namespace WpfApp1
             LoadCustomerContainers();
         }
 
-        public CustomerContainerPage(IEOBasePage page, PersonDTO customer) : this(customer)
+        public CustomerContainerPage(EOStackPage page, PersonDTO customer) : this(customer)
         {
             basePage = page;
         }
@@ -122,6 +122,11 @@ namespace WpfApp1
                     Label.Text = sel.Label;
                 }
             }
+        }
+
+        public void LoadWorkOrderData(WorkOrderMessage msg)
+        {
+
         }
     }
 }

@@ -27,7 +27,7 @@ namespace WpfApp1
     /// <summary>
     /// Interaction logic for ShipmentPage.xaml
     /// </summary>
-    public partial class ShipmentPage : Page, IEOBasePage
+    public partial class ShipmentPage : EOStackPage
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 

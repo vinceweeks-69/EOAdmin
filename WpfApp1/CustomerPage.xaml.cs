@@ -28,7 +28,7 @@ namespace WpfApp1
     /// <summary>
     /// Interaction logic for CustomerPage.xaml
     /// </summary>
-    public partial class CustomerPage : Page, IEOBasePage
+    public partial class CustomerPage : EOStackPage
     {
         Dictionary<int, string> columnIndicesAndNames = new Dictionary<int, string>();
 
@@ -38,7 +38,7 @@ namespace WpfApp1
 
         ObservableCollection<PersonDTO> list1 = new ObservableCollection<PersonDTO>();
 
-        IEOBasePage basePage;
+        EOStackPage basePage;
 
         public CustomerPage()
         {
@@ -67,7 +67,7 @@ namespace WpfApp1
             CustomerListView.ItemsSource = list1;
         }
 
-        public CustomerPage(IEOBasePage page) : this()
+        public CustomerPage(EOStackPage page) : this()
         {
             basePage = page;
         }

@@ -33,7 +33,7 @@ namespace WpfApp1
         public string User { get; private set; }
         public string Pwd { get; private set; }
 
-        public Stack<Page> NavigationStack = new Stack<Page>();
+        public Stack<EOBasePage> NavigationStack = new Stack<EOBasePage>();
         public WorkOrderMessage WorkOrderMessage { get; set; }
 
         public MainWindow()
@@ -74,7 +74,7 @@ namespace WpfApp1
             return pageIsOnStack;
         }
 
-        public Page GetPageFromStack(Type pageType) 
+        public EOBasePage GetPageFromStack(Type pageType) 
         {
             if(PageIsOnStack(pageType))
             {
@@ -84,13 +84,13 @@ namespace WpfApp1
             return null;
         }
 
-        public IEOBasePage GetEOBasePage(Type page )
+        public IEOStackPage GetEOStackPage(Type page )
         {
-            IEOBasePage basePage = null;
+            IEOStackPage basePage = null;
 
             if(PageIsOnStack(page))
             {
-                basePage = (IEOBasePage)NavigationStack.Where(a => a.GetType() == page).First();
+                basePage = (IEOStackPage)NavigationStack.Where(a => a.GetType() == page).First();
             }
 
             return basePage;
@@ -210,15 +210,14 @@ namespace WpfApp1
             //currently the nav stack is only used in "Create / Edit Work Order" mode
             if(NavigationStack.Count > 0)
             {
-                //if(NavigationStack.Count == 2)
+                NavigationStack.Pop();
+
+                if (NavigationStack.Count > 0)
                 {
-                    //pop the product page
-                    NavigationStack.Pop();
+                    Page p = NavigationStack.ElementAt(0);
+
+                    this.MainContent.Content = new Frame() { Content = p };
                 }
-
-                Page p = NavigationStack.ElementAt(0);
-
-                this.MainContent.Content = new Frame() { Content = p};
             }
             else if(currentPage is InventoryPage || currentPage is ArrangementPage || currentPage is WorkOrderPage 
                 || currentPage is VendorPage || currentPage is ShipmentPage || currentPage is ReportsPage 

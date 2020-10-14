@@ -28,7 +28,7 @@ namespace WpfApp1
     /// <summary>
     /// Interaction logic for WorkOrderReportPage.xaml
     /// </summary>
-    public partial class WorkOrderReportPage : Page
+    public partial class WorkOrderReportPage : EOStackPage
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
@@ -39,12 +39,11 @@ namespace WpfApp1
         public WorkOrderReportPage()
         {
             InitializeComponent();
-
+            
             MainWindow mainWnd = Application.Current.MainWindow as MainWindow;
 
             inventory = mainWnd.GetInventoryByType(0);
         }
-               
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -206,6 +205,40 @@ namespace WpfApp1
                     wnd.MainContent.Content = new Frame() { Content = workOrderPage };
                 }
             }
+        }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridView gView1 = WorkOrderReportListView.View as GridView;
+            var workingWidth = PageGrid.ActualWidth - 80;   //SystemParameters.VerticalScrollBarWidth; // = 17 not the actual displayed width 
+
+            WorkOrderReportListView.Width = workingWidth;
+            WorkOrderDetailListView.Width = workingWidth;
+
+            var col1 = 0.33;
+            var col2 = 0.33;
+            var col3 = 0.33;
+
+            gView1.Columns[0].Width = workingWidth * col1;
+            gView1.Columns[1].Width = workingWidth * col2;
+            gView1.Columns[2].Width = workingWidth * col3;
+
+            GridView gView2 = WorkOrderDetailListView.View as GridView;
+
+            col1 = 0.50;
+            col2 = 0.40;
+            col3 = 0.10;
+
+            gView2.Columns[0].Width = workingWidth * col1;
+            gView2.Columns[1].Width = workingWidth * col2;
+            gView2.Columns[2].Width = workingWidth * col3;
+
+            var workingHeight = PageGrid.RowDefinitions.ElementAt(4).ActualHeight;
+            workingHeight += PageGrid.RowDefinitions.ElementAt(5).ActualHeight;
+            workingHeight += PageGrid.RowDefinitions.ElementAt(6).ActualHeight;
+
+            WorkOrderReportListView.Height = workingHeight * 0.5;
+            WorkOrderDetailListView.Height = workingHeight * 0.3;
         }
     }
 }

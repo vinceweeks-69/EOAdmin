@@ -7,7 +7,7 @@
       mc:Ignorable="d"
       Title="ButtonPage" Height="Auto" Width="Auto">
 
-    <Grid Margin="10,10,0,0">
+    <Grid Margin="10,10,0,0" MinHeight="40">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="8*" />
@@ -15,9 +15,9 @@
             <ColumnDefinition Width="8*" />
         </Grid.ColumnDefinitions>
         
-        <Button Name="BackBtn" Grid.Column="1" Content="Back" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" MinWidth="80" Width="Auto" Height="20" Click="BackBtn_Click"/>
-        <Button Name="SaveBtn" Grid.Column="2" Content="Save" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" MinWidth="80" Width="Auto" Height="20" Click="SaveBtn_Click"/>
-        <Button Name="CancelBtn" Grid.Column="3" Content="Cancel" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" MinWidth="80" Width="Auto" Height="20" RenderTransformOrigin="-0.977,0.423"/>
+        <Button Name="BackBtn" Grid.Column="1" Content="Back" HorizontalAlignment="Left" Margin="2,10,10,10" VerticalAlignment="Top" MinWidth="80" Width="Auto" Height="20" Click="BackBtn_Click"/>
+        <Button Name="SaveBtn" Grid.Column="2" Content="Save" HorizontalAlignment="Left" Margin="2,10,10,10" VerticalAlignment="Top" MinWidth="80" Width="Auto" Height="20" Click="SaveBtn_Click"/>
+        <Button Name="CancelBtn" Grid.Column="3" Content="Cancel" HorizontalAlignment="Left" Margin="2,10,10,10" VerticalAlignment="Top" MinWidth="80" Width="Auto" Height="20" RenderTransformOrigin="-0.977,0.423"/>
 
     </Grid>
 </Page>
