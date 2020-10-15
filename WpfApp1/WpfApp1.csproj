@@ -184,6 +184,8 @@
     </Compile>
     <Compile Include="ViewModels\EOPageBase.cs" />
     <Compile Include="ViewModels\WorkOrderEventArgs.cs" />
+    <Compile Include="ViewModels\WorkOrderInventoryItemDTO_Wpf.cs" />
+    <Compile Include="ViewModels\WorkOrderInventoryMapDTO_Wpf.cs" />
     <Compile Include="ViewModels\WorkOrderMessage.cs" />
     <Compile Include="ViewModels\WorkOrderViewModel.cs" />
     <Compile Include="WorkOrderPage.xaml.cs">
