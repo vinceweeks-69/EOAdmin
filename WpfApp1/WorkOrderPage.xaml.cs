@@ -61,6 +61,7 @@ namespace WpfApp1
             list1.Add(new KeyValuePair<long, string>(2, "Email"));
 
             OrderType.ItemsSource = list1;
+            OrderType.SelectedIndex = 0;
 
             ObservableCollection<KeyValuePair<long, string>> list2 = new ObservableCollection<KeyValuePair<long, string>>();
             list2.Add(new KeyValuePair<long, string>(1, "Pickup"));
@@ -69,12 +70,16 @@ namespace WpfApp1
 
             DeliveryType.ItemsSource = list2;
             DeliveryType.SelectionChanged += DeliveryType_SelectionChanged;
+            DeliveryType.SelectedIndex = 0;
 
             ObservableCollection<KeyValuePair<long, string>> list3 = new ObservableCollection<KeyValuePair<long, string>>();
             list3.Add(new KeyValuePair<long, string>(1, "Melissa"));
             list3.Add(new KeyValuePair<long, string>(2, "Thom"));
             list3.Add(new KeyValuePair<long, string>(3, "Danny"));
             list3.Add(new KeyValuePair<long, string>(3, "Robert"));
+
+            WorkOrderDate.SelectedDate = DateTime.Today;
+            PickupDate.SelectedDate = DateTime.Today;
 
             DeliveryPerson.ItemsSource = list3;
             DeliveryPerson.SelectionChanged += DeliveryPerson_SelectionChanged;
@@ -97,12 +102,26 @@ namespace WpfApp1
             {
                 PayButton.IsEnabled = false;  
             }
+            else
+            {
+                if(currentWorkOrder.WorkOrder.Paid)
+                {
+                    PayButton.IsEnabled = false;
+                    SaveButton.IsEnabled = false;
+                }
+            }
         }
 
         public WorkOrderPage(WorkOrderResponse workOrderResponse) : this()
         {
             currentWorkOrder = workOrderResponse;
             arrangementList = workOrderResponse.ArrangementRequestList();
+
+            if(currentWorkOrder.WorkOrder.Paid)
+            {
+                PayButton.IsEnabled = false;
+                SaveButton.IsEnabled = false;
+            }
 
             LoadCustomer();    
         }
@@ -203,7 +222,7 @@ namespace WpfApp1
                 }
             }
         }
-        public void LoadWorkOrderData(WorkOrderMessage msg)
+        public override void LoadWorkOrderData(WorkOrderMessage msg)
         {
             if(msg.HasMessage())
             {
@@ -227,6 +246,12 @@ namespace WpfApp1
                     (msg.Arrangement.ArrangementInventory.Count > 0 || msg.Arrangement.NotInInventory.Count > 0))
                 {
                     ProcessArrangementData(msg);  
+                }
+
+                if(msg.WorkOrderPaid.HasValue)
+                {
+                    PayButton.IsEnabled = false;
+                    SaveButton.IsEnabled = false;
                 }
 
                 ReloadItemList();
@@ -378,19 +403,19 @@ namespace WpfApp1
                 currentWorkOrder.WorkOrder.CreateDate = DateTime.Now;
                 currentWorkOrder.WorkOrder.Comments = CommentsTextBox.Text;
                 
-                if(Customer.person_id != 0)
+                if(Customer != null && Customer.person_id != 0)
                 {
                     currentWorkOrder.WorkOrder.CustomerId = Customer.person_id;
                 }
 
-                currentWorkOrder.WorkOrder.OrderType = OrderType.SelectedItem != null ? ((KeyValuePair<int, string>)OrderType.SelectedItem).Key : 1;
-                currentWorkOrder.WorkOrder.DeliveryType = DeliveryType.SelectedItem != null ? ((KeyValuePair<int, string>)DeliveryType.SelectedItem).Key : 1;
+                currentWorkOrder.WorkOrder.OrderType = Convert.ToInt32(OrderType.SelectedItem != null ? ((KeyValuePair<long, string>)OrderType.SelectedItem).Key : 1);
+                currentWorkOrder.WorkOrder.DeliveryType = Convert.ToInt32(DeliveryType.SelectedItem != null ? ((KeyValuePair<long, string>)DeliveryType.SelectedItem).Key : 1);
                 if(currentWorkOrder.WorkOrder.DeliveryType > 1)
                 {
                     currentWorkOrder.WorkOrder.IsDelivery = true;
                 }
 
-                currentWorkOrder.WorkOrder.DeliveredBy = DeliveryPerson.SelectedItem != null ? ((KeyValuePair<int, string>)DeliveryPerson.SelectedItem).Value : String.Empty;
+                currentWorkOrder.WorkOrder.DeliveredBy = DeliveryPerson.SelectedItem != null ? ((KeyValuePair<long, string>)DeliveryPerson.SelectedItem).Value : String.Empty;
                 currentWorkOrder.WorkOrder.DeliveryDate = DeliveryDate.SelectedDate.HasValue ? DeliveryDate.SelectedDate.Value : DateTime.MinValue;
                 if (!currentWorkOrder.WorkOrder.IsDelivery)
                 {
@@ -410,8 +435,9 @@ namespace WpfApp1
                 }
                 else
                 {
-                    //clear form?
                     MessageBox.Show("Work Order saved");
+                    currentWorkOrder.WorkOrder.WorkOrderId = response.Id;
+                    PayButton.IsEnabled = true;
                 }
             }
             catch (Exception ex)
@@ -420,39 +446,24 @@ namespace WpfApp1
             }
         }
 
-        public GetWorkOrderSalesDetailResponse GetWorkOrderDetail()
+        public async Task<GetWorkOrderSalesDetailResponse> GetWorkOrderDetail()
         {
-            GetWorkOrderSalesDetailResponse response = new GetWorkOrderSalesDetailResponse();
+             
+            WorkOrderResponse request = new WorkOrderResponse();
+            request.WorkOrderList = currentWorkOrder.WorkOrderList;
+            request.NotInInventory = currentWorkOrder.NotInInventory;
+            List<GetArrangementResponse> arrangementResponseList = new List<GetArrangementResponse>();
+            foreach(AddArrangementRequest aar in arrangementList)
+            {
+                GetArrangementResponse getArrangement = new GetArrangementResponse();
+                getArrangement.ArrangementList = aar.ArrangementInventory;
+                getArrangement.NotInInventory = aar.NotInInventory;
+                arrangementResponseList.Add(getArrangement);
+            }
 
-            //try
-            //{
-            //    HttpClient client = new HttpClient();
-            //    client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Arrangements = arrangementResponseList;
 
-            //    client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
-
-            //    string jsonData = JsonConvert.SerializeObject(new GetWorkOrderSalesDetailRequest(workOrderInventoryList,0,0));
-            //    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-            //    HttpResponseMessage httpResponse = client.PostAsync("api/Login/GetWorkOrderDetail", content).Result;
-
-            //    if (httpResponse.IsSuccessStatusCode)
-            //    {
-            //        Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
-            //        StreamReader strReader = new StreamReader(streamData);
-            //        string strData = strReader.ReadToEnd();
-            //        strReader.Close();
-            //        response = JsonConvert.DeserializeObject<GetWorkOrderSalesDetailResponse>(strData);
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show("There was an error retreiving work order sales detail");
-            //    }
-            //}
-            //catch(Exception ex)
-            //{
-
-            //}
+            GetWorkOrderSalesDetailResponse response = await ((App)App.Current).PostRequest<WorkOrderResponse, GetWorkOrderSalesDetailResponse>("GetWorkOrderDetail", request);
 
             return response;
         }
@@ -587,15 +598,41 @@ namespace WpfApp1
             var workingWidth = PageGrid.ActualWidth - 80;   //SystemParameters.VerticalScrollBarWidth; // take into account vertical scrollbar
             WorkOrderInventoryListView.Width = workingWidth;
 
-            var col1 = 0.50;
-            var col2 = 0.20;
+            var col1 = 0.40;
+            var col2 = 0.15;
             var col3 = 0.15;
             var col4 = 0.15;
+            var col5 = 0.15;
 
             gView.Columns[0].Width = workingWidth * col1;
             gView.Columns[1].Width = workingWidth * col2;
             gView.Columns[2].Width = workingWidth * col3;
             gView.Columns[3].Width = workingWidth * col4;
+            gView.Columns[4].Width = workingWidth * col5;
+        }
+
+        private void PayButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
+
+            WorkOrderResponse wor = new WorkOrderResponse();
+            wor.WorkOrder = currentWorkOrder.WorkOrder;
+            wor.WorkOrderList = currentWorkOrder.WorkOrderList;
+            wor.NotInInventory = currentWorkOrder.NotInInventory;
+            List<GetArrangementResponse> arrangementResponseList = new List<GetArrangementResponse>();
+            foreach (AddArrangementRequest aar in arrangementList)
+            {
+                GetArrangementResponse getArrangement = new GetArrangementResponse();
+                getArrangement.ArrangementList = aar.ArrangementInventory;
+                getArrangement.NotInInventory = aar.NotInInventory;
+                arrangementResponseList.Add(getArrangement);
+            }
+
+            wor.Arrangements = arrangementResponseList;
+
+            PaymentPage paymentPage = new PaymentPage(wor, Customer);
+            wnd.NavigationStack.Push(paymentPage);
+            wnd.MainContent.Content = new Frame() { Content = paymentPage };
         }
     }
 }

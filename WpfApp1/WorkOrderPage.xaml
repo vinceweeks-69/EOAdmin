@@ -67,7 +67,7 @@
             <Button Name="SaveButton" Content="Save" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top" Width="80" Click="SaveButton_Click"/>
             <Button Content="Clear" Grid.Row="9" Grid.Column="2" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
             <Button Content="Camera" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
-            <Button Name="PayButton"  Content="Pay" Grid.Row="9" Grid.Column="4" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
+            <Button Name="PayButton"  Content="Pay" Grid.Row="9" Grid.Column="4" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" Click="PayButton_Click" />
 
             <ListView Name="WorkOrderInventoryListView" Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" MinHeight="200" Height="Auto"  Margin="10,10,10,10" VerticalAlignment="Top" Width ="{Binding Path=ActualWidth, ElementName=PageGrid}"  ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.Resources>
@@ -78,7 +78,7 @@
                 
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="250"/>
+                        <GridViewColumn Header="Inventory Name" DisplayMemberBinding="{Binding InventoryName}" Width="200"/>
                         <GridViewColumn Header="Quantity" Width="60" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -86,24 +86,24 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Edit" Width="100">
+                        <GridViewColumn Header="Edit" Width="80">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Name="EditWorkOrderItem" Content="Edit" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldShow}" Click="EditWorkOrderItem_Click" MinWidth="80"/>
+                                    <Button Name="EditWorkOrderItem" Content="Edit" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldShow}" Click="EditWorkOrderItem_Click" MinWidth="60"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Delete" Width="100">
+                        <GridViewColumn Header="Delete" Width="80">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Delete" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldShow}" Click="DeleteButton_Click" MinWidth="80" />
+                                    <Button Content="Delete" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldShow}" Click="DeleteButton_Click" MinWidth="60" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Add" Width="100">
+                        <GridViewColumn Header="Add" Width="80">
                               <GridViewColumn.HeaderTemplate>
                                 <DataTemplate>
-                                    <Button Name="AddProductToWorkOrder" Content="Add" Click="AddProductToWorkOrder_Click"  MinWidth="40"/>
+                                    <Button Name="AddProductToWorkOrder" Content="Add" Click="AddProductToWorkOrder_Click"  MinWidth="60"/>
                                 </DataTemplate>
                             </GridViewColumn.HeaderTemplate>
                             

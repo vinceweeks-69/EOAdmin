@@ -74,7 +74,7 @@ namespace WpfApp1
         }
 
 
-        public void LoadWorkOrderData(WorkOrderMessage msg)
+        public override void LoadWorkOrderData(WorkOrderMessage msg)
         {
 
         }

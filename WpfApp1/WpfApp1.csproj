@@ -164,6 +164,9 @@
     <Compile Include="MaterialsPage.xaml.cs">
       <DependentUpon>MaterialsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PaymentPage.xaml.cs">
+      <DependentUpon>PaymentPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PersonFilter.xaml.cs">
       <DependentUpon>PersonFilter.xaml</DependentUpon>
     </Compile>
@@ -263,6 +266,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="MaterialsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PaymentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

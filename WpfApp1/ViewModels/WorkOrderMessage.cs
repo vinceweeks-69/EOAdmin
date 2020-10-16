@@ -19,6 +19,8 @@ namespace WpfApp1.ViewModels
             CustomerContainer = new CustomerContainerDTO();
         }
 
+        public bool? WorkOrderPaid { get; set; }
+
         public PersonDTO Person { get; set; }
 
         public WorkOrderInventoryMapDTO Inventory { get; set; }
@@ -33,7 +35,7 @@ namespace WpfApp1.ViewModels
         {
             bool hasMessage = false;
 
-            if(Person.person_id != 0 || Inventory.InventoryId != 0 || !String.IsNullOrEmpty(NotInInventory.NotInInventoryName) || Arrangement.ArrangementInventory.Count > 0 || Arrangement.NotInInventory.Count > 0 || CustomerContainer.CustomerContainerId > 0)
+            if(WorkOrderPaid.HasValue || Person.person_id != 0 || Inventory.InventoryId != 0 || !String.IsNullOrEmpty(NotInInventory.NotInInventoryName) || Arrangement.ArrangementInventory.Count > 0 || Arrangement.NotInInventory.Count > 0 || CustomerContainer.CustomerContainerId > 0)
             {
                 hasMessage = true;
             }

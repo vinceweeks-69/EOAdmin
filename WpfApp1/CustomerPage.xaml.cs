@@ -72,7 +72,7 @@ namespace WpfApp1
             basePage = page;
         }
 
-        public void LoadWorkOrderData(WorkOrderMessage msg)
+        public override void LoadWorkOrderData(WorkOrderMessage msg)
         {
             int debug = 1;
         }

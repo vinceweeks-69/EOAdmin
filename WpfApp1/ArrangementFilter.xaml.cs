@@ -33,7 +33,7 @@ namespace WpfApp1
         List<ContainerTypeDTO> containerTypes = new List<ContainerTypeDTO>();
         public List<ContainerInventoryDTO> containers = new List<ContainerInventoryDTO>();
 
-        public IEOStackPage basePage;
+        public EOStackPage basePage;
         public MainWindow mainWnd { get; set; }
 
         public ArrangementFilter()

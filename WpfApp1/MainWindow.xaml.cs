@@ -84,13 +84,13 @@ namespace WpfApp1
             return null;
         }
 
-        public IEOStackPage GetEOStackPage(Type page )
+        public EOStackPage GetEOStackPage(Type page )
         {
-            IEOStackPage basePage = null;
+            EOStackPage basePage = null;
 
             if(PageIsOnStack(page))
             {
-                basePage = (IEOStackPage)NavigationStack.Where(a => a.GetType() == page).First();
+                basePage = (EOStackPage)NavigationStack.Where(a => a.GetType() == page).First();
             }
 
             return basePage;

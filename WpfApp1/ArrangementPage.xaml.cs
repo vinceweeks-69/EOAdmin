@@ -199,7 +199,7 @@ namespace WpfApp1
         /// Add data from a subordinate page to this arrangement
         /// </summary>
         /// <param name="msg"></param>
-        public void LoadWorkOrderData(WorkOrderMessage msg)
+        public override void LoadWorkOrderData(WorkOrderMessage msg)
         {
             if(msg.HasMessage())
             {

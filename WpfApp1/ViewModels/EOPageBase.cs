@@ -41,7 +41,7 @@ namespace WpfApp1
 
     public class EOStackPage : EOBasePage, IEOStackPage
     {
-        public void LoadWorkOrderData(WorkOrderMessage msg)
+        public virtual void LoadWorkOrderData(WorkOrderMessage msg)
         {
 
         }
