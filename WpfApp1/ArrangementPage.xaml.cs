@@ -550,9 +550,9 @@ namespace WpfApp1
             //this.InventoryListView.ItemsSource = arrangementInventoryList;
         }
 
-        public void AddInventorySelection(long inventoryId, string inventoryName)
+        public void AddInventorySelection(long inventoryId, string inventoryName,long inventoryTypeId)
         {
-            arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, 0));
+            arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, inventoryTypeId, 0));
             //this.InventoryListView.ItemsSource = null;
             //this.InventoryListView.ItemsSource = arrangementInventoryList;
         }

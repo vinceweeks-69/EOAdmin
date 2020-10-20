@@ -343,14 +343,20 @@ namespace WpfApp1
         {
             ObservableCollection<WorkOrderViewModel> list1 = new ObservableCollection<WorkOrderViewModel>();
 
-            foreach(WorkOrderInventoryMapDTO dto in currentWorkOrder.WorkOrderList)
+            bool shouldEnable = currentWorkOrder.WorkOrder.Paid ? false : true;
+
+            foreach (WorkOrderInventoryMapDTO dto in currentWorkOrder.WorkOrderList)
             {
-                list1.Add(new WorkOrderViewModel(dto));
+                WorkOrderViewModel vm = new WorkOrderViewModel(dto);
+                vm.ShouldEnable = shouldEnable;
+                list1.Add(vm);
             }
 
             foreach(NotInInventoryDTO dto in currentWorkOrder.NotInInventory)
             {
-                list1.Add(new WorkOrderViewModel(dto));
+                WorkOrderViewModel vm = new WorkOrderViewModel(dto);
+                vm.ShouldEnable = shouldEnable;
+                list1.Add(vm);
             }
 
             foreach(AddArrangementRequest aar in arrangementList)
@@ -370,12 +376,14 @@ namespace WpfApp1
                 foreach(ArrangementInventoryItemDTO ai in aar.ArrangementInventory)
                 {
                     vm = new WorkOrderViewModel(ai,currentWorkOrder.WorkOrder.WorkOrderId);
+                    vm.ShouldEnable = shouldEnable;
                     list1.Add(vm);
                 }
 
                 foreach(NotInInventoryDTO notIn in aar.NotInInventory)
                 {
                     vm = new WorkOrderViewModel(notIn);
+                    vm.ShouldEnable = shouldEnable;
                     list1.Add(vm);
                 }
 
@@ -429,14 +437,16 @@ namespace WpfApp1
 
                 ApiResponse response = await ((App)App.Current).PostRequest<AddWorkOrderRequest, ApiResponse>("AddWorkOrder", addWorkOrderRequest);
 
-                if(!response.Success)
+                if(response.Id == 0 || !response.Success)
                 {
                     MessageBox.Show("Error adding Work Order");
                 }
                 else
                 {
                     MessageBox.Show("Work Order saved");
+                    
                     currentWorkOrder.WorkOrder.WorkOrderId = response.Id;
+                    SaveButton.IsEnabled = false;
                     PayButton.IsEnabled = true;
                 }
             }
@@ -548,6 +558,18 @@ namespace WpfApp1
             //InventoryFilter inventoryFilter = new InventoryFilter(this);
             //wnd.NavigationStack.Push(inventoryFilter);
             //wnd.MainContent.Content = new Frame() { Content = inventoryFilter};
+
+            //couldn't get at the "Add" button that is in the list view header to disable it 
+            //if the work order has been paid
+            if(currentWorkOrder.WorkOrder.Paid)
+            {
+                Button b = sender as Button;
+                if(b != null)
+                {
+                    b.IsEnabled = false;
+                }
+                return;
+            }
 
             ArrangementFilter filter = new ArrangementFilter(this);
             MainWindow wnd = Application.Current.MainWindow as MainWindow;

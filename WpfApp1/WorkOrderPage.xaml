@@ -82,34 +82,34 @@
                         <GridViewColumn Header="Quantity" Width="60" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Text="{Binding Path=Quantity, Mode=TwoWay}"  Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldShow}" TextChanged="QuantityTextBox_TextChanged"/>
+                                    <TextBox Text="{Binding Path=Quantity, Mode=TwoWay}"  Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldEnable}" TextChanged="QuantityTextBox_TextChanged"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Edit" Width="80">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Name="EditWorkOrderItem" Content="Edit" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldShow}" Click="EditWorkOrderItem_Click" MinWidth="60"/>
+                                    <Button Name="EditWorkOrderItem" Content="Edit" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldEnable}" Click="EditWorkOrderItem_Click" MinWidth="60"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Delete" Width="80">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Delete" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldShow}" Click="DeleteButton_Click" MinWidth="60" />
+                                    <Button Content="Delete" CommandParameter="{Binding}" Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldEnable}" Click="DeleteButton_Click" MinWidth="60" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Add" Width="80">
                               <GridViewColumn.HeaderTemplate>
                                 <DataTemplate>
-                                    <Button Name="AddProductToWorkOrder" Content="Add" Click="AddProductToWorkOrder_Click"  MinWidth="60"/>
+                                    <Button x:Name="AddProductToWorkOrder" Content="Add" Click="AddProductToWorkOrder_Click" IsEnabled="{Binding ShouldEnable}" MinWidth="60" />
                                 </DataTemplate>
                             </GridViewColumn.HeaderTemplate>
                             
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Name="AddInventoryToWorkOrder" Content="Add" Visibility="Hidden" />
+                                    <Button  Visibility="Hidden" IsEnabled="False" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

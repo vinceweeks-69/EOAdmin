@@ -16,10 +16,11 @@ namespace WpfApp1.ViewModels
 
         }
 
-        public WorkOrderInventoryItemDTO_Wpf(long workOrderId, long inventoryId, string inventoryName, string size, long imageId, long groupID = 0, int quantity = 1)
+        public WorkOrderInventoryItemDTO_Wpf(long workOrderId, long inventoryId, long inventoryTypeId,  string inventoryName, string size, long imageId, long groupID = 0, int quantity = 1)
         {
             WorkOrderId = workOrderId;
             InventoryId = inventoryId;
+            InventoryTypeId = InventoryTypeId;
             InventoryName = inventoryName;
             ImageId = imageId;
             Size = size;
@@ -30,6 +31,7 @@ namespace WpfApp1.ViewModels
         public WorkOrderInventoryItemDTO_Wpf(ArrangementInventoryDTO dto)
         {
             InventoryId = dto.InventoryId;
+            InventoryTypeId = dto.InventoryTypeId;
             InventoryName = dto.ArrangementInventoryName;
             Quantity = dto.Quantity;
             ImageId = dto.ImageId;
@@ -40,9 +42,23 @@ namespace WpfApp1.ViewModels
 
         public long InventoryId { get; set; }
 
+        public long InventoryTypeId { get; set; }
+
         public string InventoryName { get; set; }
 
-        public int Quantity { get; set; }
+        int quantity;
+        public int Quantity
+        {
+            get
+            {
+                return quantity;
+            }
+            set
+            {
+                quantity = value;
+                OnPropertyChanged(nameof(Quantity));
+            }
+        }
 
         public long ImageId { get; set; }
 

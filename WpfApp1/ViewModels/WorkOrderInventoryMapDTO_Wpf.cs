@@ -16,9 +16,23 @@ namespace WpfApp1.ViewModels
 
         public long InventoryId { get; set; }
 
+        public long InventoryTypeId { get; set; }
+
         public string InventoryName { get; set; }
 
-        public int Quantity { get; set; }
+        int quantity;
+        public int Quantity
+        {
+            get
+            {
+                return quantity;
+            }
+            set
+            {
+                quantity = value;
+                OnPropertyChanged(nameof(Quantity));
+            }
+        }
 
         public string Size { get; set; }
 

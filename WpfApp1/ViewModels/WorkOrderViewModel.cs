@@ -87,7 +87,19 @@ namespace WpfApp1.ViewModels
 
         public string InventoryName { get; set; }
 
-        public int Quantity { get; set; }
+        int quantity;
+        public int Quantity
+        {
+            get
+            {
+                return quantity;
+            }
+            set
+            {
+                quantity = value;
+                OnPropertyChanged(nameof(Quantity));
+            }
+        }
 
         public long ImageId { get; set; }
 
@@ -121,6 +133,20 @@ namespace WpfApp1.ViewModels
             get
             {
                 return Quantity == 0 ? false : true;
+            }
+        }
+
+        private bool shouldEnable;
+        public bool ShouldEnable
+        {
+            set
+            {
+                shouldEnable = value;
+                OnPropertyChanged(nameof(ShouldEnable));
+            }
+            get
+            {
+                return shouldEnable;
             }
         }
 
