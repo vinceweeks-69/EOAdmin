@@ -348,6 +348,12 @@ namespace WpfApp1
             foreach (WorkOrderInventoryMapDTO dto in currentWorkOrder.WorkOrderList)
             {
                 WorkOrderViewModel vm = new WorkOrderViewModel(dto);
+
+                if(((ObservableCollection<WorkOrderViewModel>)WorkOrderInventoryListView.ItemsSource).Where(a => a.InventoryId == dto.InventoryId).Any())
+                {
+                    WorkOrderViewModel wovm = ((ObservableCollection<WorkOrderViewModel>)WorkOrderInventoryListView.ItemsSource).Where(a => a.InventoryId == dto.InventoryId).First();
+                    vm.Quantity = wovm.Quantity;
+                }
                 vm.ShouldEnable = shouldEnable;
                 list1.Add(vm);
             }
@@ -355,6 +361,13 @@ namespace WpfApp1
             foreach(NotInInventoryDTO dto in currentWorkOrder.NotInInventory)
             {
                 WorkOrderViewModel vm = new WorkOrderViewModel(dto);
+
+                if (((ObservableCollection<WorkOrderViewModel>)WorkOrderInventoryListView.ItemsSource).Where(a => a.NotInInventoryId == dto.NotInInventoryId).Any())
+                {
+                    WorkOrderViewModel wovm = ((ObservableCollection<WorkOrderViewModel>)WorkOrderInventoryListView.ItemsSource).Where(a => a.NotInInventoryId == dto.NotInInventoryId).First();
+                    vm.Quantity = wovm.Quantity;
+                }
+
                 vm.ShouldEnable = shouldEnable;
                 list1.Add(vm);
             }

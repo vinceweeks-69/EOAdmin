@@ -93,6 +93,15 @@ namespace WpfApp1
                     }
                 }
             }
+
+            ObservableCollection<WorkOrderViewModel> list3 = new ObservableCollection<WorkOrderViewModel>();
+
+            arrangementInventoryList = currentArrangement.ArrangementInventory;
+            notInInventory = currentArrangement.NotInInventory;
+
+            ArrangementInventoryListView.ItemsSource = new ObservableCollection<WorkOrderViewModel>();
+
+            ReloadListData();
         }
 
         private async void LoadCustomerContainers(long customerId)
@@ -164,17 +173,30 @@ namespace WpfApp1
             GiftMessage.Text = currentArrangement.Arrangement.GiftMessage;
         }
 
+        //Consolidate DTOs
         private void ReloadListData()
         {
             ObservableCollection<WorkOrderViewModel> list4 = new ObservableCollection<WorkOrderViewModel>();
 
             foreach (ArrangementInventoryItemDTO aiid in currentArrangement.ArrangementInventory)
             {
+                if (((ObservableCollection<WorkOrderViewModel>)ArrangementInventoryListView.ItemsSource).Where(a => a.InventoryId == aiid.InventoryId).Any())
+                {
+                    WorkOrderViewModel wovm = ((ObservableCollection<WorkOrderViewModel>)ArrangementInventoryListView.ItemsSource).Where(a => a.InventoryId == aiid.InventoryId).First();
+                    aiid.Quantity = wovm.Quantity;
+                }
+
                 list4.Add(new WorkOrderViewModel(aiid, 0));
             }
 
             foreach (NotInInventoryDTO notIn in currentArrangement.NotInInventory)
             {
+                if (((ObservableCollection<WorkOrderViewModel>)ArrangementInventoryListView.ItemsSource).Where(a => a.NotInInventoryId == notIn.NotInInventoryId).Any())
+                {
+                    WorkOrderViewModel wovm = ((ObservableCollection<WorkOrderViewModel>)ArrangementInventoryListView.ItemsSource).Where(a => a.NotInInventoryId == notIn.NotInInventoryId).First();
+                    notIn.NotInInventoryQuantity = wovm.Quantity;
+                }
+
                 list4.Add(new WorkOrderViewModel(notIn));
             }
 
@@ -440,6 +462,11 @@ namespace WpfApp1
             }
 
             //currentArrangment has current inventory and non inventory lists
+            ReloadListData();
+
+            currentArrangement.ArrangementInventory = arrangementInventoryList;
+
+            currentArrangement.NotInInventory = notInInventory;
         }
 
         public void AddArrangement()
