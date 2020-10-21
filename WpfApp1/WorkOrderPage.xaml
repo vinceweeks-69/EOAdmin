@@ -82,7 +82,7 @@
                         <GridViewColumn Header="Quantity" Width="60" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Text="{Binding Path=Quantity, Mode=TwoWay}"  Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldEnable}" TextChanged="QuantityTextBox_TextChanged"/>
+                                    <TextBox Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Visibility="{Binding ItemVisibility}" IsEnabled="{Binding ShouldEnable}" TextChanged="QuantityTextBox_TextChanged"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

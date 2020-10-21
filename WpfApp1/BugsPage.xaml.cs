@@ -32,6 +32,8 @@ namespace WpfApp1
         {
             if(bugs.Text.Length > 0)
             {
+                Window wnd = Application.Current.MainWindow;
+
                 EOMailMessage msg = new EOMailMessage();
                 try
                 {
@@ -39,17 +41,11 @@ namespace WpfApp1
                     if (Email.SendEmail(msg))
                     {
                         bugs.Text = String.Empty;
-                        MessageBox.Show("Your message has been set to the development team",
-                                          "Success",
-                                          MessageBoxButton.OK,
-                                          MessageBoxImage.Exclamation);
+                        MessageBox.Show(wnd, "Your message has been set to the development team", "Success", MessageBoxButton.OK);
                     }
                     else
                     {
-                        MessageBox.Show("There was an error sending your message - call Vince!",
-                                          "Error",
-                                          MessageBoxButton.OK,
-                                          MessageBoxImage.Exclamation);
+                        MessageBox.Show(wnd,"There was an error sending your message - call Vince!","Error", MessageBoxButton.OK);
                     }
                 
                 }

@@ -137,7 +137,7 @@ namespace WpfApp1
                         }
                     }
 
-                    MessageBox.Show(sb.ToString());
+                    MessageBox.Show(Application.Current.MainWindow,sb.ToString(),"Error",MessageBoxButton.OK);
                 }
 
                 //jsonData = JsonConvert.SerializeObject(request);
@@ -190,7 +190,7 @@ namespace WpfApp1
                 }
                 else
                 {
-                    MessageBox.Show("There was an error retreiving an image");
+                    MessageBox.Show(Application.Current.MainWindow,"There was an error retreiving an image","Error",MessageBoxButton.OK);
                 }
             }
             catch(Exception ex)

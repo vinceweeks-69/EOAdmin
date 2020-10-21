@@ -70,7 +70,7 @@ namespace WpfApp1
             }
             else
             {
-                MessageBox.Show("Please pick a From and To date value and ensure that the From date is earlier than the To date.");
+                MessageBox.Show(Application.Current.MainWindow,"Please pick a From and To date value and ensure that the From date is earlier than the To date.","Error",MessageBoxButton.OK);
             }
         }
 

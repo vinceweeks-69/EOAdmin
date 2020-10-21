@@ -155,7 +155,7 @@
                         <GridViewColumn Header="Quantity" Width="100" >
                              <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox  Text="{Binding Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                                    <TextBox  x:Name="Quantity" Text="{Binding Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="Quantity_TextChanged"  Width="70"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>    
                         </GridViewColumn>

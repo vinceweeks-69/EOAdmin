@@ -300,7 +300,7 @@ namespace WpfApp1
                 }
                 else
                 {
-                    MessageBox.Show("There was an error retreiving arrangements");
+                    MessageBox.Show(Application.Current.MainWindow,"There was an error retreiving arrangements","Error",MessageBoxButton.OK);
                 }
             }
             catch (Exception ex)
@@ -384,6 +384,7 @@ namespace WpfApp1
                 imageWindow.ImageBox.Source = image;
             }
 
+            imageWindow.Owner = wnd;
             imageWindow.ShowDialog();
         }
 
@@ -396,6 +397,7 @@ namespace WpfApp1
         {
             //add a check to see if this plant already has an image and warn if
             OpenFileDialog openFileDialog = new OpenFileDialog();
+
             if (openFileDialog.ShowDialog() == true)
             {
                 fileStreamContent = new StreamContent(File.OpenRead(openFileDialog.FileName));
@@ -547,7 +549,7 @@ namespace WpfApp1
                 }
                 else
                 {
-                    MessageBox.Show("Error adding arrangement");
+                    MessageBox.Show(Application.Current.MainWindow,"Error adding arrangement","Error",MessageBoxButton.OK);
                 }
             }
             catch (Exception ex)
@@ -570,19 +572,34 @@ namespace WpfApp1
 
         private void OnDeleteArrangementInventory(object sender, RoutedEventArgs e)
         {
-            //Button b = sender as Button;
-            //ArrangementInventoryItemDTO arrangementInventoryItem = b.CommandParameter as ArrangementInventoryItemDTO;
-            //arrangementInventoryList.Remove(arrangementInventoryItem);
-            //this.InventoryListView.ItemsSource = null;
-            //this.InventoryListView.ItemsSource = arrangementInventoryList;
+            Button b = sender as Button;
+            if (b != null)
+            {
+                WorkOrderViewModel arrangementInventoryItem = b.CommandParameter as WorkOrderViewModel;
+                if (arrangementInventoryItem != null)
+                {
+                    if(arrangementInventoryList.Where(a => a.InventoryId == arrangementInventoryItem.InventoryId).Any())
+                    {
+                        ArrangementInventoryItemDTO dto = arrangementInventoryList.Where(a => a.InventoryId == arrangementInventoryItem.InventoryId).First();
+                        arrangementInventoryList.Remove(dto);
+                    }
+                    else if(notInInventory.Where(a => a.NotInInventoryId == arrangementInventoryItem.NotInInventoryId).Any())
+                    {
+                        NotInInventoryDTO dto = notInInventory.Where(a => a.NotInInventoryId == arrangementInventoryItem.NotInInventoryId).First();
+                        notInInventory.Remove(dto);
+                    }
+
+                    ReloadListData();
+                }
+            }
         }
 
-        public void AddInventorySelection(long inventoryId, string inventoryName,long inventoryTypeId)
-        {
-            arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, inventoryTypeId, 0));
-            //this.InventoryListView.ItemsSource = null;
-            //this.InventoryListView.ItemsSource = arrangementInventoryList;
-        }
+        //public void AddInventorySelection(long inventoryId, string inventoryName,long inventoryTypeId)
+        //{
+        //    arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, inventoryTypeId, 0));
+        //    //this.InventoryListView.ItemsSource = null;
+        //    //this.InventoryListView.ItemsSource = arrangementInventoryList;
+        //}
 
         private void Products_Click(object sender, RoutedEventArgs e)
         {
@@ -601,7 +618,7 @@ namespace WpfApp1
             }
 
             filter.InventoryTypeCombo.ItemsSource = list1;
-
+            filter.Owner = wnd;
             filter.ShowDialog();
         }
 
@@ -684,25 +701,6 @@ namespace WpfApp1
             }
         }
 
-        private void AddItemNotInInventory_Click(object sender, RoutedEventArgs e)
-        {
-            //if(NotInInventoryName.Text != String.Empty && NotInInventoryQuantity.Text != String.Empty && NotInInventorySize.Text != String.Empty && NotInInventoryPrice.Text != String.Empty)
-            //{
-            //    if(!notInInventory.Where(a => a.NotInInventoryName != NotInInventoryName.Text && a.NotInInventoryQuantity != Convert.ToInt32(NotInInventoryQuantity.Text) &&
-            //        a.NotInInventorySize != NotInInventorySize.Text && a.NotInInventoryPrice != Convert.ToDecimal(NotInInventoryPrice.Text)).Any())
-            //    {
-            //        NotInInventoryDTO notIn = new NotInInventoryDTO();
-            //        notIn.NotInInventoryName = NotInInventoryName.Text;
-            //        notIn.NotInInventoryQuantity = Convert.ToInt32(NotInInventoryQuantity.Text);
-            //        notIn.NotInInventorySize = NotInInventorySize.Text;
-            //        notIn.NotInInventoryPrice = Convert.ToDecimal(NotInInventoryPrice.Text);
-            //        notInInventory.Add(notIn);
-
-            //        ReloadListData();
-            //    }
-            //}
-        }
-
         private void Container_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //if container type is "Customer container at EO" pick from  customer containers on site
@@ -773,6 +771,24 @@ namespace WpfApp1
             var workingHeight = PageGrid.RowDefinitions.ElementAt(12).ActualHeight;
 
             ArrangementInventoryListView.Height = workingHeight * 0.9;
+        }
+
+        private void Quantity_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            foreach (WorkOrderViewModel vm in ArrangementInventoryListView.ItemsSource as ObservableCollection<WorkOrderViewModel>)
+            {
+                if (vm.InventoryId != 0 && currentArrangement.ArrangementInventory.Where(a => a.InventoryId == vm.InventoryId).Any())
+                {
+                    ArrangementInventoryItemDTO woii = currentArrangement.ArrangementInventory.Where(a => a.InventoryId == vm.InventoryId).First();
+                    woii.Quantity = vm.Quantity;
+                }
+
+                if (vm.NotInInventoryId != 0 && currentArrangement.NotInInventory.Where(a => a.NotInInventoryId == vm.NotInInventoryId).Any())
+                {
+                    NotInInventoryDTO notIn = currentArrangement.NotInInventory.Where(a => a.NotInInventoryId == vm.NotInInventoryId).First();
+                    notIn.NotInInventoryQuantity = vm.Quantity;
+                }
+            }
         }
     }
 }

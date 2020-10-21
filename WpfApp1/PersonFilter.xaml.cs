@@ -44,10 +44,12 @@ namespace WpfApp1
             //run filter against person table
 
             GetPersonRequest request = new GetPersonRequest();
-            request.FirstName = Name.Text;
-            //request.LastName = LastNameTextBox.Text;
+            request.FirstName = FirstName.Text;
+            request.LastName = LastName.Text;
             request.PhonePrimary = Phone.Text;
             request.Email = Email.Text;
+            request.Address = Address.Text;
+            request.ZipCode = ZipCode.Text;
 
             MainWindow mainWnd = Application.Current.MainWindow as MainWindow;
             GetPersonResponse response = mainWnd.GetCustomers(request);
@@ -75,6 +77,32 @@ namespace WpfApp1
             }
 
             this.Close();
+        }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridView gView = PersonFilterListView.View as GridView;
+
+            var workingWidth = PageGrid.ActualWidth - 80;   //SystemParameters.VerticalScrollBarWidth; // take into account vertical scrollbar
+            PersonFilterListView.Width = workingWidth;
+
+            var col1 = 0.12;
+            var col2 = 0.12;
+            var col3 = 0.12;
+            var col4 = 0.12;
+            var col5 = 0.12;
+            var col6 = 0.12;
+            var col7 = 0.12;
+            var col8 = 0.12;
+
+            gView.Columns[0].Width = workingWidth * col1;
+            gView.Columns[1].Width = workingWidth * col2;
+            gView.Columns[2].Width = workingWidth * col3;
+            gView.Columns[3].Width = workingWidth * col4;
+            gView.Columns[4].Width = workingWidth * col5;
+            gView.Columns[5].Width = workingWidth * col6;
+            gView.Columns[6].Width = workingWidth * col7;
+            gView.Columns[7].Width = workingWidth * col8;
         }
     }
 }

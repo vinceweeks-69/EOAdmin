@@ -7,34 +7,63 @@
         mc:Ignorable="d"
         Title="Person Filter" Height="463" Width="563"
         WindowStartupLocation="CenterOwner">
-    <Grid HorizontalAlignment="Left" Width="553" Margin="0,0,0,-3">
-        <Label Content="Name" HorizontalAlignment="Left" Margin="32,34,0,0" VerticalAlignment="Top" Width="53"/>
-        <TextBox Name="Name" HorizontalAlignment="Left" Height="25" Margin="32,65,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136"/>
-        <Label Content="City" HorizontalAlignment="Left" Margin="202,34,0,0" VerticalAlignment="Top" Width="63" Height="26"/>
-        <TextBox Name="City" HorizontalAlignment="Left" Height="23" Margin="202,65,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="134"/>
-        <Label Content="Community" HorizontalAlignment="Left" Margin="366,34,0,0" VerticalAlignment="Top" Height="26" Width="81"/>
-        <TextBox Name="Community" HorizontalAlignment="Left" Height="23" Margin="366,65,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="131"/>
-        <Label Content="Phone" HorizontalAlignment="Left" Margin="32,95,0,0" VerticalAlignment="Top" Width="54" Height="30"/>
-        <TextBox Name="Phone" HorizontalAlignment="Left" Height="26" Margin="32,125,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="139"/>
-        <Label Content="Email" HorizontalAlignment="Left" Margin="202,95,0,0" VerticalAlignment="Top" Height="30" Width="54"/>
-        <TextBox Name="Email" HorizontalAlignment="Left" Height="23" Margin="202,125,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="134"/>
-        <Label Content="Address" HorizontalAlignment="Left" Margin="366,95,0,0" VerticalAlignment="Top" Height="30" Width="56"/>
-        <TextBox Name="Address" HorizontalAlignment="Left" Height="23" Margin="366,125,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="134"/>
-        <ListView Name="PersonFilterListView" HorizontalAlignment="Left" Height="127" Margin="32,190,0,0" VerticalAlignment="Top" Width="465" SelectionChanged="ListView_SelectionChanged">
+    <Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="3*" />
+        </Grid.RowDefinitions>
+        
+        <Label Content="First Name" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="Auto"/>
+        <TextBox Name="FirstName" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" MinHeight="25" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MinWidth="136"/>
+        
+        <Label Content="Last Name" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="Auto"/>
+        <TextBox Name="LastName" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" MinHeight="25" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MinWidth="136"/>
+        
+        <Label Content="Community"  Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top"  Width="Auto"/>
+        <TextBox Name="Community" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" MinHeight="25" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MinWidth="136"/>
+        
+        <Label Content="Address"  Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top"  Width="Auto"/>
+        <TextBox Name="Address" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" MinHeight="25" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MinWidth="136"/>
+        
+        <Label Content="City" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="Auto" Height="26"/>
+        <TextBox Name="City" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" MinHeight="25" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MinWidth="136"/>
+        
+        <Label Content="Zip Code" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="63" Height="26"/>
+        <TextBox Name="ZipCode" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" MinHeight="25" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MinWidth="136"/>
+        
+        <Label Content="Phone" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="54" Height="30"/>
+        <TextBox Name="Phone" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" MinHeight="25" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MinWidth="139"/>
+        
+        <Label Content="Email" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" MinHeight="25" Width="Auto"/>
+        <TextBox Name="Email" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="23" Margin="10,10,10,10" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MinWidth="136" Width="Auto"/>
+        
+       <Button Content="Search" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top" MinWidth="75" Width="Auto" Click="Button_Click"/>
+        
+        <ListView Name="PersonFilterListView" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="127" Height="Auto" Margin="10,10,10,10" VerticalAlignment="Top" MinWidth="465" Width="Auto" SelectionChanged="ListView_SelectionChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" DisplayMemberBinding="{Binding CustomerName}" Width="100"/>
                     <GridViewColumn Header="Phone" DisplayMemberBinding="{Binding phone_primary}" Width="100"/>
                     <GridViewColumn Header="Email" DisplayMemberBinding="{Binding email}" Width="100"/>
                     <GridViewColumn Header="Address" DisplayMemberBinding="{Binding street_address}" Width="100"/>
-                    <GridViewColumn Header="Unit/Apt/Suite" DisplayMemberBinding="{Binding unit_apt_suite}" Width="150"/>
+                    <GridViewColumn Header="Unit/Apt/Suite" DisplayMemberBinding="{Binding unit_apt_suite}" Width="100"/>
                     <GridViewColumn Header="City" DisplayMemberBinding="{Binding city}" Width="100"/>
                     <GridViewColumn Header="State" DisplayMemberBinding="{Binding state}" Width="100"/>
-                    <GridViewColumn Header="Zip" DisplayMemberBinding="{Binding zipcode}" Width="150"/>    
+                    <GridViewColumn Header="Zip" DisplayMemberBinding="{Binding zipcode}" Width="100"/>    
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button Content="Go" HorizontalAlignment="Left" Margin="226,360,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-
     </Grid>
 </Window>

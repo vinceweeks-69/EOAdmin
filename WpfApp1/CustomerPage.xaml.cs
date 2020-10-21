@@ -254,12 +254,12 @@ namespace WpfApp1
                 }
                 else
                 {
-                    MessageBox.Show("Error");
+                    //MessageBox.Show("Error");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                //MessageBox.Show(ex.Message);
             }
 
             return strData;
@@ -292,12 +292,12 @@ namespace WpfApp1
                 }
                 else
                 {
-                    MessageBox.Show("Error");
+                    //MessageBox.Show("Error");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                //MessageBox.Show(ex.Message);
             }
 
             return strData;

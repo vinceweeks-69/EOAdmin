@@ -98,18 +98,7 @@ namespace WpfApp1
             PickOrCreateBuyer.ItemsSource = list4;
             PickOrCreateBuyer.SelectionChanged += PickOrCreateBuyer_SelectionChanged;
 
-            if(currentWorkOrder.WorkOrder.WorkOrderId <= 0)
-            {
-                PayButton.IsEnabled = false;  
-            }
-            else
-            {
-                if(currentWorkOrder.WorkOrder.Paid)
-                {
-                    PayButton.IsEnabled = false;
-                    SaveButton.IsEnabled = false;
-                }
-            }
+            WorkOrderInventoryListView.ItemsSource = new ObservableCollection<WorkOrderViewModel>();
         }
 
         public WorkOrderPage(WorkOrderResponse workOrderResponse) : this()
@@ -117,10 +106,20 @@ namespace WpfApp1
             currentWorkOrder = workOrderResponse;
             arrangementList = workOrderResponse.ArrangementRequestList();
 
-            if(currentWorkOrder.WorkOrder.Paid)
+            if (currentWorkOrder.WorkOrder.WorkOrderId <= 0)
             {
                 PayButton.IsEnabled = false;
-                SaveButton.IsEnabled = false;
+            }
+            else
+            {
+                PayButton.IsEnabled = true;
+                SaveButton.IsEnabled = true;
+
+                if (currentWorkOrder.WorkOrder.Paid)
+                {
+                    PayButton.IsEnabled = false;
+                    SaveButton.IsEnabled = false;
+                }
             }
 
             LoadCustomer();    
@@ -188,15 +187,16 @@ namespace WpfApp1
 
             if (cb != null)
             {
+                MainWindow wnd = Application.Current.MainWindow as MainWindow;
+
                 if (cb.SelectedIndex == 1)
                 {
                     PersonFilter pFilter = new PersonFilter(this);
-
+                    pFilter.Owner = wnd;
                     pFilter.ShowDialog();
                 }
                 else if(cb.SelectedIndex == 2)
                 {
-                    MainWindow wnd = Application.Current.MainWindow as MainWindow;
                     CustomerPage customerPage = new CustomerPage(this);
                     wnd.NavigationStack.Push(customerPage);
                     wnd.MainContent.Content = new Frame() { Content = customerPage };
@@ -279,14 +279,6 @@ namespace WpfApp1
                     currentWorkOrder.NotInInventory.Remove(dto);
                 }
             }
-            else if (notIn.UnsavedId != 0)
-            {
-                if (currentWorkOrder.NotInInventory.Where(a => a.UnsavedId == notIn.UnsavedId).Any())
-                {
-                    NotInInventoryDTO dto = currentWorkOrder.NotInInventory.Where(a => a.UnsavedId == notIn.UnsavedId).First();
-                    currentWorkOrder.NotInInventory.Remove(dto);
-                }
-            }
 
             //names must be unique
             if(!currentWorkOrder.NotInInventory.Where(a => a.NotInInventoryName == notIn.NotInInventoryName).Any())
@@ -295,7 +287,7 @@ namespace WpfApp1
             }
             else
             {
-                MessageBox.Show("Duplicate name for not in inventory item.", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                MessageBox.Show(Application.Current.MainWindow,"Duplicate name for not in inventory item.", "Error", MessageBoxButton.OK);
             }
         }
 
@@ -413,60 +405,70 @@ namespace WpfApp1
             AddWorkOrder();
         }
 
-        public async void AddWorkOrder()
+        public async Task<bool> AddWorkOrder(bool showMsgBox = true)
         {
+            bool result = false;
+
             AddWorkOrderRequest addWorkOrderRequest = new AddWorkOrderRequest();
 
             try
             {
-                currentWorkOrder.WorkOrder.Buyer = Buyer.Text;
-                currentWorkOrder.WorkOrder.Seller = Seller.Text;
-                currentWorkOrder.WorkOrder.CreateDate = DateTime.Now;
-                currentWorkOrder.WorkOrder.Comments = CommentsTextBox.Text;
-                
-                if(Customer != null && Customer.person_id != 0)
+                if (!currentWorkOrder.WorkOrder.IsCancelled && !currentWorkOrder.WorkOrder.Paid)
                 {
-                    currentWorkOrder.WorkOrder.CustomerId = Customer.person_id;
-                }
+                    currentWorkOrder.WorkOrder.Buyer = Buyer.Text;
+                    currentWorkOrder.WorkOrder.Seller = Seller.Text;
+                    currentWorkOrder.WorkOrder.CreateDate = DateTime.Now;
+                    currentWorkOrder.WorkOrder.Comments = CommentsTextBox.Text;
 
-                currentWorkOrder.WorkOrder.OrderType = Convert.ToInt32(OrderType.SelectedItem != null ? ((KeyValuePair<long, string>)OrderType.SelectedItem).Key : 1);
-                currentWorkOrder.WorkOrder.DeliveryType = Convert.ToInt32(DeliveryType.SelectedItem != null ? ((KeyValuePair<long, string>)DeliveryType.SelectedItem).Key : 1);
-                if(currentWorkOrder.WorkOrder.DeliveryType > 1)
-                {
-                    currentWorkOrder.WorkOrder.IsDelivery = true;
-                }
+                    if (Customer != null && Customer.person_id != 0)
+                    {
+                        currentWorkOrder.WorkOrder.CustomerId = Customer.person_id;
+                    }
 
-                currentWorkOrder.WorkOrder.DeliveredBy = DeliveryPerson.SelectedItem != null ? ((KeyValuePair<long, string>)DeliveryPerson.SelectedItem).Value : String.Empty;
-                currentWorkOrder.WorkOrder.DeliveryDate = DeliveryDate.SelectedDate.HasValue ? DeliveryDate.SelectedDate.Value : DateTime.MinValue;
-                if (!currentWorkOrder.WorkOrder.IsDelivery)
-                {
-                    currentWorkOrder.WorkOrder.DeliveryDate = PickupDate.SelectedDate.HasValue ? PickupDate.SelectedDate.Value : DateTime.MinValue;
-                }
+                    currentWorkOrder.WorkOrder.OrderType = Convert.ToInt32(OrderType.SelectedItem != null ? ((KeyValuePair<long, string>)OrderType.SelectedItem).Key : 1);
+                    currentWorkOrder.WorkOrder.DeliveryType = Convert.ToInt32(DeliveryType.SelectedItem != null ? ((KeyValuePair<long, string>)DeliveryType.SelectedItem).Key : 1);
+                    if (currentWorkOrder.WorkOrder.DeliveryType > 1)
+                    {
+                        currentWorkOrder.WorkOrder.IsDelivery = true;
+                    }
 
-                addWorkOrderRequest.WorkOrder = currentWorkOrder.WorkOrder;
-                addWorkOrderRequest.WorkOrderInventoryMap = currentWorkOrder.WorkOrderList;
-                addWorkOrderRequest.NotInInventory = currentWorkOrder.NotInInventory;
-                addWorkOrderRequest.Arrangements = arrangementList;
+                    currentWorkOrder.WorkOrder.DeliveredBy = DeliveryPerson.SelectedItem != null ? ((KeyValuePair<long, string>)DeliveryPerson.SelectedItem).Value : String.Empty;
+                    currentWorkOrder.WorkOrder.DeliveryDate = DeliveryDate.SelectedDate.HasValue ? DeliveryDate.SelectedDate.Value : DateTime.MinValue;
+                    if (!currentWorkOrder.WorkOrder.IsDelivery)
+                    {
+                        currentWorkOrder.WorkOrder.DeliveryDate = PickupDate.SelectedDate.HasValue ? PickupDate.SelectedDate.Value : DateTime.MinValue;
+                    }
 
-                ApiResponse response = await ((App)App.Current).PostRequest<AddWorkOrderRequest, ApiResponse>("AddWorkOrder", addWorkOrderRequest);
+                    addWorkOrderRequest.WorkOrder = currentWorkOrder.WorkOrder;
+                    addWorkOrderRequest.WorkOrderInventoryMap = currentWorkOrder.WorkOrderList;
+                    addWorkOrderRequest.NotInInventory = currentWorkOrder.NotInInventory;
+                    addWorkOrderRequest.Arrangements = arrangementList;
 
-                if(response.Id == 0 || !response.Success)
-                {
-                    MessageBox.Show("Error adding Work Order");
-                }
-                else
-                {
-                    MessageBox.Show("Work Order saved");
-                    
-                    currentWorkOrder.WorkOrder.WorkOrderId = response.Id;
-                    SaveButton.IsEnabled = false;
-                    PayButton.IsEnabled = true;
+                    ApiResponse response = await ((App)App.Current).PostRequest<AddWorkOrderRequest, ApiResponse>("AddWorkOrder", addWorkOrderRequest);
+
+                    if (response.Id == 0 || !response.Success)
+                    {
+                        MessageBox.Show(wnd,"Error adding Work Order","Error",MessageBoxButton.OK);
+                    }
+                    else
+                    {
+                        if (showMsgBox)
+                        {
+                            MessageBox.Show(wnd, "Work Order saved", "Success", MessageBoxButton.OK);
+                        }
+
+                        currentWorkOrder.WorkOrder.WorkOrderId = response.Id;
+                        PayButton.IsEnabled = true;
+                        result = true;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 ((App)App.Current).LogError(ex.Message, JsonConvert.SerializeObject(addWorkOrderRequest));
             }
+
+            return result;
         }
 
         public async Task<GetWorkOrderSalesDetailResponse> GetWorkOrderDetail()
@@ -499,22 +501,31 @@ namespace WpfApp1
         private void CustomerSearch_Click(object sender, RoutedEventArgs e)
         {
             PersonFilter filter = new PersonFilter(this);
-
+            filter.Owner = Application.Current.MainWindow as MainWindow;
             filter.ShowDialog();
         }
 
         private void SetWorkOrderSalesData()
         {
-            //GetWorkOrderSalesDetailResponse response = GetWorkOrderDetail();
-
-            //SubTotal.Text = response.SubTotal.ToString("C", CultureInfo.CurrentCulture);
-            //Tax.Text = response.Tax.ToString("C", CultureInfo.CurrentCulture);
-            //Total.Text = response.Total.ToString("C", CultureInfo.CurrentCulture);
+            
         }
 
         private void QuantityTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SetWorkOrderSalesData();
+            foreach(WorkOrderViewModel vm in WorkOrderInventoryListView.ItemsSource as ObservableCollection<WorkOrderViewModel>)
+            {
+                if(vm.InventoryId != 0 && currentWorkOrder.WorkOrderList.Where(a => a.InventoryId == vm.InventoryId).Any())
+                {
+                    WorkOrderInventoryMapDTO woii = currentWorkOrder.WorkOrderList.Where(a => a.InventoryId == vm.InventoryId).First();
+                    woii.Quantity = vm.Quantity;
+                }
+   
+                if(vm.NotInInventoryId != 0 && currentWorkOrder.NotInInventory.Where(a => a.NotInInventoryId == vm.NotInInventoryId).Any())
+                {
+                    NotInInventoryDTO notIn = currentWorkOrder.NotInInventory.Where(a => a.NotInInventoryId == vm.NotInInventoryId).First();
+                    notIn.NotInInventoryQuantity = vm.Quantity;
+                }
+            }
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -599,7 +610,7 @@ namespace WpfApp1
             }
 
             filter.InventoryTypeCombo.ItemsSource = list1;
-
+            filter.Owner = wnd;
             filter.ShowDialog();
         }
 
@@ -646,28 +657,48 @@ namespace WpfApp1
             gView.Columns[4].Width = workingWidth * col5;
         }
 
-        private void PayButton_Click(object sender, RoutedEventArgs e)
+        private async void PayButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
+            PrepareForPayment();   
+        }
 
-            WorkOrderResponse wor = new WorkOrderResponse();
-            wor.WorkOrder = currentWorkOrder.WorkOrder;
-            wor.WorkOrderList = currentWorkOrder.WorkOrderList;
-            wor.NotInInventory = currentWorkOrder.NotInInventory;
-            List<GetArrangementResponse> arrangementResponseList = new List<GetArrangementResponse>();
-            foreach (AddArrangementRequest aar in arrangementList)
+        private async void PrepareForPayment()
+        {
+            AddWorkOrder(false).ContinueWith(a => MakePayment(a.Result));
+        }
+
+        private void MakePayment(bool saveSuccessful)
+        {
+            Dispatcher.Invoke(() =>
             {
-                GetArrangementResponse getArrangement = new GetArrangementResponse();
-                getArrangement.ArrangementList = aar.ArrangementInventory;
-                getArrangement.NotInInventory = aar.NotInInventory;
-                arrangementResponseList.Add(getArrangement);
-            }
+                MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
-            wor.Arrangements = arrangementResponseList;
+                if (saveSuccessful)
+                {
+                    WorkOrderResponse wor = new WorkOrderResponse();
+                    wor.WorkOrder = currentWorkOrder.WorkOrder;
+                    wor.WorkOrderList = currentWorkOrder.WorkOrderList;
+                    wor.NotInInventory = currentWorkOrder.NotInInventory;
+                    List<GetArrangementResponse> arrangementResponseList = new List<GetArrangementResponse>();
+                    foreach (AddArrangementRequest aar in arrangementList)
+                    {
+                        GetArrangementResponse getArrangement = new GetArrangementResponse();
+                        getArrangement.ArrangementList = aar.ArrangementInventory;
+                        getArrangement.NotInInventory = aar.NotInInventory;
+                        arrangementResponseList.Add(getArrangement);
+                    }
 
-            PaymentPage paymentPage = new PaymentPage(wor, Customer);
-            wnd.NavigationStack.Push(paymentPage);
-            wnd.MainContent.Content = new Frame() { Content = paymentPage };
+                    wor.Arrangements = arrangementResponseList;
+
+                    PaymentPage paymentPage = new PaymentPage(wor, Customer);
+                    wnd.NavigationStack.Push(paymentPage);
+                    wnd.MainContent.Content = new Frame() { Content = paymentPage };
+                }
+                else
+                {
+                    MessageBox.Show(wnd, "There was an error saving the work order.", "Error", MessageBoxButton.OK);
+                }
+            });
         }
     }
 }

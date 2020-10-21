@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="ImageWindow" Height="403.846" Width="446.154">
+        Title="ImageWindow" Height="403.846" Width="446.154" WindowStartupLocation="CenterOwner">
     <Grid Margin="10,0,2,-1">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="149*"/>

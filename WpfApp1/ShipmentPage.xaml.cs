@@ -264,7 +264,7 @@ namespace WpfApp1
             }
 
             filter.InventoryTypeCombo.ItemsSource = list1;
-
+            filter.Owner = wnd;
             filter.ShowDialog();
         }
 

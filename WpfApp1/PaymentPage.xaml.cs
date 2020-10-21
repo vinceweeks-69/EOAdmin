@@ -203,7 +203,7 @@ namespace WpfApp1
 
                     if(paymentResponse.Messages.Count > 0)
                     {
-                        MessageBox.Show("Error", MessageFormatter(paymentResponse.Messages["Stripe"]), MessageBoxButton.OK);
+                        MessageBox.Show(Application.Current.MainWindow, MessageFormatter(paymentResponse.Messages["Stripe"]), "Error", MessageBoxButton.OK);
                     }
                 }
                 else
@@ -219,7 +219,7 @@ namespace WpfApp1
 
                 if (paymentSaved)
                 {
-                    MessageBox.Show("Payment Successful", "Success", MessageBoxButton.OK);
+                    MessageBox.Show(Application.Current.MainWindow,"Payment Successful", "Success", MessageBoxButton.OK);
                     MainWindow wnd = Application.Current.MainWindow as MainWindow;
                     if(wnd.PageIsOnStack(typeof(WorkOrderPage)))
                     {
@@ -237,7 +237,7 @@ namespace WpfApp1
                 }
                 else
                 {
-                    MessageBox.Show("There was a problem saving the payment record", "Error",  MessageBoxButton.OK);
+                    MessageBox.Show(Application.Current.MainWindow,"There was a problem saving the payment record", "Error",  MessageBoxButton.OK);
                 }
             }
 

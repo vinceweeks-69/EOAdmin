@@ -172,6 +172,7 @@ namespace WpfApp1
                 imageWindow.ImageBox.Source = image;
             }
 
+            imageWindow.Owner = wnd;
             imageWindow.ShowDialog();
         }
 

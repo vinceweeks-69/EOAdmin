@@ -234,7 +234,6 @@ namespace WpfApp1
             //}
 
             //filter.InventoryTypeCombo.ItemsSource = list1;
-
             filter.ShowDialog();
         }
 

@@ -62,14 +62,14 @@
         <Label Content="Add item not in inventory" FontWeight="Bold" Grid.Column="1" Grid.Row="8"  Margin="10,10,10,10" />
         
         <Label Content="Name"  Grid.Row="9" Grid.Column="1" FontWeight="Bold" Margin="10,10,10,10"/>
-        <TextBox Name="NotInName"  Grid.Row="10" Grid.Column="1" FontWeight="Bold" Margin="10,10,10,10"/>
+        <TextBox Name="NotInName"  Grid.Row="10" Grid.Column="1" VerticalAlignment="Center" Margin="10,10,10,10"/>
         
         <Label Content="Size"  Grid.Row="9" Grid.Column="2" FontWeight="Bold" Margin="10,10,10,10"/>
-        <TextBox Name="NotInSize"  Grid.Row="10" Grid.Column="2" FontWeight="Bold" Margin="10,10,10,10"/>
+        <TextBox Name="NotInSize"  Grid.Row="10" Grid.Column="2"   VerticalAlignment="Center" Margin="10,10,10,10"/>
         
         <Label Content="Price"  Grid.Row="11" Grid.Column="1" FontWeight="Bold" Margin="10,10,10,10"/>
-        <TextBox Name="NotInPrice"  Grid.Row="12" Grid.Column="1" FontWeight="Bold" Margin="10,10,10,10"/>
+        <TextBox Name="NotInPrice"  Grid.Row="12" Grid.Column="1"  VerticalAlignment="Center" Margin="10,10,10,10"/>
         
-        <Button Name ="AddNotInInventory" Content="Add" Grid.Column="2" Grid.Row="12" Margin="10,10,10,10"  Click="AddNotInInventory_Click" />
+        <Button Name ="AddNotInInventory" Content="Add" Grid.Column="2" Grid.Row="12"  Margin="10,10,10,10"  Click="AddNotInInventory_Click" />
     </Grid>
 </Window>

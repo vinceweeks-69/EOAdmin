@@ -186,7 +186,7 @@ namespace WpfApp1
                 }
                 else
                 {
-                    MessageBox.Show("Error adding container");
+                    MessageBox.Show(Application.Current.MainWindow,"Error adding container","Error",MessageBoxButton.OK);
                 }
             }
             catch (Exception ex)
@@ -217,7 +217,7 @@ namespace WpfApp1
                 }
                 else
                 {
-                    MessageBox.Show("There was an error retreiving containers");
+                    MessageBox.Show(Application.Current.MainWindow,"There was an error retreiving containers","Error",MessageBoxButton.OK);
                 }
             }
             catch (Exception ex)
@@ -254,6 +254,7 @@ namespace WpfApp1
                 imageWindow.ImageBox.Source = image;
             }
 
+            imageWindow.Owner = Application.Current.MainWindow;
             imageWindow.ShowDialog();
         }
 
@@ -307,7 +308,7 @@ namespace WpfApp1
                 }
                 else
                 {
-                    MessageBox.Show("Error deleting plant");
+                    MessageBox.Show(Application.Current.MainWindow,"Error deleting plant","Error",MessageBoxButton.OK);
                 }
             }
             catch(Exception ex)
