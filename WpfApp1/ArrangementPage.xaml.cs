@@ -768,9 +768,9 @@ namespace WpfApp1
             gView.Columns[2].Width = workingWidth * col3;
             gView.Columns[3].Width = workingWidth * col4;
 
-            var workingHeight = PageGrid.RowDefinitions.ElementAt(12).ActualHeight;
+            var workingHeight = PageGrid.ActualHeight;
 
-            ArrangementInventoryListView.Height = workingHeight * 0.9;
+            ArrangementInventoryListView.Height = workingHeight * 0.4;
         }
 
         private void Quantity_TextChanged(object sender, TextChangedEventArgs e)

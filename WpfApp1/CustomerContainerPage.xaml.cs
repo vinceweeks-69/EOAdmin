@@ -128,5 +128,25 @@ namespace WpfApp1
         {
 
         }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridView gView = CustomerContainerListView.View as GridView;
+
+            var workingWidth = PageGrid.ActualWidth;             // SystemParameters.VerticalScrollBarWidth; // take into account vertical scrollbar
+            CustomerContainerListView.Width = workingWidth;
+
+            var col1 = 0.33;
+            var col2 = 0.33;
+            var col3 = 0.33;
+
+            gView.Columns[0].Width = workingWidth * col1;
+            gView.Columns[1].Width = workingWidth * col2;
+            gView.Columns[2].Width = workingWidth * col3;
+
+            var workingHeight = PageGrid.RowDefinitions.ElementAt(8).ActualHeight;
+
+            CustomerContainerListView.Height = workingHeight * 0.9;
+        }
     }
 }

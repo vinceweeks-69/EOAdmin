@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       Title="CustomerContainerPage">
     <ScrollViewer>
-        <Grid>
+        <Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="33*"/>
                 <ColumnDefinition Width="33*"/>
@@ -94,50 +94,6 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            
-            <!--<ListView  x:Name="CustomerContainerListView" ItemsSource="{Binding customerContainersOC}" ItemSelected="CustomerContainerListView_ItemSelected">
-
-                <ListView.Header>
-                    <Grid >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="2*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Label Text="Label"  Grid.Column="0" Grid.Row="0" HorizontalOptions="Start" HorizontalTextAlignment="Center" VerticalOptions="Center"/>
-                        <Label Text="{x:Static fontawesome:FontAwesomeIcons.Binoculars}"   FontFamily="{StaticResource FontAwesomeSolid}" Grid.Column="1" Grid.Row="0" HorizontalOptions="Start" />
-                        --><!--<Label Text="{x:Static fontawesome:FontAwesomeIcons.Camera}"  FontFamily="{StaticResource FontAwesomeSolid}" Grid.Column="2" Grid.Row="0" HorizontalOptions="Start" HorizontalTextAlignment="Center" VerticalOptions="Center"/>--><!--
-                        <Label Text="{x:Static fontawesome:FontAwesomeIcons.TrashAlt}"  FontFamily="{StaticResource FontAwesomeSolid}" TextColor="Red"  Grid.Column="3" Grid.Row="0" HorizontalOptions="Start" />
-                     </Grid>
-                </ListView.Header>
-
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Label Grid.Column="0" Text="{Binding Label}" HorizontalOptions="Start" HorizontalTextAlignment="Start" VerticalOptions="Center"/>
-                                <Button x:Name="ViewCustomerContainerImage" Text="View" Grid.Column="1"  HorizontalOptions="Start" VerticalOptions="Start" Clicked="ViewCustomerContainerImage_Clicked"/>
-                                --><!--<Button x:Name="AddCustomerContainerImage" Text="Add" Grid.Column="2"  HorizontalOptions="Start" VerticalOptions="Start" Clicked="AddCustomerContainerImage_Clicked"/>--><!--
-                                <Button x:Name="DeleteCustomerContainer" Text="Delete"  Grid.Column="3"  HorizontalOptions="Start" VerticalOptions="Start" Clicked="DeleteCustomerContainer_Clicked"/>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>-->
-            
         </Grid>
     </ScrollViewer>
 </local:EOStackPage>

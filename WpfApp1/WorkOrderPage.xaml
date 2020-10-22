@@ -46,7 +46,7 @@
             <TextBox Name="Buyer" Grid.Row="2" Grid.Column="3" Margin="10,10,10,10" />
 
             <Label Content="Comments" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" FontWeight="Bold" />
-            <TextBox Name="CommentsTextBox" Grid.Row="4" Grid.Column =" 1" Grid.ColumnSpan="4" HorizontalAlignment="Left" Height="80" MinWidth="570" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" />
+            <TextBox Name="CommentsTextBox" Grid.Row="4" Grid.Column =" 1" Grid.ColumnSpan="4" HorizontalAlignment="Left" Height="80" MinWidth="570" Width="Auto" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" />
 
             <Label Content="Order Type" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
             <Label Content="Delivery Type" Grid.Row="5" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />

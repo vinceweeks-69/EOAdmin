@@ -41,6 +41,9 @@ namespace WpfApp1
             paymentType.Add(new KeyValuePair<int, string>(1, "Check"));
             paymentType.Add(new KeyValuePair<int, string>(2, "Credit Card"));
 
+            ccConfirmLabel.Visibility = Visibility.Hidden;
+            ccConfirmTextBox.Visibility = Visibility.Hidden;
+
             PaymentTypeComboBox.ItemsSource = paymentType;
             PaymentTypeComboBox.SelectedIndex = 0;
 
@@ -70,6 +73,62 @@ namespace WpfApp1
             currentWorkOrder = workOrder;
             Customer.Person = customer;
             GetWorkOrderDetail();
+        }
+
+        public PaymentPage(WorkOrderResponse workOrder,WorkOrderPaymentDTO payment) : this()
+        {
+            currentWorkOrder = workOrder;
+            Customer.Person = new PersonDTO();
+            SetWorkOrderDetail(payment);
+        }
+
+        void SetWorkOrderDetail(WorkOrderPaymentDTO payment)
+        {
+            Pay.IsEnabled = false;
+
+            PaymentTypeComboBox.SelectedIndex = payment.WorkOrderPaymentType;
+            PaymentTypeComboBox.IsEnabled = false;
+
+            if(payment.WorkOrderPaymentType == 2)
+            {
+                ccConfirmLabel.Visibility = Visibility.Visible;
+                ccConfirmTextBox.Visibility = Visibility.Visible;
+                ccConfirmTextBox.Text = payment.WorkOrderPaymentCreditCardConfirmation;
+                CCGrid.Visibility = Visibility.Hidden;
+            }
+
+            DiscountTypeComboBox.SelectedIndex = payment.DiscountType;
+            DiscountTypeComboBox.IsEnabled = false;
+
+            DiscountAmountTextBox.IsEnabled = false;
+
+            if (payment.DiscountType > 0)
+            {
+                DiscountAmountTextBox.Text = payment.DiscountAmount.ToString("N2");
+            }
+
+            if(!String.IsNullOrEmpty(payment.GiftCardNumber))
+            {
+                GiftCardNumberTextBox.Text = payment.GiftCardNumber;
+                GiftCardNumberTextBox.IsEnabled = false;
+            }
+
+
+            if (payment.GiftCardAmount > 0)
+            {
+                GiftCardCheckBox.IsChecked = true;
+                GiftCardCheckBox_Click(GiftCardCheckBox, new RoutedEventArgs());
+                GiftCardCheckBox.IsEnabled = false;
+                GiftCardAmountTextBox.Text = payment.GiftCardAmount.ToString("N2");
+                GiftCardAmountTextBox.IsEnabled = false;
+            }
+
+            SubTotalTextBox.Text = "";
+
+            TaxTextBox.Text = payment.WorkOrderPaymentTax.ToString("N2");
+
+            TotalTextBox.Text = payment.WorkOrderPaymentAmount.ToString("N2");
+
         }
 
         public async void GetWorkOrderDetail()
@@ -350,6 +409,18 @@ namespace WpfApp1
                 workOrderPayment.DiscountAmount = workValue;
             }
 
+            if (!String.IsNullOrEmpty(GiftCardNumberTextBox.Text))
+            {
+                workOrderPayment.GiftCardNumber = GiftCardNumberTextBox.Text;
+            }
+
+            if(!string.IsNullOrEmpty(GiftCardAmountTextBox.Text))
+            {
+                workValue = 0;
+                decimal.TryParse(GiftCardAmountTextBox.Text, out workValue);
+                workOrderPayment.GiftCardAmount = workValue;
+            }
+
             return workOrderPayment;
         }
 
@@ -414,17 +485,28 @@ namespace WpfApp1
 
         private void GiftCardCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            ComboBox cb = sender as ComboBox;
+            CheckBox cb = sender as CheckBox;
 
             if (cb != null)
             {
-                if (cb.SelectedIndex > 0)
+                if (cb.IsChecked.HasValue)
                 {
-                    GiftCardNumberLabel.Visibility = Visibility.Visible;
-                    GiftCardNumberTextBox.Visibility = Visibility.Visible;
+                    if (cb.IsChecked.Value)
+                    {
+                        GiftCardNumberLabel.Visibility = Visibility.Visible;
+                        GiftCardNumberTextBox.Visibility = Visibility.Visible;
 
-                    GiftCardAmountLabel.Visibility = Visibility.Visible;
-                    GiftCardAmountTextBox.Visibility = Visibility.Visible;
+                        GiftCardAmountLabel.Visibility = Visibility.Visible;
+                        GiftCardAmountTextBox.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        GiftCardNumberLabel.Visibility = Visibility.Hidden;
+                        GiftCardNumberTextBox.Visibility = Visibility.Hidden;
+
+                        GiftCardAmountLabel.Visibility = Visibility.Hidden;
+                        GiftCardAmountTextBox.Visibility = Visibility.Hidden;
+                    }
                 }
                 else
                 {

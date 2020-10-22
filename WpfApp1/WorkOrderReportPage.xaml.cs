@@ -43,6 +43,9 @@ namespace WpfApp1
             MainWindow mainWnd = Application.Current.MainWindow as MainWindow;
 
             inventory = mainWnd.GetInventoryByType(0);
+
+            this.FromDatePicker.SelectedDate = DateTime.Now;
+            this.ToDatePicker.SelectedDate = DateTime.Now;
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
@@ -51,11 +54,15 @@ namespace WpfApp1
 
             if (((this.FromDatePicker.SelectedDate.HasValue && this.FromDatePicker.SelectedDate.Value != DateTime.MinValue) &&
                (this.ToDatePicker.SelectedDate.HasValue && this.ToDatePicker.SelectedDate.Value != DateTime.MinValue)) &&
-               (this.FromDatePicker.SelectedDate.Value < this.ToDatePicker.SelectedDate.Value))
+               (this.FromDatePicker.SelectedDate.Value <= this.ToDatePicker.SelectedDate.Value))
             {
                 WorkOrderListFilter filter = new WorkOrderListFilter();
-                filter.FromDate = FromDatePicker.SelectedDate.Value;
+
+                filter.FromDate = FromDatePicker.SelectedDate.Value;    //automatically 12:00 am start of day
+                               
                 filter.ToDate = ToDatePicker.SelectedDate.Value;
+                filter.ToDate = filter.ToDate.AddHours(23);
+                filter.ToDate = filter.ToDate.AddMinutes(59);
 
                 List<WorkOrderResponse> response = await  ((App)App.Current).PostRequest<WorkOrderListFilter,List<WorkOrderResponse>>("GetWorkOrders", filter);
 
@@ -70,53 +77,9 @@ namespace WpfApp1
             }
             else
             {
-                MessageBox.Show(Application.Current.MainWindow,"Please pick a From and To date value and ensure that the From date is earlier than the To date.","Error",MessageBoxButton.OK);
+                MessageBox.Show(Application.Current.MainWindow,"Please pick a From and To date value and ensure that the From date is earlier than  or equal to the To date.","Error",MessageBoxButton.OK);
             }
         }
-
-        //private List<WorkOrderResponse> GetWorkOrders()
-        //{
-        //   List<WorkOrderResponse> workOrders = new List<WorkOrderResponse>();
-
-        //    try
-        //    {
-        //        WorkOrderListFilter filter = new WorkOrderListFilter();
-        //        filter.FromDate = this.FromDatePicker.SelectedDate.Value;
-        //        filter.ToDate = this.ToDatePicker.SelectedDate.Value;
-
-        //        HttpClient client = new HttpClient();
-        //        client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //        client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
-
-        //        string jsonData = JsonConvert.SerializeObject(filter);
-        //        var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-        //        HttpResponseMessage httpResponse =
-        //            client.PostAsync("api/Login/GetWorkOrders",content).Result;
-
-        //        if (httpResponse.IsSuccessStatusCode)
-        //        {
-        //            Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
-        //            StreamReader strReader = new StreamReader(streamData);
-        //            string strData = strReader.ReadToEnd();
-        //            strReader.Close();
-        //            List<WorkOrderResponse> response = JsonConvert.DeserializeObject<List<WorkOrderResponse>>(strData);
-        //            workOrders = response;
-        //        }
-        //        else
-        //        {
-        //            MessageBox.Show("There was an error retreiving Work Orders");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-
-        //    return workOrders;
-        //}
 
         private void ShowWorkOrderItems_Clicked(object sender, RoutedEventArgs e)
         {
@@ -215,13 +178,15 @@ namespace WpfApp1
             WorkOrderReportListView.Width = workingWidth;
             WorkOrderDetailListView.Width = workingWidth;
 
-            var col1 = 0.33;
-            var col2 = 0.33;
-            var col3 = 0.33;
+            var col1 = 0.25;
+            var col2 = 0.25;
+            var col3 = 0.25;
+            var col4 = 0.25;
 
             gView1.Columns[0].Width = workingWidth * col1;
             gView1.Columns[1].Width = workingWidth * col2;
             gView1.Columns[2].Width = workingWidth * col3;
+            gView1.Columns[3].Width = workingWidth * col4;
 
             GridView gView2 = WorkOrderDetailListView.View as GridView;
 
@@ -233,12 +198,46 @@ namespace WpfApp1
             gView2.Columns[1].Width = workingWidth * col2;
             gView2.Columns[2].Width = workingWidth * col3;
 
-            var workingHeight = PageGrid.RowDefinitions.ElementAt(4).ActualHeight;
-            workingHeight += PageGrid.RowDefinitions.ElementAt(5).ActualHeight;
-            workingHeight += PageGrid.RowDefinitions.ElementAt(6).ActualHeight;
+            var workingHeight = PageGrid.ActualHeight;
 
-            WorkOrderReportListView.Height = workingHeight * 0.5;
-            WorkOrderDetailListView.Height = workingHeight * 0.3;
+            WorkOrderReportListView.Height = workingHeight * 0.4;
+            WorkOrderDetailListView.Height = workingHeight * 0.2;
+        }
+
+        private async void PaymentDetail_Click(object sender, RoutedEventArgs e)
+        {
+            //if paid - load payment page with detail
+            Button b = sender as Button;
+
+            if (b != null)
+            {
+                WorkOrderResponse  workOrder = (WorkOrderResponse)b.CommandParameter;
+                if (workOrder != null && workOrder.WorkOrder != null &&  workOrder.WorkOrder.WorkOrderId > 0)
+                {
+                    GenericGetRequest request = new GenericGetRequest("GetWorkOrderPayment", "workOrderId", workOrder.WorkOrder.WorkOrderId);
+                    WorkOrderPaymentDTO  payment = await ((App)App.Current).GetRequest<WorkOrderPaymentDTO>(request);
+
+                    PaymentDetailLoaded(payment, workOrder);    
+                }
+            }
+        }
+
+        void PaymentDetailLoaded(WorkOrderPaymentDTO payment, WorkOrderResponse workOrder)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (payment != null && payment.WorkOrderPaymentId > 0)
+                {
+                    MainWindow wnd = Application.Current.MainWindow as MainWindow;
+                    PaymentPage paymentPage = new PaymentPage(workOrder, payment);
+                    wnd.NavigationStack.Push(paymentPage);
+                    wnd.MainContent.Content = new Frame() { Content = paymentPage };
+                }
+                else
+                {
+                    MessageBox.Show(Application.Current.MainWindow, "Work Order has not been paid.", "OK", MessageBoxButton.OK);
+                }
+            });
         }
     }
 }

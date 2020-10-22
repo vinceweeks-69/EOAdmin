@@ -57,6 +57,9 @@
                 <Label Content="Payment Type"  Grid.Row="1" Grid.Column="0" FontWeight="Bold" />
                 <ComboBox x:Name="PaymentTypeComboBox" Grid.Row="2" Grid.Column="0" SelectedValuePath="Key" DisplayMemberPath="Value"  Margin="10,10,10,10" SelectionChanged="PaymentTypeComboBox_SelectionChanged" />
                 
+                <Label x:Name="ccConfirmLabel"  Content="Credit Card payment confirmation" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" FontWeight="Bold" />
+                <TextBox x:Name="ccConfirmTextBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="10,10,10,10" IsReadOnly="True" />
+                
                 <Label Content="Sub Total"  Grid.Row="3" Grid.Column="0" FontWeight="Bold" />
                 <TextBox x:Name="SubTotalTextBox" Grid.Row="4" Grid.Column="0" Margin="10,10,10,10" IsReadOnly="True" />
                          
