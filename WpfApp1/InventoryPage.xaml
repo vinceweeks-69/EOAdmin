@@ -10,23 +10,26 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="8*"/>
+            <ColumnDefinition Width="8*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Label Content="Elegant Orchids Inventory" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
+        <Label Content="Elegant Orchids Inventory" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
 
-        <Button Content="Orchids" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Margin="20" VerticalAlignment="Top" Width="107" Click="PlantsButton_Click" Height="20"/>
-        <Button Content="Foliage" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="20" VerticalAlignment="Top" Width="107" Click="FoliageButton_Click" Height="20"/>
-        <Button Content="Materials" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Margin="20" VerticalAlignment="Top" Width="107" Click="MaterialsButton_Click" Height="20"/>
-        <Button Content="Containers" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="20" VerticalAlignment="Top" Width="107" Height="20" Click="ContainersButton_Click" />
-        <Button Content="Arrangements" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Margin="20" VerticalAlignment="Top" Width="107" Height="20" Click="ArrangementsButton_Click"/>
-        <Button Content="Import" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Margin="20,20,0,20" VerticalAlignment="Top" Width="107" Height="20" Click="ImportButton_Click" />
+        <Button Content="Orchids" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="107" Click="PlantsButton_Click" Height="20"/>
+        <Button Content="Foliage" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="107" Click="FoliageButton_Click" Height="20"/>
+        <Button Content="Materials" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="107" Click="MaterialsButton_Click" Height="20"/>
+        <Button Content="Containers" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="107" Height="20" Click="ContainersButton_Click" />
+        <Button Content="Arrangements" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="107" Height="20" Click="ArrangementsButton_Click"/>
+        <Button Content="Import" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="107" Height="20" Click="ImportButton_Click" />
 
     </Grid>
 </Page>

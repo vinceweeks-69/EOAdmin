@@ -9,7 +9,7 @@
       Title="ImportPage">
 
 
-    <Grid Margin="0,-12,399,0">
+    <Grid>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -21,17 +21,18 @@
             <RowDefinition Height="60"/>
             <RowDefinition Height="60"/>
             <RowDefinition Height="60"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
         <Label Content="Elegant Orchids Import" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
 
-        <Button Content="Import Orchids" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Width="107" Click="PlantsButton_Click" Height="20"/>
-        <Button Content="Import Materials"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Width="107" Click="MaterialsButton_Click" Height="20"/>
-        <Button Content="Import Containers" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Width="107" Height="20" Click="ContainersButton_Click" />
-        <Button Content="Import Arrangements" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Width="107" Height="20" Click="ArrangementsButton_Click"/>
-        <Button Content="Import Foliage" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Margin="10,10,0,10" VerticalAlignment="Top" Width="107" Click="FoliageButton_Click" Height="20" RenderTransformOrigin="1.817,0.986"/>
-        <Button Content="Import Vendors" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Margin="10,10,0,10" VerticalAlignment="Top" Width="107" Height="20" Click="VendorButton_Click" />
-        <Button Content="Import Customers" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" Margin="10,10,0,10" VerticalAlignment="Top" Width="107" Height="20" Click="CustomerButton_Click" />
-        <Button Content="Import Image" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Margin="10,10,0,10" VerticalAlignment="Top" Width="107" Height="20" Click="ImageButton_Click" />
+        <Button Content="Import Orchids" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="120" Click="PlantsButton_Click" Height="20"/>
+        <Button Content="Import Materials"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="120" Click="MaterialsButton_Click" Height="20"/>
+        <Button Content="Import Containers" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="120" Height="20" Click="ContainersButton_Click" />
+        <Button Content="Import Arrangements" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="120" Height="20" Click="ArrangementsButton_Click"/>
+        <Button Content="Import Foliage" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="120" Click="FoliageButton_Click" Height="20" RenderTransformOrigin="1.817,0.986"/>
+        <Button Content="Import Vendors" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="120" Height="20" Click="VendorButton_Click" />
+        <Button Content="Import Customers" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="120" Height="20" Click="CustomerButton_Click" />
+        <Button Content="Import Image" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Center" Width="120" Height="20" Click="ImageButton_Click" />
     </Grid>
 </Page>

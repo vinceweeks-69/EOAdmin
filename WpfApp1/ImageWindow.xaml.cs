@@ -28,5 +28,10 @@ namespace WpfApp1
         {
             this.Close();
         }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
     }
 }

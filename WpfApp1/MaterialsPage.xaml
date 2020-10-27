@@ -8,18 +8,36 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="">
 
-    <Grid Margin="0,0,101,75">
+    <Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="1*"/>
 
-        <Label Content="Elegant Orchids Materials" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
-        <Button Content="Add Image" HorizontalAlignment="Left" Margin="31,182,0,0" VerticalAlignment="Top" Width="122" Height="29" Click="AddImageButton_Click"/>
-        <ComboBox Name="MaterialTypes" HorizontalAlignment="Left" Margin="33,106,0,0" VerticalAlignment="Top" Width="120" Height="29"  DisplayMemberPath="Value" SelectionChanged="MaterialTypes_SelectionChanged"/>
-        <Label Content="Material Type" HorizontalAlignment="Left" Margin="33,56,0,0" VerticalAlignment="Top" Width="71" RenderTransformOrigin="0.559,-0.795" Height="44"/>
-        <Label Content="Material Name" HorizontalAlignment="Left" Margin="211,56,0,0" VerticalAlignment="Top" Width="101" Height="28"/>
-        <ComboBox Name="MaterialNames" HorizontalAlignment="Left" Margin="211,106,0,0" VerticalAlignment="Top" Width="120" Height="29" DisplayMemberPath="Value" SelectionChanged="MaterialNames_SelectionChanged"/>
-        <!--<Label Content="Sevice Code" HorizontalAlignment="Left" Margin="377,53,0,0" VerticalAlignment="Top" Width="72" RenderTransformOrigin="0.559,-0.795" Height="44"/>
-        <ComboBox Name ="ServiceCodes" HorizontalAlignment="Left" Margin="377,106,0,0" VerticalAlignment="Top" Width="120" Height="29" DisplayMemberPath="Value"/>-->
-        <ListView Name="MaterialInventoryListView" HorizontalAlignment="Left" Height="217" Margin="31,276,0,0" VerticalAlignment="Top" Width="615">
+        </Grid.RowDefinitions>
+        
+        <Label Content="Elegant Orchids Materials" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
+         
+        <Label Content="Material Type" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.559,-0.795" Height="44"/>
+        <ComboBox Name="MaterialTypes" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Height="29"  DisplayMemberPath="Value" SelectionChanged="MaterialTypes_SelectionChanged"/>
+
+        <Label Content="Material Name" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="101" Height="28"/>
+        <ComboBox Name="MaterialNames" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Height="29" DisplayMemberPath="Value" SelectionChanged="MaterialNames_SelectionChanged"/>
+        
+        <Button Content="Add Image" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="122" Height="29" Click="AddImageButton_Click"/>
+        
+        <ListView Name="MaterialInventoryListView" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="Auto" Margin="10,10,10,10" VerticalAlignment="Top" Width="Auto">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Material Type" DisplayMemberBinding="{Binding Material.MaterialTypeName}" Width="100"/>

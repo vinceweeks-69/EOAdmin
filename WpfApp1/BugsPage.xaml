@@ -9,16 +9,31 @@
       Title="BugsPage">
 
     <Grid>
-        <Label Content="Bugs and New Feature Requests" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>    
+            <RowDefinition Height="10*"/>  
+            <RowDefinition Height="1*"/>  
+            <RowDefinition Height="1*"/> 
+        </Grid.RowDefinitions>
+        
+        <Label Content="Bugs and New Feature Requests" Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
 
         <TextBox
             x:Name="bugs"
+            Grid.Row="1"
+            Grid.Column="1"
             TextWrapping="Wrap"
             AcceptsReturn="True"
             HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto" Margin="40,74,150,125"/>
+            VerticalScrollBarVisibility="Auto" Margin="10,10,10,10"/>
         
-         <Button x:Name="Send" Content="Send" HorizontalAlignment="Left" Margin="286,351,0,0" VerticalAlignment="Top" Width="122" Height="29" Click="Send_Click"  RenderTransformOrigin="0.893,0.379"/>
+         <Button x:Name="Send" Content="Send" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Width="122" Height="29" Click="Send_Click" />
 
     </Grid>
 </Page>

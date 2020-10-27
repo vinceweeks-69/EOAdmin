@@ -7,18 +7,35 @@
       mc:Ignorable="d" d:DesignWidth="800"
       Title="PlantPage" Height="592.5">
 
-    <Grid Margin="0,0,101,75">
+    <Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
         
-        <Label Content="Elegant Orchids Orchids" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
-        <Button Content="Add Image" HorizontalAlignment="Left" Margin="31,182,0,0" VerticalAlignment="Top" Width="122" Height="29" Click="AddImageButton_Click"/>
-        <ComboBox Name="PlantTypes" HorizontalAlignment="Left" Margin="33,106,0,0" VerticalAlignment="Top" Width="120" Height="29"  DisplayMemberPath="Value" SelectionChanged="PlantTypes_SelectionChanged"/>
-        <Label Content="Orchid Type" HorizontalAlignment="Left" Margin="33,56,0,0" VerticalAlignment="Top" Width="71" RenderTransformOrigin="0.559,-0.795" Height="44"/>
-        <Label Content="Orchid Name" HorizontalAlignment="Left" Margin="211,56,0,0" VerticalAlignment="Top" Width="101" Height="28"/>
-        <ComboBox Name="PlantNames" HorizontalAlignment="Left" Margin="211,106,0,0" VerticalAlignment="Top" Width="120" Height="29" DisplayMemberPath="Value" SelectionChanged="PlantNames_SelectionChanged"/>
-        <!--<Label Content="Sevice Code" HorizontalAlignment="Left" Margin="377,53,0,0" VerticalAlignment="Top" Width="72" RenderTransformOrigin="0.559,-0.795" Height="44"/>
-        <ComboBox Name ="ServiceCodes" HorizontalAlignment="Left" Margin="377,106,0,0" VerticalAlignment="Top" Width="120" Height="29" DisplayMemberPath="Value"/>-->
-        <ListView Name="PlantInventoryListView" HorizontalAlignment="Left" Height="217" Margin="31,276,0,0" VerticalAlignment="Top" Width="615">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="6*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        
+        <Label Content="Elegant Orchids Orchids" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
+        
+        <Label Content="Orchid Type" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="71" RenderTransformOrigin="0.559,-0.795" Height="44"/>
+        <ComboBox Name="PlantTypes" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="120" Height="29"  DisplayMemberPath="Value" SelectionChanged="PlantTypes_SelectionChanged"/>
+        
+        <Label Content="Orchid Name" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="101" Height="28"/>
+        <ComboBox Name="PlantNames" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="120" Height="29" DisplayMemberPath="Value" SelectionChanged="PlantNames_SelectionChanged"/>
+
+        <Button Content="Add Image" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="122" Height="29" Click="AddImageButton_Click"/>
+        
+        <ListView Name="PlantInventoryListView" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="Auto" Margin="10,10,10,10" VerticalAlignment="Top" Width="Auto">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Orchid Type" DisplayMemberBinding="{Binding Plant.PlantTypeName}" Width="100"/>

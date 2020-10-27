@@ -8,16 +8,32 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ContainerPage">
 
-    <Grid>
-        <Label Content="Elegant Orchids Containers" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
-        <Label Content="Container Name" HorizontalAlignment="Left" Margin="188,59,0,0" VerticalAlignment="Top" Width="101" Height="25"/>
-        <Button Content="Add Image" HorizontalAlignment="Left" Margin="31,182,0,0" VerticalAlignment="Top" Width="122" Height="29" Click="AddImageButton_Click"/>
-        <!--<Label Content="Sevice Code" HorizontalAlignment="Left" Margin="336,56,0,0" VerticalAlignment="Top" Width="106" RenderTransformOrigin="0.559,-0.795" Height="28"/>
-        <ComboBox x:Name ="ServiceCodes" HorizontalAlignment="Left" Margin="336,105,0,0" VerticalAlignment="Top" Width="106" Height="22" DisplayMemberPath="Value"/>-->
-        <Label Content="Container Type" HorizontalAlignment="Left" Margin="31,66,0,0" VerticalAlignment="Top" Width="101" Height="25"/>
-        <ComboBox Name="ContainerNames" HorizontalAlignment="Left" Margin="188,105,0,0" VerticalAlignment="Top" Width="120" DisplayMemberPath="Value"/>
-        <ComboBox Name="ContainerTypes" HorizontalAlignment="Left" Margin="33,105,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ContainerTypes_SelectionChanged" DisplayMemberPath="Value"/>
-        <ListView Name="ContainerListView" HorizontalAlignment="Left" Height="176" Margin="33,246,0,0" VerticalAlignment="Top" Width="530">
+    <Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="6*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        
+        <Label Content="Elegant Orchids Containers" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="341" Height="41" FontFamily="Verdana" FontSize="20"/>
+        
+        <Label Content="Container Name" Grid.Row="1" Grid.Column="1"  HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="101" Height="25"/>
+        <ComboBox Name="ContainerNames" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,00,00" VerticalAlignment="Top" Width="120" DisplayMemberPath="Value"/>
+                
+        <Label Content="Container Type" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="101" Height="25"/>
+        <ComboBox Name="ContainerTypes" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="120" SelectionChanged="ContainerTypes_SelectionChanged" DisplayMemberPath="Value"/>
+        
+        <ListView Name="ContainerListView" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top"  Width="Auto" Height="Auto">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Container Type" DisplayMemberBinding="{Binding Container.ContainerTypeName}" Width="150"/>

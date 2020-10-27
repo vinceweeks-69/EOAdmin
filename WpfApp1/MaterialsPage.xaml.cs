@@ -417,5 +417,25 @@ namespace WpfApp1
 
             //this.FoliageInventoryListView.ItemsSource = list3;
         }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridView gView = MaterialInventoryListView.View as GridView;
+
+            var workingWidth = PageGrid.ActualWidth - 80;   //SystemParameters.VerticalScrollBarWidth; // take into account vertical scrollbar
+            MaterialInventoryListView.Width = workingWidth;
+
+            var col1 = 0.40;
+            var col2 = 0.15;
+            var col3 = 0.15;
+            var col4 = 0.15;
+            var col5 = 0.15;
+
+            gView.Columns[0].Width = workingWidth * col1;
+            gView.Columns[1].Width = workingWidth * col2;
+            gView.Columns[2].Width = workingWidth * col3;
+            gView.Columns[3].Width = workingWidth * col4;
+            gView.Columns[4].Width = workingWidth * col5;
+        }
     }
 }

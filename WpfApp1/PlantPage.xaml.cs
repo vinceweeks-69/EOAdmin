@@ -431,5 +431,10 @@ namespace WpfApp1
 
             this.PlantInventoryListView.ItemsSource = list3;
         }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
     }
 }

@@ -336,5 +336,25 @@ namespace WpfApp1
             this.ContainerNames.ItemsSource = null;
             this.ContainerNames.ItemsSource = list2;
         }
+
+        private void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridView gView = ContainerListView.View as GridView;
+
+            var workingWidth = PageGrid.ActualWidth - 80;   //SystemParameters.VerticalScrollBarWidth; // take into account vertical scrollbar
+            ContainerListView.Width = workingWidth;
+
+            var col1 = 0.20;
+            var col2 = 0.20;
+            var col3 = 0.20;
+            var col4 = 0.20;
+            var col5 = 0.20;
+
+            gView.Columns[0].Width = workingWidth * col1;
+            gView.Columns[1].Width = workingWidth * col2;
+            gView.Columns[2].Width = workingWidth * col3;
+            gView.Columns[3].Width = workingWidth * col4;
+            gView.Columns[4].Width = workingWidth * col5;
+        }
     }
 }

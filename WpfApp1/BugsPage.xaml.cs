@@ -28,7 +28,7 @@ namespace WpfApp1
             InitializeComponent();
         }
 
-        private void Send_Click(object sender, RoutedEventArgs e)
+        public void Send_Click(object sender, RoutedEventArgs e)
         {
             if(bugs.Text.Length > 0)
             {

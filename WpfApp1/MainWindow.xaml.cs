@@ -265,7 +265,7 @@ namespace WpfApp1
             }
             else if (currentPage is BugsPage)
             {
-                //((BugsPage)currentPage).AddBug();
+                ((BugsPage)currentPage).Send_Click(null,new RoutedEventArgs());
             }
         }
 
