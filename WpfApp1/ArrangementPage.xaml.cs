@@ -60,11 +60,7 @@ namespace WpfApp1
 
             currentArrangement = arrangementRequest;
 
-            ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
-            list1.Add(new KeyValuePair<long, string>(1, "Vicky"));
-            list1.Add(new KeyValuePair<long, string>(2, "Marguerita"));
-
-            Designer.ItemsSource = list1;
+            GetUsers();
 
             ObservableCollection<KeyValuePair<long, string>> list2 = new ObservableCollection<KeyValuePair<long, string>>();
             list2.Add(new KeyValuePair<long, string>(0, "180"));
@@ -102,6 +98,26 @@ namespace WpfApp1
             ArrangementInventoryListView.ItemsSource = new ObservableCollection<WorkOrderViewModel>();
 
             ReloadListData();
+        }
+
+        private async void GetUsers()
+        {
+            GenericGetRequest request = new GenericGetRequest("GetUsers", String.Empty, 0);
+            ((App)App.Current).GetRequest<GetUserResponse>(request).ContinueWith(a => UsersLoaded(a.Result));
+        }
+
+        private void UsersLoaded(GetUserResponse response)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
+                foreach (UserDTO u in response.Users.Where(a => a.RoleId == 2).ToList())
+                {
+                    list1.Add(new KeyValuePair<long, string>(u.UserId, u.UserName));
+                }
+
+                Designer.ItemsSource = list1;
+            });
         }
 
         private async void LoadCustomerContainers(long customerId)
@@ -275,40 +291,23 @@ namespace WpfApp1
                 ReloadListData();
             }
         }
-        private List<KeyValuePair<long,string>> GetInventoryList()
-        {
-            List<KeyValuePair<long, string>> inventoryList = new List<KeyValuePair<long, string>>();
+        //private async void GetInventoryList()
+        //{
+        //    GenericGetRequest request = new GenericGetRequest("GetInventoryList",String.Empty,0);
 
-            try
-            {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //    ((App)App.Current).GetRequest<GetKvpLongStringResponse>(request).ContinueWith(a =>
+        //    {
+        //        InventoryListLoaded(a.Result);
+        //    });
+        //}
 
-                client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
-
-                HttpResponseMessage httpResponse =
-                    client.GetAsync("api/Login/GetInventoryList").Result;
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
-                    StreamReader strReader = new StreamReader(streamData);
-                    string strData = strReader.ReadToEnd();
-                    strReader.Close();
-                    GetKvpLongStringResponse response = JsonConvert.DeserializeObject<GetKvpLongStringResponse>(strData);
-                    inventoryList = response.KvpList;
-                }
-                else
-                {
-                    MessageBox.Show(Application.Current.MainWindow,"There was an error retreiving arrangements","Error",MessageBoxButton.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-            return inventoryList;
-        }
+        //private void InventoryListLoaded(GetKvpLongStringResponse response)
+        //{
+        //    Dispatcher.Invoke(() =>
+        //    {
+        //        inventoryList = response.KvpList;
+        //    });
+        //}
 
         private List<ServiceCodeDTO> GetServiceCodes()
         {
@@ -471,92 +470,21 @@ namespace WpfApp1
             currentArrangement.NotInInventory = notInInventory;
         }
 
-        public void AddArrangement()
+        private async void OnAddArrangement()
         {
-            long image_id = 0;
-            string jsonData = String.Empty;
+            //validate
 
-            try
+            //if correct, save
+            ((App)App.Current).PostRequest<AddArrangementRequest, ApiResponse>("AddArrangement", currentArrangement).ContinueWith(a => OnArrangementAdded(a.Result));
+        }
+
+        private void OnArrangementAdded(ApiResponse response)
+        {
+            Dispatcher.Invoke(() =>
             {
-                AddArrangementRequest addArrangementRequest = new AddArrangementRequest();
+                //reset ui and variables
 
-                //save image if the user has selected one
-                if (fileStreamContent != null)
-                {
-                    var url = "http://localhost:9000/api/Login/UploadPlantImage";
-                    fileStreamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data") { Name = "file", FileName = fileName };
-                    fileStreamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
-                    using (var client1 = new HttpClient())
-                    {
-                        client1.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
-
-                        using (var formData = new MultipartFormDataContent())
-                        {
-                            formData.Add(fileStreamContent);
-                            var response = client1.PostAsync(url, formData).Result;
-                            string strImageId = response.Content.ReadAsStringAsync().Result;
-
-                            Int64.TryParse(strImageId, out image_id);
-                        }
-                    }
-                }
-
-                String arrangementName = this.ArrangementName.Text;
-
-                //KeyValuePair<long, string> serviceCode = (KeyValuePair<long, string>)this.ServiceCodes.SelectedValue;
-
-                ArrangementDTO aDTO = new ArrangementDTO();
-                aDTO.ArrangementName = arrangementName;
-                addArrangementRequest.Arrangement = aDTO;
-
-                InventoryDTO iDTO = new InventoryDTO();
-                iDTO.InventoryName = arrangementName;
-                iDTO.InventoryTypeId = 3; //"Arrangements"
-                //iDTO.ServiceCodeId = serviceCode.Key;
-
-                //foreach (ArrangementInventoryItemDTO ai in arrangementInventoryList)
-                //{
-                //    addArrangementRequest.ArrangementInventory.Add(new ArrangementInventoryItemDTO()
-                //    {
-                //        ArrangementInventoryName = ai.InventoryName,
-                //        InventoryId = ai.InventoryId,
-                //        Quantity = ai.Quantity,
-                //    });
-                //}
-
-                ///ADD FROM currentArrangement
-
-                addArrangementRequest.Arrangement = aDTO;
-                addArrangementRequest.Inventory = iDTO;
-                if (image_id > 0)
-                {
-                    addArrangementRequest.ImageId = image_id;
-                }
-
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-                client.DefaultRequestHeaders.Accept.Add(
-                   new MediaTypeWithQualityHeaderValue("application/json"));
-
-                client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
-
-                jsonData = JsonConvert.SerializeObject(addArrangementRequest);
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage httpResponse = client.PostAsync("api/Login/AddArrangement", content).Result;
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    //Reload();
-                }
-                else
-                {
-                    MessageBox.Show(Application.Current.MainWindow,"Error adding arrangement","Error",MessageBoxButton.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                Exception ex2 = new Exception("AddArrangement", ex);
-                ((App)App.Current).LogError(ex2.Message, jsonData);
-            }
+            });
         }
 
         //add the selected inventory item to the list of inventory items for the current arrangement

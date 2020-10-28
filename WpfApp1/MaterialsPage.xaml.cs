@@ -29,7 +29,7 @@ namespace WpfApp1
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
         string fileName;
-        HttpContent fileStreamContent = null;
+
         List<MaterialTypeDTO> materialTypes = new List<MaterialTypeDTO>();
         List<MaterialNameDTO> materialNames = new List<MaterialNameDTO>();
         List<ServiceCodeDTO> serviceCodes = new List<ServiceCodeDTO>();
@@ -133,6 +133,8 @@ namespace WpfApp1
 
             return materials;
         }
+
+
         private void AddImageButton_Click(object sender, RoutedEventArgs e)
         {
             ////add a check to see if this plant already has an image and warn if

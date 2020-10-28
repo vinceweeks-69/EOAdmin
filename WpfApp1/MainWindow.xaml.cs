@@ -29,7 +29,6 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        //public string LAN_Address { get; private set; }
         public string User { get; private set; }
         public string Pwd { get; private set; }
 
@@ -102,20 +101,12 @@ namespace WpfApp1
 
             try
             {
-                //HttpClient client = new HttpClient();
-                //client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-
-                //client.DefaultRequestHeaders.Accept.Add(
-                //   new MediaTypeWithQualityHeaderValue("application/json"));
-
                 Frame f = MainContent.Content as Frame;
                 User = (f.Content as LoginPage).UserName.Text;
                 Pwd = (f.Content as LoginPage).Password.Password;
 
                 ((App)App.Current).User = User;
                 ((App)App.Current).Pwd = Pwd;
-
-                //client.DefaultRequestHeaders.Add("EO-Header", User + " : " + Pwd);
 
                 request.Login.UserName = User;
                 request.Login.Password = Pwd;
@@ -139,23 +130,6 @@ namespace WpfApp1
 
                     MessageBox.Show(Application.Current.MainWindow,sb.ToString(),"Error",MessageBoxButton.OK);
                 }
-
-                //jsonData = JsonConvert.SerializeObject(request);
-                //var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                //HttpResponseMessage httpResponse = client.PostAsync("api/Login/Login", content).Result;
-                //if (httpResponse.IsSuccessStatusCode)
-                //{
-                //    IEnumerable<string> values;
-                //    httpResponse.Headers.TryGetValues("EO-Header", out values);
-                //    if (values != null && values.ToList().Count == 1)
-                //    {                        
-                //        this.MainContent.Content = new Frame() { Content = new DashboardPage() };
-                //    }
-                //    else
-                //    {
-                //        MessageBox.Show("Unrecognized username / password");
-                //    }
-                //}
             }
             catch(Exception ex)
             {
@@ -267,43 +241,6 @@ namespace WpfApp1
             {
                 ((BugsPage)currentPage).Send_Click(null,new RoutedEventArgs());
             }
-        }
-
-        public List<VendorDTO> GetVendors()
-        {
-            List<VendorDTO> vDTO = new List<VendorDTO>();
-
-            try
-            {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("plain/text"));
-
-                client.DefaultRequestHeaders.Add("EO-Header", User + " : " + Pwd);
-
-                string jsonData = JsonConvert.SerializeObject(new GetPersonRequest());
-                StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage httpResponse =
-                    client.PostAsync("api/Login/GetVendors",content).Result;
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    string strData = httpResponse.Content.ReadAsStringAsync().Result;
-                    GetVendorResponse resp = JsonConvert.DeserializeObject<GetVendorResponse>(strData);
-                    vDTO = resp.VendorList;
-                }
-                else
-                {
-                    MessageBox.Show("There was an error retreiving vendors");
-                }
-            }
-            catch(Exception ex)
-            {
-                Exception ex2 = new Exception("Admin - GetVendors", ex);
-                ((App)App.Current).LogError(ex2.Message, String.Empty);
-            }
-
-            return vDTO;
         }
 
         public List<InventoryTypeDTO> GetInventoryTypes()

@@ -35,130 +35,98 @@ namespace WpfApp1
         {
             InitializeComponent();
 
-            GetVendorResponse response = GetVendors();
-
-            foreach(VendorDTO dto in response.VendorList)
-            {
-                list3.Add(dto);
-            }
-
-            this.VendorListView.ItemsSource = list3;
+            GetVendors();
         }
 
-        public GetVendorResponse GetVendors()
+        private async void GetVendors()
         {
-            GetVendorResponse response = new GetVendorResponse();
-
-            try
-            {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("plain/text"));
-
-                client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
-
-                string jsonData = JsonConvert.SerializeObject(new GetPersonRequest());
-                StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage httpResponse =
-                    client.PostAsync("api/Login/GetVendors",content).Result;
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    string strData = httpResponse.Content.ReadAsStringAsync().Result;
-                    response = JsonConvert.DeserializeObject<GetVendorResponse>(strData);
-                }
-                else
-                {
-                    MessageBox.Show("There was an error retreiving vendors");
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-            return response;
+            ((App)App.Current).PostRequest<GetPersonRequest, GetVendorResponse>("GetVendors", new GetPersonRequest()).ContinueWith(a => VendorsLoaded(a.Result));
         }
 
-        public void AddVendor()
+        private void VendorsLoaded(GetVendorResponse response)
         {
-            try
+            Dispatcher.Invoke(() =>
             {
-                AddVendorRequest addVendorRequest = new AddVendorRequest();
-
-                if(String.IsNullOrEmpty(this.VendorName.Text))
+                foreach (VendorDTO vDTO in response.VendorList)
                 {
-                    MessageBox.Show("The least you can do is enter a name...");
-                    return;
+                    list3.Add(vDTO);
                 }
 
-                addVendorRequest.Vendor.VendorName = this.VendorName.Text;
-                addVendorRequest.Vendor.VendorEmail = this.VendorEmail.Text;
-                addVendorRequest.Vendor.VendorPhone = this.VendorPhone.Text;
-                addVendorRequest.Vendor.StreetAddress = this.Address1.Text;
-                addVendorRequest.Vendor.UnitAptSuite = this.Address2.Text;
-                addVendorRequest.Vendor.City = this.City.Text;
-                addVendorRequest.Vendor.State = this.State.Text;
-                addVendorRequest.Vendor.ZipCode = this.Zip.Text;
+                this.VendorListView.ItemsSource = list3;
+            });
+        }
 
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(((App)App.Current).LAN_Address);
-                client.DefaultRequestHeaders.Accept.Add(
-                   new MediaTypeWithQualityHeaderValue("application/json"));
+        private bool ValidateVendorData()
+        {
+            bool vendorDataValid = true;
+            StringBuilder sb = new StringBuilder();
 
-                client.DefaultRequestHeaders.Add("EO-Header", wnd.User + " : " + wnd.Pwd);
+            if (String.IsNullOrEmpty(this.VendorName.Text))
+            {
+                sb.AppendLine("The least you can do is enter a name...");
+            }
 
-                string jsonData = JsonConvert.SerializeObject(addVendorRequest);
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage httpResponse = client.PostAsync("api/Login/AddVendor", content).Result;
-                if (httpResponse.IsSuccessStatusCode)
+            if(sb.Length > 0)
+            {
+                MessageBox.Show(sb.ToString());
+                vendorDataValid = false;
+            }
+
+            return vendorDataValid;
+        }
+
+        private AddVendorRequest GetVendorData()
+        {
+            AddVendorRequest addVendorRequest = new AddVendorRequest();
+
+            addVendorRequest.Vendor.VendorName = this.VendorName.Text;
+            addVendorRequest.Vendor.VendorEmail = this.VendorEmail.Text;
+            addVendorRequest.Vendor.VendorPhone = this.VendorPhone.Text;
+            addVendorRequest.Vendor.StreetAddress = this.Address1.Text;
+            addVendorRequest.Vendor.UnitAptSuite = this.Address2.Text;
+            addVendorRequest.Vendor.City = this.City.Text;
+            addVendorRequest.Vendor.State = this.State.Text;
+            addVendorRequest.Vendor.ZipCode = this.Zip.Text;
+
+            return addVendorRequest;
+        }
+
+        public async void AddVendor()
+        {
+            if (ValidateVendorData())
+            {
+                AddVendorRequest request = GetVendorData();
+                ((App)App.Current).PostRequest<AddVendorRequest, ApiResponse>("AddVendor", request).ContinueWith(a => VendorAdded(a.Result));
+            }
+        }
+
+        private void VendorAdded(ApiResponse response)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if(response.Success && response.Id > 0)
                 {
-                    Stream streamData = httpResponse.Content.ReadAsStreamAsync().Result;
-                    StreamReader strReader = new StreamReader(streamData);
-                    string strData = strReader.ReadToEnd();
-                    strReader.Close();
-                    ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(strData);
+                    ResetUI();
 
-                    //if (apiResponse.Messages.Count > 0)
-                    //{
-                    //    StringBuilder sb = new StringBuilder();
-                    //    foreach (KeyValuePair<string, List<string>> messages in apiResponse.Messages)
-                    //    {
-                    //        foreach (string msg in messages.Value)
-                    //        {
-                    //            sb.AppendLine(msg);
-                    //        }
-                    //    }
-
-                    //    MessageBox.Show(sb.ToString());
-                    //}
-                    //else
-                    {
-                        if (apiResponse.Id > 0)
-                        {
-                            ClearEditFields();
-
-                            addVendorRequest.Vendor.VendorId = apiResponse.Id;
-                            list3.Add(addVendorRequest.Vendor);
-                            this.VendorListView.ItemsSource = null;
-                            this.VendorListView.ItemsSource = list3;
-
-                            MessageBox.Show("Vendor added");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Error adding Vendor");
-                        }
-                    }
+                    MessageBox.Show("Vendor added");
                 }
                 else
                 {
                     MessageBox.Show("Error adding Vendor");
                 }
-            }
-            catch(Exception ex)
-            {
+            });
+        }
 
-            }
+        private void ResetUI()
+        {
+             this.VendorName.Text = String.Empty;
+             this.VendorEmail.Text = String.Empty;
+             this.VendorPhone.Text = String.Empty;
+             this.Address1.Text = String.Empty;
+             this.Address2.Text = String.Empty;
+             this.City.Text = String.Empty;
+             this.State.Text = String.Empty;
+             this.Zip.Text = String.Empty;
         }
 
         public void AddPersonSelection(PersonDTO person)

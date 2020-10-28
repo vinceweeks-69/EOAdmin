@@ -26,7 +26,7 @@
 
         </Grid.RowDefinitions>
         <Label Content="Elegant Orchids Administration" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"  VerticalAlignment="Top"  FontFamily="Verdana" FontSize="20"/>
-        <Button Content="Inventory" Grid.Column="1" Grid.Row="1" Margin="2,10,2,0"  HorizontalAlignment="Center"  VerticalAlignment="Center" MinWidth="160" Width="Auto" Background="#FFDDDDDD" Click="InventoryButton_Click"/>
+        <Button Content="Inventory" Grid.Column="1" Grid.Row="1" Margin="2,10,2,10"  HorizontalAlignment="Center"  VerticalAlignment="Center" MinWidth="160" Width="Auto" Background="#FFDDDDDD" Click="InventoryButton_Click"/>
         <Button Content="Arrangements" Grid.Column="2" Grid.Row="1" Margin="2,10,2,10" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="160" Width="Auto" Click="ArrangementsButton_Click"/>
         <Button Content="Work Orders" Grid.Column="1" Grid.Row="2" Margin="2,10,2,10" HorizontalAlignment="Center"  VerticalAlignment="Center" MinWidth="160" Width="Auto" Click="WorkOrdersButton_Click"/>
         <Button Content="Vendors" Grid.Column="2" Grid.Row="2" Margin="2,10,2,10" HorizontalAlignment="Center"  VerticalAlignment="Center" MinWidth="160" Width="Auto" Click="VendorsButton_Click"/>

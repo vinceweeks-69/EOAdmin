@@ -32,6 +32,8 @@ namespace WpfApp1
     {
         MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
+        List<UserDTO> Users { get; set; }
+
         List<AddArrangementRequest> arrangementList = new List<AddArrangementRequest>();
 
         ObservableCollection<WorkOrderInventoryMapDTO> list1 = new ObservableCollection<WorkOrderInventoryMapDTO>();
@@ -46,14 +48,7 @@ namespace WpfApp1
         {
             InitializeComponent();
 
-            ObservableCollection<KeyValuePair<long, string>> list0 = new ObservableCollection<KeyValuePair<long, string>>();
-            list0.Add(new KeyValuePair<long, string>(0, "Melissa"));
-            list0.Add(new KeyValuePair<long, string>(1, "Thom"));
-            list0.Add(new KeyValuePair<long, string>(2, "Roseanne"));
-            list0.Add(new KeyValuePair<long, string>(3, "Vicky"));
-            list0.Add(new KeyValuePair<long, string>(4, "Marguerita"));
-
-            Seller.ItemsSource = list0;
+            GetUsers();
 
             ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
             list1.Add(new KeyValuePair<long, string>(0, "Walk In"));
@@ -72,17 +67,8 @@ namespace WpfApp1
             DeliveryType.SelectionChanged += DeliveryType_SelectionChanged;
             DeliveryType.SelectedIndex = 0;
 
-            ObservableCollection<KeyValuePair<long, string>> list3 = new ObservableCollection<KeyValuePair<long, string>>();
-            list3.Add(new KeyValuePair<long, string>(1, "Melissa"));
-            list3.Add(new KeyValuePair<long, string>(2, "Thom"));
-            list3.Add(new KeyValuePair<long, string>(3, "Danny"));
-            list3.Add(new KeyValuePair<long, string>(3, "Robert"));
-
             WorkOrderDate.SelectedDate = DateTime.Today;
             PickupDate.SelectedDate = DateTime.Today;
-
-            DeliveryPerson.ItemsSource = list3;
-            DeliveryPerson.SelectionChanged += DeliveryPerson_SelectionChanged;
 
             DeliveryPerson.Visibility = Visibility.Hidden;
             DeliveryPersonLabel.Visibility = Visibility.Hidden;
@@ -123,6 +109,42 @@ namespace WpfApp1
             }
 
             LoadCustomer();    
+        }
+
+        private async void GetUsers()
+        {
+            GenericGetRequest request = new GenericGetRequest("GetUsers", String.Empty, 0);
+            ((App)App.Current).GetRequest<GetUserResponse>(request).ContinueWith(a => UsersLoaded(a.Result));
+        }
+
+        private void UsersLoaded(GetUserResponse response)
+        {
+            Users = response.Users;
+
+            List<UserDTO> sellers = Users.Where(a => a.RoleId < 3).ToList();
+
+            List<UserDTO> deliverers = Users.Where(a => a.RoleId == 1 || a.RoleId == 3).ToList();
+
+            Dispatcher.Invoke(() =>
+            {
+                ObservableCollection<KeyValuePair<long, string>> list1 = new ObservableCollection<KeyValuePair<long, string>>();
+                foreach (UserDTO u in sellers)
+                {
+                    list1.Add(new KeyValuePair<long, string>(u.UserId, u.UserName));
+                }
+
+                Seller.ItemsSource = list1;
+
+                ObservableCollection<KeyValuePair<long, string>> list2 = new ObservableCollection<KeyValuePair<long, string>>();
+                foreach (UserDTO u in deliverers)
+                {
+                    list2.Add(new KeyValuePair<long, string>(u.UserId, u.UserName));
+                }
+
+                DeliveryPerson.ItemsSource = list2;
+
+                DeliveryPerson.SelectionChanged += DeliveryPerson_SelectionChanged;
+            });
         }
 
         async void LoadCustomer()
