@@ -695,7 +695,7 @@ namespace WpfApp1
             {
                 MainWindow wnd = Application.Current.MainWindow as MainWindow;
 
-                if (saveSuccessful)
+                if (saveSuccessful) // else AddWorkOrder has put a up a msg box
                 {
                     WorkOrderResponse wor = new WorkOrderResponse();
                     wor.WorkOrder = currentWorkOrder.WorkOrder;
@@ -715,10 +715,6 @@ namespace WpfApp1
                     PaymentPage paymentPage = new PaymentPage(wor, Customer);
                     wnd.NavigationStack.Push(paymentPage);
                     wnd.MainContent.Content = new Frame() { Content = paymentPage };
-                }
-                else
-                {
-                    MessageBox.Show(wnd, "There was an error saving the work order.", "Error", MessageBoxButton.OK);
                 }
             });
         }

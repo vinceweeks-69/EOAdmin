@@ -25,7 +25,7 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="8*" />
                 <RowDefinition Height="1*" />
-                <RowDefinition Height="1*" />
+                <RowDefinition Height="12*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
@@ -38,7 +38,7 @@
 
             <Label Content="Work Orders" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
 
-            <ListView x:Name="WorkOrderReportListView" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="230" MinWidth="100" Height="Auto" Margin="10,10,0,0" VerticalAlignment="Top" Width ="Auto" SelectionChanged="WorkOrderReportListView_SelectionChanged">
+            <ListView x:Name="WorkOrderReportListView" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="130" MinWidth="100" Height="Auto" Margin="10,10,10,10" VerticalAlignment="Top" Width ="Auto" SelectionChanged="WorkOrderReportListView_SelectionChanged">
                 <ListView.Resources>
                     <Style TargetType="{x:Type GridViewColumnHeader}">
                         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -74,7 +74,7 @@
 
             <Label Content="Details" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
 
-            <ListView Name="WorkOrderDetailListView" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="100" MinWidth="430" Height="Auto" Margin="10,10,0,0" VerticalAlignment="Top" Width ="Auto" >
+            <ListView Name="WorkOrderDetailListView" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" MinHeight="230" MinWidth="430" Height="Auto" Margin="10,10,0,0" VerticalAlignment="Top" Width ="Auto" >
                 <ListView.Resources>
                     <Style TargetType="{x:Type GridViewColumnHeader}">
                         <Setter Property="HorizontalContentAlignment" Value="Left" />
