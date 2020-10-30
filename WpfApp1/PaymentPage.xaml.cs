@@ -424,7 +424,7 @@ namespace WpfApp1
             return workOrderPayment;
         }
 
-        private void EmailReceipt(WorkOrderPaymentDTO workOrderPayment)
+        private async void EmailReceipt(WorkOrderPaymentDTO workOrderPayment)
         {
             try
             {
@@ -438,7 +438,10 @@ namespace WpfApp1
 
                     if (!String.IsNullOrEmpty(Customer.Person.email))
                     {
-                        emailHtml = emailHelper.ComposeReceipt(currentWorkOrder, workOrderPayment);
+                        GenericGetRequest request = new GenericGetRequest("GetWorkOrderPrices", "workOrderId", workOrderPayment.WorkOrderId);
+                        GetWorkOrderPriceResponse workOrderPrices = await ((App)App.Current).GetRequest<GetWorkOrderPriceResponse>(request);
+
+                        emailHtml = emailHelper.ComposeReceipt(currentWorkOrder, workOrderPayment,workOrderPrices);
 
                         mailMessage = new EOMailMessage("service@elegantorchids.com", Customer.Person.email, "Elegant Orchids Receipt", emailHtml, "Orchids@5185");
                     }

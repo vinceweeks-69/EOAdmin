@@ -483,19 +483,8 @@ namespace WpfApp1
             Dispatcher.Invoke(() =>
             {
                 //reset ui and variables
-
+                
             });
-        }
-
-        //add the selected inventory item to the list of inventory items for the current arrangement
-        private void InventoryCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //KeyValuePair<long, string> kvp = ((KeyValuePair<long, string>)InventoryCombo.SelectedValue);
-            //long inventoryId = kvp.Key;
-            //string inventoryName = kvp.Value;
-            //arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, 0));
-            //this.InventoryListView.ItemsSource = null;
-            //this.InventoryListView.ItemsSource = arrangementInventoryList;
         }
 
         private void OnDeleteArrangementInventory(object sender, RoutedEventArgs e)
@@ -521,13 +510,6 @@ namespace WpfApp1
                 }
             }
         }
-
-        //public void AddInventorySelection(long inventoryId, string inventoryName,long inventoryTypeId)
-        //{
-        //    arrangementInventoryList.Add(new ArrangementInventoryItemDTO(0, inventoryId, inventoryName, inventoryTypeId, 0));
-        //    //this.InventoryListView.ItemsSource = null;
-        //    //this.InventoryListView.ItemsSource = arrangementInventoryList;
-        //}
 
         private void Products_Click(object sender, RoutedEventArgs e)
         {
