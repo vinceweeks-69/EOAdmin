@@ -159,8 +159,13 @@ namespace WpfApp1
 
         public string WorkOrderTotal()
         {
-            decimal total = Convert.ToDecimal(SubTotalTextBox.Text);
+            decimal total = 0.0M;  
             decimal tax = 0.0M;
+
+            if(!String.IsNullOrEmpty(SubTotalTextBox.Text))
+            {
+                total = Convert.ToDecimal(SubTotalTextBox.Text);
+            }
 
             if (!String.IsNullOrEmpty(TaxTextBox.Text))
             {
@@ -482,6 +487,12 @@ namespace WpfApp1
                 {
                     DiscountAmountLabel.Visibility = Visibility.Hidden;
                     DiscountAmountTextBox.Visibility = Visibility.Hidden;
+                    DiscountAmountTextBox.Text = String.Empty;
+
+                    if (Pay.IsEnabled)
+                    {
+                        TotalTextBox.Text = WorkOrderTotal();
+                    }
                 }
             }
         }
@@ -506,18 +517,29 @@ namespace WpfApp1
                     {
                         GiftCardNumberLabel.Visibility = Visibility.Hidden;
                         GiftCardNumberTextBox.Visibility = Visibility.Hidden;
+                        GiftCardNumberTextBox.Text = String.Empty;
 
                         GiftCardAmountLabel.Visibility = Visibility.Hidden;
                         GiftCardAmountTextBox.Visibility = Visibility.Hidden;
+                        GiftCardAmountTextBox.Text = String.Empty;
+                        GiftCardNumberTextBox.Text = String.Empty;
+
+                        if (Pay.IsEnabled)
+                        {
+                            TotalTextBox.Text = WorkOrderTotal();
+                        }
                     }
                 }
                 else
                 {
                     GiftCardNumberLabel.Visibility = Visibility.Hidden;
                     GiftCardNumberTextBox.Visibility = Visibility.Hidden;
+                    GiftCardNumberTextBox.Text = String.Empty;
 
                     GiftCardAmountLabel.Visibility = Visibility.Hidden;
                     GiftCardAmountTextBox.Visibility = Visibility.Hidden;
+                    GiftCardAmountTextBox.Text = String.Empty;
+                    GiftCardNumberTextBox.Text = String.Empty;
                 }
             }
         }

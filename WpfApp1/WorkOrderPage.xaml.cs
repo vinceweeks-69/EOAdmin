@@ -274,6 +274,8 @@ namespace WpfApp1
                 {
                     PayButton.IsEnabled = false;
                     SaveButton.IsEnabled = false;
+                    CameraButton.IsEnabled = false;
+                    currentWorkOrder.WorkOrder.Paid = true;
                 }
 
                 ReloadItemList();

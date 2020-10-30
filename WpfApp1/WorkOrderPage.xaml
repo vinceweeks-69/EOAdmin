@@ -66,7 +66,7 @@
 
             <Button Name="SaveButton" Content="Save" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top" Width="80" Click="SaveButton_Click"/>
             <Button Content="Clear" Grid.Row="9" Grid.Column="2" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
-            <Button Content="Camera" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
+            <Button Name="CameraButton"  Content="Camera" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" />
             <Button Name="PayButton"  Content="Pay" Grid.Row="9" Grid.Column="4" HorizontalAlignment="Center" Margin="10,10,10,10" VerticalAlignment="Top"  Width="80" Click="PayButton_Click" />
 
             <ListView Name="WorkOrderInventoryListView" Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" MinHeight="200" Height="Auto"  Margin="10,10,10,10" VerticalAlignment="Top" Width ="{Binding Path=ActualWidth, ElementName=PageGrid}"  ScrollViewer.VerticalScrollBarVisibility="Auto">
